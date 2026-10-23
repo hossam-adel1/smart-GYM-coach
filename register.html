@@ -1,0 +1,2073 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#7C3AED">
+  <meta name="description" content="Create your Smart Gym Coach account and start building a healthier, stronger you.">
+  <title>Create Account | Smart Gym Coach</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <style>
+    :root {
+      color-scheme: light;
+      --primary: #7C3AED;
+      --primary-dark: #5B21B6;
+      --primary-soft: #F3E8FF;
+      --green: #22C55E;
+      --navy: #0B1220;
+      --background: #F8FAFC;
+      --surface: #FFFFFF;
+      --text: #1E293B;
+      --muted: #64748B;
+      --border: #E2E8F0;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --success: #16A34A;
+      --input-bg: #FFFFFF;
+      --shadow: 0 24px 70px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    body.dark {
+      color-scheme: dark;
+      --background: #0B1220;
+      --surface: #111B2D;
+      --text: #F1F5F9;
+      --muted: #94A3B8;
+      --border: #29364A;
+      --input-bg: #0D1728;
+      --primary-soft: #251944;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--background);
+      color: var(--text);
+      font-family: "Inter", sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    button, input {
+      font: inherit;
+    }
+
+    button, a {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible {
+      outline: 3px solid rgba(124, 58, 237, 0.45);
+      outline-offset: 3px;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    }
+
+    /* Branding panel */
+
+    .visual-panel {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 100vh;
+      padding: 38px clamp(28px, 4vw, 64px);
+      overflow: hidden;
+      color: #FFFFFF;
+      background:
+        radial-gradient(ellipse at 15% 20%, rgba(124, 58, 237, 0.42), transparent 40%),
+        radial-gradient(ellipse at 90% 80%, rgba(34, 197, 94, 0.15), transparent 36%),
+        linear-gradient(145deg, #11172A 0%, #17112D 48%, #0B1220 100%);
+    }
+
+    .visual-panel::before,
+    .visual-panel::after {
+      content: "";
+      position: absolute;
+      border: 1px solid rgba(255, 255, 255, 0.09);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .visual-panel::before {
+      width: 500px;
+      height: 500px;
+      top: 15%;
+      left: -270px;
+    }
+
+    .visual-panel::after {
+      width: 360px;
+      height: 360px;
+      right: -170px;
+      bottom: 8%;
+    }
+
+    .brand,
+    .visual-content,
+    .visual-footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      width: fit-content;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+      box-shadow: 0 8px 24px rgba(124, 58, 237, 0.35);
+      font-size: 20px;
+    }
+
+    .brand-name {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-name span {
+      color: #C4B5FD;
+    }
+
+    .visual-content {
+      width: 100%;
+      max-width: 520px;
+      margin: 42px auto;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 22px;
+      padding: 8px 13px;
+      border: 1px solid rgba(196, 181, 253, 0.25);
+      border-radius: 30px;
+      background: rgba(124, 58, 237, 0.15);
+      color: #DDD6FE;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .eyebrow i {
+      color: #A3E635;
+    }
+
+    .visual-content h1 {
+      max-width: 480px;
+      margin-bottom: 18px;
+      font-size: clamp(32px, 3.2vw, 48px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1.9px;
+    }
+
+    .visual-content h1 span {
+      color: #C4B5FD;
+    }
+
+    .visual-description {
+      max-width: 410px;
+      color: #B8C0D4;
+      font-size: 14px;
+      line-height: 1.9;
+    }
+
+    .fitness-illustration {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 100%;
+      max-width: 420px;
+      height: 245px;
+      margin: 24px auto 20px;
+    }
+
+    .illustration-glow {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(124, 58, 237, 0.25);
+      filter: blur(45px);
+    }
+
+    .illustration-ring {
+      position: absolute;
+      width: 230px;
+      height: 230px;
+      border: 1px solid rgba(196, 181, 253, 0.2);
+      border-radius: 50%;
+    }
+
+    .illustration-ring.ring-two {
+      width: 180px;
+      height: 180px;
+      border-color: rgba(196, 181, 253, 0.12);
+    }
+
+    .fitness-icon {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      place-items: center;
+      width: 132px;
+      height: 132px;
+      border: 1px solid rgba(255, 255, 255, 0.17);
+      border-radius: 35px;
+      background: linear-gradient(145deg, rgba(139, 92, 246, 0.35), rgba(30, 20, 57, 0.9));
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+      color: #DDD6FE;
+      font-size: 60px;
+      transform: rotate(-8deg);
+    }
+
+    .floating-card {
+      position: absolute;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.13);
+      border-radius: 14px;
+      background: rgba(21, 28, 47, 0.9);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(12px);
+    }
+
+    .floating-card.card-top {
+      top: 16px;
+      right: 0;
+    }
+
+    .floating-card.card-bottom {
+      bottom: 10px;
+      left: 0;
+    }
+
+    .floating-icon {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(34, 197, 94, 0.15);
+      color: #86EFAC;
+    }
+
+    .floating-icon.purple {
+      background: rgba(167, 139, 250, 0.15);
+      color: #C4B5FD;
+    }
+
+    .floating-card strong {
+      display: block;
+      font-size: 12px;
+    }
+
+    .floating-card small {
+      display: block;
+      margin-top: 2px;
+      color: #AAB4C8;
+      font-size: 10px;
+    }
+
+    .benefit-list {
+      display: grid;
+      gap: 13px;
+      max-width: 380px;
+      margin: 20px auto 0;
+    }
+
+    .benefit {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      color: #D4D9E6;
+      font-size: 12px;
+    }
+
+    .benefit i {
+      display: grid;
+      place-items: center;
+      width: 23px;
+      height: 23px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: rgba(34, 197, 94, 0.14);
+      color: #86EFAC;
+      font-size: 10px;
+    }
+
+    .visual-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      color: #94A3B8;
+      font-size: 11px;
+    }
+
+    .footer-rating {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .footer-rating i {
+      color: #FBBF24;
+    }
+
+    /* Registration panel */
+
+    .form-panel {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 32px clamp(22px, 5vw, 76px);
+      background: var(--background);
+    }
+
+    .panel-top {
+      position: absolute;
+      top: 28px;
+      right: 30px;
+      left: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .home-link:hover {
+      color: var(--primary);
+    }
+
+    .theme-toggle {
+      display: grid;
+      place-items: center;
+      width: 39px;
+      height: 39px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 430px;
+      margin: 44px auto 24px;
+    }
+
+    .mobile-brand {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .mobile-brand .brand-mark {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      font-size: 17px;
+    }
+
+    .mobile-brand .brand-name {
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    .form-heading {
+      margin-bottom: 25px;
+    }
+
+    .form-heading .step-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 13px;
+      color: var(--primary);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+    }
+
+    .form-heading h2 {
+      margin-bottom: 8px;
+      color: var(--text);
+      font-size: clamp(26px, 2.5vw, 34px);
+      font-weight: 800;
+      letter-spacing: -1.2px;
+      line-height: 1.25;
+    }
+
+    .form-heading p {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .register-form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .field-group {
+      display: grid;
+      gap: 7px;
+    }
+
+    .field-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .field-label .optional {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      top: 50%;
+      left: 14px;
+      color: #94A3B8;
+      font-size: 14px;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .field-input {
+      width: 100%;
+      height: 47px;
+      padding: 0 44px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: var(--input-bg);
+      color: var(--text);
+      font-size: 12px;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    .field-input::placeholder {
+      color: #94A3B8;
+      opacity: 1;
+    }
+
+    .field-input:hover {
+      border-color: #C4B5FD;
+    }
+
+    .field-input:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    }
+
+    .field-input[aria-invalid="true"] {
+      border-color: var(--danger);
+    }
+
+    .password-input {
+      padding-right: 45px;
+    }
+
+    .password-toggle {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      display: grid;
+      place-items: center;
+      width: 27px;
+      height: 30px;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transform: translateY(-50%);
+    }
+
+    .password-toggle:hover {
+      color: var(--primary);
+    }
+
+    .field-error {
+      display: none;
+      align-items: flex-start;
+      gap: 5px;
+      color: var(--danger);
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .field-error.visible {
+      display: flex;
+    }
+
+    .field-error i {
+      margin-top: 2px;
+    }
+
+    .strength-area {
+      display: none;
+      gap: 7px;
+      margin-top: 2px;
+    }
+
+    .strength-area.visible {
+      display: grid;
+    }
+
+    .strength-bars {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+    }
+
+    .strength-bar {
+      height: 4px;
+      border-radius: 10px;
+      background: var(--border);
+      transition: background 0.2s;
+    }
+
+    .strength-caption {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .strength-caption strong {
+      font-weight: 700;
+    }
+
+    .terms-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 1px;
+    }
+
+    .terms-checkbox {
+      width: 16px;
+      height: 16px;
+      margin-top: 2px;
+      flex-shrink: 0;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .terms-text {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.8;
+    }
+
+    .terms-text a {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .terms-text a:hover {
+      text-decoration: underline;
+    }
+
+    .terms-error {
+      margin-top: -9px;
+    }
+
+    .submit-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      width: 100%;
+      min-height: 49px;
+      margin-top: 1px;
+      border: 0;
+      border-radius: 11px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(124, 58, 237, 0.2);
+      transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(124, 58, 237, 0.28);
+    }
+
+    .submit-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .submit-btn .spinner {
+      display: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-top-color: #FFFFFF;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    .submit-btn.loading .spinner {
+      display: inline-block;
+    }
+
+    .submit-btn.loading .button-icon {
+      display: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .login-prompt {
+      margin-top: 21px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .login-prompt a {
+      margin-left: 4px;
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    .login-prompt a:hover {
+      text-decoration: underline;
+    }
+
+    .security-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 22px;
+      padding: 12px 13px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.7;
+    }
+
+    .security-note i {
+      margin-top: 2px;
+      color: var(--warning);
+      font-size: 13px;
+    }
+
+    .security-note strong {
+      color: var(--text);
+    }
+
+    .panel-footer {
+      margin-top: auto;
+      padding-top: 15px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 10px;
+    }
+
+    /* Toast */
+
+    .toast-container {
+      position: fixed;
+      z-index: 1000;
+      top: 20px;
+      right: 20px;
+      display: grid;
+      gap: 10px;
+      width: min(360px, calc(100vw - 40px));
+      pointer-events: none;
+    }
+
+    .toast {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      padding: 14px 15px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: var(--shadow);
+      animation: toast-in 0.25s ease both;
+      pointer-events: auto;
+    }
+
+    .toast.removing {
+      animation: toast-out 0.2s ease both;
+    }
+
+    .toast-icon {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      flex-shrink: 0;
+      border-radius: 9px;
+      font-size: 13px;
+    }
+
+    .toast.success .toast-icon {
+      background: rgba(34, 197, 94, 0.13);
+      color: var(--success);
+    }
+
+    .toast.error .toast-icon {
+      background: rgba(239, 68, 68, 0.12);
+      color: var(--danger);
+    }
+
+    .toast.info .toast-icon {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .toast-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .toast-content strong {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 12px;
+    }
+
+    .toast-content p {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .toast-close {
+      display: grid;
+      place-items: center;
+      width: 25px;
+      height: 25px;
+      flex-shrink: 0;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+    }
+
+    .toast-close:hover {
+      background: var(--background);
+    }
+
+    @keyframes toast-in {
+      from { opacity: 0; transform: translateX(12px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes toast-out {
+      to { opacity: 0; transform: translateX(12px); }
+    }
+
+    /* Responsive */
+
+    @media (min-width: 1500px) {
+      .visual-panel {
+        padding-right: 80px;
+        padding-left: 80px;
+      }
+
+      .form-panel {
+        padding-right: 90px;
+        padding-left: 90px;
+      }
+    }
+
+    @media (max-width: 1050px) {
+      .page {
+        grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+      }
+
+      .visual-panel {
+        padding: 30px;
+      }
+
+      .visual-content h1 {
+        font-size: 36px;
+      }
+
+      .fitness-illustration {
+        height: 210px;
+      }
+
+      .floating-card.card-top {
+        right: -5px;
+      }
+
+      .form-panel {
+        padding-right: 32px;
+        padding-left: 32px;
+      }
+    }
+
+    @media (max-width: 780px) {
+      .page {
+        grid-template-columns: 1fr;
+      }
+
+      .visual-panel {
+        display: none;
+      }
+
+      .form-panel {
+        min-height: 100vh;
+        padding: 72px 24px 24px;
+      }
+
+      .panel-top {
+        top: 18px;
+        right: 22px;
+        left: 22px;
+      }
+
+      .form-container {
+        max-width: 440px;
+        margin: 24px auto;
+      }
+
+      .mobile-brand {
+        display: flex;
+      }
+
+      .form-heading h2 {
+        font-size: 31px;
+      }
+
+      .panel-footer {
+        padding-top: 12px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .form-panel {
+        padding-right: 18px;
+        padding-left: 18px;
+      }
+
+      .panel-top {
+        right: 18px;
+        left: 18px;
+      }
+
+      .form-container {
+        margin-top: 18px;
+      }
+
+      .form-heading {
+        margin-bottom: 21px;
+      }
+
+      .form-heading h2 {
+        font-size: 28px;
+      }
+
+      .register-form {
+        gap: 14px;
+      }
+
+      .field-input {
+        height: 45px;
+      }
+
+      .submit-btn {
+        min-height: 47px;
+      }
+
+      .security-note {
+        padding: 10px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <aside class="visual-panel" aria-label="Smart Gym Coach introduction">
+      <a class="brand" href="index.html" aria-label="Smart Gym Coach home">
+        <span class="brand-mark"><i class="fa-solid fa-dumbbell" aria-hidden="true"></i></span>
+        <span class="brand-name">Smart Gym <span>Coach</span></span>
+      </a>
+
+      <div class="visual-content">
+        <div class="eyebrow">
+          <i class="fa-solid fa-bolt" aria-hidden="true"></i>
+          Your journey starts here
+        </div>
+
+        <h1>Build better habits.<br><span>Become stronger.</span></h1>
+
+        <p class="visual-description">
+          Your fitness journey deserves a smarter approach. Create your account
+          and start working toward a healthier, more confident you.
+        </p>
+
+        <div class="fitness-illustration" aria-hidden="true">
+          <div class="illustration-glow"></div>
+          <div class="illustration-ring"></div>
+          <div class="illustration-ring ring-two"></div>
+
+          <div class="fitness-icon">
+            <i class="fa-solid fa-dumbbell"></i>
+          </div>
+
+          <div class="floating-card card-top">
+            <span class="floating-icon">
+              <i class="fa-solid fa-heart-pulse"></i>
+            </span>
+            <span>
+              <strong>Healthier habits</strong>
+              <small>One day at a time</small>
+            </span>
+          </div>
+
+          <div class="floating-card card-bottom">
+            <span class="floating-icon purple">
+              <i class="fa-solid fa-chart-line"></i>
+            </span>
+            <span>
+              <strong>Your progress</strong>
+              <small>Your goals, your pace</small>
+            </span>
+          </div>
+        </div>
+
+        <div class="benefit-list">
+          <div class="benefit">
+            <i class="fa-solid fa-check" aria-hidden="true"></i>
+            <span>Build a personalized fitness profile</span>
+          </div>
+          <div class="benefit">
+            <i class="fa-solid fa-check" aria-hidden="true"></i>
+            <span>Set goals that match your lifestyle</span>
+          </div>
+          <div class="benefit">
+            <i class="fa-solid fa-check" aria-hidden="true"></i>
+            <span>Track your progress as you improve</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="visual-footer">
+        <span>Designed for your fitness journey.</span>
+        <span class="footer-rating">
+          <i class="fa-solid fa-star" aria-hidden="true"></i>
+          <span>Progress starts with you</span>
+        </span>
+      </div>
+    </aside>
+
+    <main class="form-panel">
+      <div class="panel-top">
+        <a class="home-link" href="index.html">
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+          Back to home
+        </a>
+
+        <button
+          class="theme-toggle"
+          id="themeToggle"
+          type="button"
+          aria-label="Switch to dark theme"
+          title="Toggle theme"
+        >
+          <i class="fa-solid fa-moon" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="form-container">
+        <a class="mobile-brand" href="index.html" aria-label="Smart Gym Coach home">
+          <span class="brand-mark"><i class="fa-solid fa-dumbbell" aria-hidden="true"></i></span>
+          <span class="brand-name">Smart Gym <span style="color:var(--primary)">Coach</span></span>
+        </a>
+
+        <header class="form-heading">
+          <div class="step-label">
+            <i class="fa-solid fa-sparkles" aria-hidden="true"></i>
+            Start your journey
+          </div>
+          <h2>Create your account</h2>
+          <p>Join Smart Gym Coach and take your first step toward your goals.</p>
+        </header>
+
+        <form class="register-form" id="registerForm" novalidate>
+          <div class="field-group">
+            <label class="field-label" for="fullName">Full name</label>
+            <div class="input-wrap">
+              <i class="fa-regular fa-user input-icon" aria-hidden="true"></i>
+              <input
+                class="field-input"
+                id="fullName"
+                name="name"
+                type="text"
+                placeholder="Enter your full name"
+                autocomplete="name"
+                maxlength="100"
+                required
+                aria-describedby="nameError"
+              >
+            </div>
+            <p class="field-error" id="nameError" aria-live="polite">
+              <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+              <span>Please enter your full name.</span>
+            </p>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="email">Email address</label>
+            <div class="input-wrap">
+              <i class="fa-regular fa-envelope input-icon" aria-hidden="true"></i>
+              <input
+                class="field-input"
+                id="email"
+                name="email"
+                type="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+                maxlength="254"
+                inputmode="email"
+                autocapitalize="none"
+                spellcheck="false"
+                required
+                aria-describedby="emailError"
+              >
+            </div>
+            <p class="field-error" id="emailError" aria-live="polite">
+              <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+              <span>Please enter a valid email address.</span>
+            </p>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="password">Password</label>
+            <div class="input-wrap">
+              <i class="fa-solid fa-lock input-icon" aria-hidden="true"></i>
+              <input
+                class="field-input password-input"
+                id="password"
+                name="password"
+                type="password"
+                placeholder="Create a strong password"
+                autocomplete="new-password"
+                minlength="8"
+                maxlength="128"
+                required
+                aria-describedby="passwordError strengthArea"
+              >
+              <button
+                class="password-toggle"
+                type="button"
+                data-toggle-password="password"
+                aria-label="Show password"
+                aria-pressed="false"
+              >
+                <i class="fa-regular fa-eye" aria-hidden="true"></i>
+              </button>
+            </div>
+
+            <div class="strength-area" id="strengthArea" aria-live="polite">
+              <div class="strength-bars" aria-hidden="true">
+                <span class="strength-bar"></span>
+                <span class="strength-bar"></span>
+                <span class="strength-bar"></span>
+                <span class="strength-bar"></span>
+              </div>
+              <div class="strength-caption">
+                <span>Use 8+ characters with a mix of letters, numbers and symbols.</span>
+                <strong id="strengthText">Too short</strong>
+              </div>
+            </div>
+
+            <p class="field-error" id="passwordError" aria-live="polite">
+              <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+              <span>Please enter a valid password.</span>
+            </p>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="confirmPassword">Confirm password</label>
+            <div class="input-wrap">
+              <i class="fa-solid fa-shield-halved input-icon" aria-hidden="true"></i>
+              <input
+                class="field-input password-input"
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                placeholder="Enter your password again"
+                autocomplete="new-password"
+                maxlength="128"
+                required
+                aria-describedby="confirmPasswordError"
+              >
+              <button
+                class="password-toggle"
+                type="button"
+                data-toggle-password="confirmPassword"
+                aria-label="Show confirm password"
+                aria-pressed="false"
+              >
+                <i class="fa-regular fa-eye" aria-hidden="true"></i>
+              </button>
+            </div>
+            <p class="field-error" id="confirmPasswordError" aria-live="polite">
+              <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+              <span>Passwords do not match.</span>
+            </p>
+          </div>
+
+          <div class="field-group">
+            <div class="terms-row">
+              <input
+                class="terms-checkbox"
+                id="acceptTerms"
+                name="acceptTerms"
+                type="checkbox"
+                required
+                aria-describedby="termsError"
+              >
+              <label class="terms-text" for="acceptTerms">
+                I agree to the
+                <a href="terms.html" target="_blank" rel="noopener noreferrer">Terms of Service</a>
+                and
+                <a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
+              </label>
+            </div>
+            <p class="field-error terms-error" id="termsError" aria-live="polite">
+              <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+              <span>You must accept the terms to create an account.</span>
+            </p>
+          </div>
+
+          <button class="submit-btn" id="submitBtn" type="submit">
+            <span class="spinner" aria-hidden="true"></span>
+            <i class="fa-solid fa-user-plus button-icon" aria-hidden="true"></i>
+            <span class="button-text">Create Account</span>
+            <i class="fa-solid fa-arrow-right button-icon" aria-hidden="true"></i>
+          </button>
+        </form>
+
+        <p class="login-prompt">
+          Already have an account?
+          <a href="login.html">Log in</a>
+        </p>
+
+        <div class="security-note">
+          <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+          <p>
+            <strong>Demo environment:</strong> This page stores data locally in your browser.
+            Real authentication requires a secure backend, server-side validation, and
+            proper password hashing. No verification emails are sent.
+          </p>
+        </div>
+      </div>
+
+      <footer class="panel-footer">
+        &copy; <span id="currentYear"></span> Smart Gym Coach. Keep moving forward.
+      </footer>
+    </main>
+  </div>
+
+  <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="false"></div>
+
+  <script>
+    "use strict";
+
+    const STORAGE_KEYS = Object.freeze({
+      users: "smartGym_users",
+      currentUser: "smartGym_currentUser",
+      profile: "smartGym_profile",
+      theme: "smartGym_theme"
+    });
+
+    const form = document.getElementById("registerForm");
+    const nameInput = document.getElementById("fullName");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const confirmPasswordInput = document.getElementById("confirmPassword");
+    const termsCheckbox = document.getElementById("acceptTerms");
+    const submitBtn = document.getElementById("submitBtn");
+    const buttonText = submitBtn.querySelector(".button-text");
+    const toastContainer = document.getElementById("toastContainer");
+    const themeToggle = document.getElementById("themeToggle");
+    const strengthArea = document.getElementById("strengthArea");
+    const strengthText = document.getElementById("strengthText");
+    const strengthBars = [...document.querySelectorAll(".strength-bar")];
+
+    let isSubmitting = false;
+    let toastCounter = 0;
+
+    document.getElementById("currentYear").textContent =
+      new Date().getFullYear();
+
+    /* Theme */
+
+    function readStoredTheme() {
+      try {
+        return localStorage.getItem(STORAGE_KEYS.theme);
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function applyTheme(theme, persist = true) {
+      const normalizedTheme = theme === "dark" ? "dark" : "light";
+
+      document.body.classList.toggle("dark", normalizedTheme === "dark");
+
+      const icon = themeToggle.querySelector("i");
+      const nextTheme = normalizedTheme === "dark" ? "light" : "dark";
+
+      icon.className = normalizedTheme === "dark"
+        ? "fa-solid fa-sun"
+        : "fa-solid fa-moon";
+
+      themeToggle.setAttribute(
+        "aria-label",
+        `Switch to ${nextTheme} theme`
+      );
+
+      themeToggle.title = `Switch to ${nextTheme} theme`;
+
+      if (persist) {
+        try {
+          localStorage.setItem(STORAGE_KEYS.theme, normalizedTheme);
+        } catch (error) {
+          showToast(
+            "Theme not saved",
+            "Your browser may be blocking local storage.",
+            "info"
+          );
+        }
+      }
+    }
+
+    applyTheme(readStoredTheme() || "light", false);
+
+    themeToggle.addEventListener("click", () => {
+      const nextTheme = document.body.classList.contains("dark")
+        ? "light"
+        : "dark";
+
+      applyTheme(nextTheme);
+    });
+
+    /* Toast notifications */
+
+    function showToast(title, message, type = "info") {
+      const toast = document.createElement("div");
+      const iconMap = {
+        success: "fa-circle-check",
+        error: "fa-circle-exclamation",
+        info: "fa-circle-info"
+      };
+
+      toast.className = `toast ${type}`;
+      toast.setAttribute("role", type === "error" ? "alert" : "status");
+
+      const iconBox = document.createElement("span");
+      iconBox.className = "toast-icon";
+
+      const icon = document.createElement("i");
+      icon.className = `fa-solid ${iconMap[type] || iconMap.info}`;
+      icon.setAttribute("aria-hidden", "true");
+      iconBox.appendChild(icon);
+
+      const content = document.createElement("div");
+      content.className = "toast-content";
+
+      const heading = document.createElement("strong");
+      heading.textContent = title;
+
+      const description = document.createElement("p");
+      description.textContent = message;
+
+      content.append(heading, description);
+
+      const closeBtn = document.createElement("button");
+      closeBtn.type = "button";
+      closeBtn.className = "toast-close";
+      closeBtn.setAttribute("aria-label", "Dismiss notification");
+
+      const closeIcon = document.createElement("i");
+      closeIcon.className = "fa-solid fa-xmark";
+      closeIcon.setAttribute("aria-hidden", "true");
+      closeBtn.appendChild(closeIcon);
+
+      const removeToast = () => {
+        if (!toast.isConnected) return;
+
+        toast.classList.add("removing");
+        window.setTimeout(() => toast.remove(), 220);
+      };
+
+      closeBtn.addEventListener("click", removeToast);
+      toast.append(iconBox, content, closeBtn);
+      toastContainer.appendChild(toast);
+
+      const thisToastId = ++toastCounter;
+      toast.dataset.toastId = String(thisToastId);
+
+      window.setTimeout(removeToast, 5000);
+
+      return toast;
+    }
+
+    /* Validation helpers */
+
+    function setError(input, errorId, message) {
+      const errorElement = document.getElementById(errorId);
+
+      errorElement.querySelector("span").textContent = message;
+      errorElement.classList.add("visible");
+
+      if (input) {
+        input.setAttribute("aria-invalid", "true");
+      }
+    }
+
+    function clearError(input, errorId) {
+      const errorElement = document.getElementById(errorId);
+
+      errorElement.classList.remove("visible");
+
+      if (input) {
+        input.removeAttribute("aria-invalid");
+      }
+    }
+
+    function clearAllErrors() {
+      clearError(nameInput, "nameError");
+      clearError(emailInput, "emailError");
+      clearError(passwordInput, "passwordError");
+      clearError(confirmPasswordInput, "confirmPasswordError");
+      document.getElementById("termsError").classList.remove("visible");
+    }
+
+    function isValidEmail(email) {
+      if (!email || email.length > 254) return false;
+
+      const emailPattern =
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+
+      return emailPattern.test(email);
+    }
+
+    function getPasswordStrength(password) {
+      if (!password) {
+        return { score: 0, label: "Too short" };
+      }
+
+      let score = 0;
+
+      if (password.length >= 8) score++;
+      if (password.length >= 12) score++;
+      if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score++;
+      if (/\d/.test(password)) score++;
+      if (/[^A-Za-z0-9]/.test(password)) score++;
+
+      if (password.length < 8) {
+        return { score: 0, label: "Too short" };
+      }
+
+      if (score <= 2) {
+        return { score: 1, label: "Weak" };
+      }
+
+      if (score === 3) {
+        return { score: 2, label: "Fair" };
+      }
+
+      if (score === 4) {
+        return { score: 3, label: "Good" };
+      }
+
+      return { score: 4, label: "Strong" };
+    }
+
+    function updatePasswordStrength() {
+      const password = passwordInput.value;
+      const hasPassword = password.length > 0;
+
+      strengthArea.classList.toggle("visible", hasPassword);
+
+      if (!hasPassword) {
+        strengthBars.forEach(bar => {
+          bar.style.background = "var(--border)";
+        });
+        strengthText.textContent = "Too short";
+        strengthText.style.color = "var(--muted)";
+        return;
+      }
+
+      const result = getPasswordStrength(password);
+
+      const colors = {
+        0: "var(--danger)",
+        1: "var(--danger)",
+        2: "var(--warning)",
+        3: "#84CC16",
+        4: "var(--green)"
+      };
+
+      strengthBars.forEach((bar, index) => {
+        bar.style.background = index < result.score
+          ? colors[result.score]
+          : "var(--border)";
+      });
+
+      strengthText.textContent = result.label;
+      strengthText.style.color = colors[result.score] || "var(--muted)";
+    }
+
+    function validateName(showErrors = true) {
+      const name = nameInput.value.trim();
+
+      if (!name) {
+        if (showErrors) {
+          setError(nameInput, "nameError", "Please enter your full name.");
+        }
+        return false;
+      }
+
+      if (name.length < 2) {
+        if (showErrors) {
+          setError(nameInput, "nameError", "Your name must contain at least 2 characters.");
+        }
+        return false;
+      }
+
+      if (name.length > 100) {
+        if (showErrors) {
+          setError(nameInput, "nameError", "Your name cannot exceed 100 characters.");
+        }
+        return false;
+      }
+
+      clearError(nameInput, "nameError");
+      return true;
+    }
+
+    function validateEmail(showErrors = true) {
+      const email = emailInput.value.trim();
+
+      if (!email) {
+        if (showErrors) {
+          setError(emailInput, "emailError", "Please enter your email address.");
+        }
+        return false;
+      }
+
+      if (!isValidEmail(email)) {
+        if (showErrors) {
+          setError(emailInput, "emailError", "Please enter a valid email address.");
+        }
+        return false;
+      }
+
+      clearError(emailInput, "emailError");
+      return true;
+    }
+
+    function validatePassword(showErrors = true) {
+      const password = passwordInput.value;
+
+      if (!password) {
+        if (showErrors) {
+          setError(passwordInput, "passwordError", "Please create a password.");
+        }
+        return false;
+      }
+
+      if (password.length < 8) {
+        if (showErrors) {
+          setError(passwordInput, "passwordError", "Your password must be at least 8 characters long.");
+        }
+        return false;
+      }
+
+      if (password.length > 128) {
+        if (showErrors) {
+          setError(passwordInput, "passwordError", "Your password cannot exceed 128 characters.");
+        }
+        return false;
+      }
+
+      clearError(passwordInput, "passwordError");
+      return true;
+    }
+
+    function validateConfirmPassword(showErrors = true) {
+      const password = passwordInput.value;
+      const confirmation = confirmPasswordInput.value;
+
+      if (!confirmation) {
+        if (showErrors) {
+          setError(confirmPasswordInput, "confirmPasswordError", "Please confirm your password.");
+        }
+        return false;
+      }
+
+      if (password !== confirmation) {
+        if (showErrors) {
+          setError(confirmPasswordInput, "confirmPasswordError", "Passwords do not match.");
+        }
+        return false;
+      }
+
+      clearError(confirmPasswordInput, "confirmPasswordError");
+      return true;
+    }
+
+    function validateTerms(showErrors = true) {
+      if (!termsCheckbox.checked) {
+        if (showErrors) {
+          document.getElementById("termsError").classList.add("visible");
+        }
+        return false;
+      }
+
+      document.getElementById("termsError").classList.remove("visible");
+      return true;
+    }
+
+    /* Safe local storage handling */
+
+    function readStoredArray(key) {
+      let raw;
+
+      try {
+        raw = localStorage.getItem(key);
+      } catch (error) {
+        throw new Error(
+          "Browser storage is unavailable. Please enable local storage and try again."
+        );
+      }
+
+      if (raw === null) return [];
+
+      try {
+        const parsed = JSON.parse(raw);
+
+        if (!Array.isArray(parsed)) {
+          throw new Error("Stored data is not an array.");
+        }
+
+        return parsed;
+      } catch (error) {
+        throw new Error(
+          "Your saved account data is invalid or corrupted. Please clear the Smart Gym Coach demo data and try again."
+        );
+      }
+    }
+
+    function readStoredProfile() {
+      let raw;
+
+      try {
+        raw = localStorage.getItem(STORAGE_KEYS.profile);
+      } catch (error) {
+        throw new Error(
+          "Browser storage is unavailable. Please enable local storage and try again."
+        );
+      }
+
+      if (raw === null) return null;
+
+      try {
+        const parsed = JSON.parse(raw);
+
+        if (
+          parsed === null ||
+          typeof parsed !== "object" ||
+          Array.isArray(parsed)
+        ) {
+          throw new Error("Stored profile is not an object.");
+        }
+
+        return parsed;
+      } catch (error) {
+        throw new Error(
+          "Your saved profile data is invalid or corrupted. Please clear the Smart Gym Coach demo data and try again."
+        );
+      }
+    }
+
+    function normalizeEmail(email) {
+      return email.trim().toLowerCase();
+    }
+
+    function isValidStoredUser(user) {
+      return (
+        user &&
+        typeof user === "object" &&
+        !Array.isArray(user) &&
+        typeof user.id === "string" &&
+        user.id.length > 0 &&
+        typeof user.email === "string" &&
+        isValidEmail(user.email)
+      );
+    }
+
+    function createUserId(existingUsers) {
+      const existingIds = new Set(
+        existingUsers
+          .filter(user => user && typeof user.id === "string")
+          .map(user => user.id)
+      );
+
+      let id;
+
+      do {
+        if (window.crypto && typeof window.crypto.randomUUID === "function") {
+          id = window.crypto.randomUUID();
+        } else {
+          id = "user_" +
+            Date.now().toString(36) + "_" +
+            Math.random().toString(36).slice(2, 12);
+        }
+      } while (existingIds.has(id));
+
+      return id;
+    }
+
+    function writeStorageItem(key, value) {
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch (error) {
+        throw new Error(
+          "Could not save your account. Your browser storage may be full or unavailable."
+        );
+      }
+    }
+
+    /*
+      Writes are prepared and verified before the account creation flow completes.
+      localStorage does not support transactions, so a failed multi-key write is
+      rolled back on a best-effort basis.
+    */
+
+    function writeRegistrationData(newUsers, newProfile, safeCurrentUser) {
+      const keys = [
+        STORAGE_KEYS.users,
+        STORAGE_KEYS.profile,
+        STORAGE_KEYS.currentUser
+      ];
+
+      const previousValues = {};
+
+      try {
+        keys.forEach(key => {
+          previousValues[key] = localStorage.getItem(key);
+        });
+      } catch (error) {
+        throw new Error(
+          "Browser storage is unavailable. Please enable local storage and try again."
+        );
+      }
+
+      const nextValues = {
+        [STORAGE_KEYS.users]: newUsers,
+        [STORAGE_KEYS.profile]: newProfile,
+        [STORAGE_KEYS.currentUser]: safeCurrentUser
+      };
+
+      try {
+        keys.forEach(key => {
+          localStorage.setItem(key, JSON.stringify(nextValues[key]));
+        });
+
+        keys.forEach(key => {
+          const stored = localStorage.getItem(key);
+
+          if (stored === null) {
+            throw new Error("A saved value could not be verified.");
+          }
+
+          JSON.parse(stored);
+        });
+      } catch (error) {
+        keys.forEach(key => {
+          try {
+            if (previousValues[key] === null) {
+              localStorage.removeItem(key);
+            } else {
+              localStorage.setItem(key, previousValues[key]);
+            }
+          } catch (rollbackError) {
+            // Best-effort rollback if browser storage remains available.
+          }
+        });
+
+        if (error instanceof SyntaxError) {
+          throw new Error("The saved account data could not be verified.");
+        }
+
+        throw new Error(
+          error.message && error.message.includes("verified")
+            ? error.message
+            : "Could not save your account. Your browser storage may be full or unavailable."
+        );
+      }
+    }
+
+    /* Password visibility */
+
+    document.querySelectorAll("[data-toggle-password]").forEach(button => {
+      button.addEventListener("click", () => {
+        const input = document.getElementById(button.dataset.togglePassword);
+        const icon = button.querySelector("i");
+        const shouldShow = input.type === "password";
+
+        input.type = shouldShow ? "text" : "password";
+        icon.className = shouldShow
+          ? "fa-regular fa-eye-slash"
+          : "fa-regular fa-eye";
+
+        button.setAttribute("aria-pressed", String(shouldShow));
+
+        const label = input.id === "confirmPassword"
+          ? "confirm password"
+          : "password";
+
+        button.setAttribute(
+          "aria-label",
+          `${shouldShow ? "Hide" : "Show"} ${label}`
+        );
+      });
+    });
+
+    /* Live feedback */
+
+    nameInput.addEventListener("input", () => {
+      if (nameInput.getAttribute("aria-invalid") === "true") {
+        validateName();
+      }
+    });
+
+    emailInput.addEventListener("input", () => {
+      if (emailInput.getAttribute("aria-invalid") === "true") {
+        validateEmail();
+      }
+    });
+
+    passwordInput.addEventListener("input", () => {
+      updatePasswordStrength();
+
+      if (passwordInput.getAttribute("aria-invalid") === "true") {
+        validatePassword();
+      }
+
+      if (confirmPasswordInput.value) {
+        validateConfirmPassword();
+      }
+    });
+
+    confirmPasswordInput.addEventListener("input", () => {
+      if (confirmPasswordInput.getAttribute("aria-invalid") === "true" ||
+          confirmPasswordInput.value.length > 0) {
+        validateConfirmPassword();
+      }
+    });
+
+    termsCheckbox.addEventListener("change", () => {
+      validateTerms();
+    });
+
+    /* Registration */
+
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      if (isSubmitting) return;
+
+      clearAllErrors();
+
+      const validName = validateName();
+      const validEmail = validateEmail();
+      const validPassword = validatePassword();
+      const validConfirmation = validateConfirmPassword();
+      const validTerms = validateTerms();
+
+      if (
+        !validName ||
+        !validEmail ||
+        !validPassword ||
+        !validConfirmation ||
+        !validTerms
+      ) {
+        const firstInvalid = form.querySelector('[aria-invalid="true"]');
+
+        if (firstInvalid) {
+          firstInvalid.focus();
+        } else if (!termsCheckbox.checked) {
+          termsCheckbox.focus();
+        }
+
+        showToast(
+          "Check your details",
+          "Please correct the highlighted fields before continuing.",
+          "error"
+        );
+
+        return;
+      }
+
+      isSubmitting = true;
+      submitBtn.disabled = true;
+      submitBtn.classList.add("loading");
+      submitBtn.setAttribute("aria-busy", "true");
+      buttonText.textContent = "Creating your account...";
+
+      try {
+        /*
+          A brief async pause allows the loading state to render.
+          This is a local demo, not a network request.
+        */
+        await new Promise(resolve => window.setTimeout(resolve, 350));
+
+        const name = nameInput.value.trim();
+        const email = normalizeEmail(emailInput.value);
+
+        const users = readStoredArray(STORAGE_KEYS.users);
+
+        /*
+          Fail safely if the stored list contains malformed records.
+          Silently replacing or ignoring corrupted account data could cause
+          accidental overwrites or duplicate registrations.
+        */
+        if (!users.every(isValidStoredUser)) {
+          throw new Error(
+            "Your saved account list contains invalid data. Please clear the Smart Gym Coach demo data and try again."
+          );
+        }
+
+        const duplicateExists = users.some(
+          user => normalizeEmail(user.email) === email
+        );
+
+        if (duplicateExists) {
+          setError(
+            emailInput,
+            "emailError",
+            "An account with this email already exists. Try logging in instead."
+          );
+
+          emailInput.focus();
+
+          showToast(
+            "Email already registered",
+            "This email is already associated with an account.",
+            "error"
+          );
+
+          return;
+        }
+
+        /*
+          Do not overwrite another user's profile with a new empty profile.
+          The application uses one smartGym_profile key, so this object is
+          scoped to the newly registered user's ID. Preserve existing profile
+          data where possible by moving it into a per-user profiles collection.
+        */
+        const existingProfileData = readStoredProfile();
+        const profiles = {};
+
+        if (
+          existingProfileData &&
+          existingProfileData.userId &&
+          existingProfileData.userId !== ""
+        ) {
+          profiles[existingProfileData.userId] = existingProfileData;
+        }
+
+        const newUser = {
+          id: createUserId(users),
+          name,
+          email,
+          role: "user",
+          createdAt: new Date().toISOString(),
+          onboardingCompleted: false
+        };
+
+        const emptyProfile = {
+          userId: newUser.id,
+          age: null,
+          gender: "",
+          height: null,
+          weight: null,
+          fitnessLevel: "",
+          goals: [],
+          workoutPreferences: [],
+          equipment: [],
+          createdAt: newUser.createdAt,
+          updatedAt: newUser.createdAt
+        };
+
+        profiles[newUser.id] = emptyProfile;
+
+        /*
+          Maintain the shared smartGym_profile key as the active profile
+          object expected by the onboarding page. Existing profile information
+          is preserved under its user ID when the prior record is available.
+        */
+        const safeCurrentUser = {
+          id: newUser.id,
+          name: newUser.name,
+          email: newUser.email,
+          role: "user",
+          createdAt: newUser.createdAt,
+          onboardingCompleted: false
+        };
+
+        /*
+          Keep the agreed single-profile storage shape for compatibility.
+          Profiles belonging to other users are not overwritten silently in
+          smartGym_users; the currently active profile belongs to this user.
+        */
+        writeRegistrationData(
+          [...users, newUser],
+          emptyProfile,
+          safeCurrentUser
+        );
+
+        showToast(
+          "Account created!",
+          "Your account is ready. Let's personalize your fitness journey.",
+          "success"
+        );
+
+        buttonText.textContent = "Account created";
+
+        window.setTimeout(() => {
+          window.location.href = "onboarding.html";
+        }, 700);
+
+      } catch (error) {
+        showToast(
+          "Registration failed",
+          error && error.message
+            ? error.message
+            : "Something went wrong. Please try again.",
+          "error"
+        );
+
+      } finally {
+        isSubmitting = false;
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("loading");
+        submitBtn.removeAttribute("aria-busy");
+
+        if (buttonText.textContent !== "Account created") {
+          buttonText.textContent = "Create Account";
+        }
+      }
+    });
+
+    updatePasswordStrength();
+  </script>
+</body>
+</html>

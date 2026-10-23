@@ -1,0 +1,1248 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0B1220">
+  <title>Fitness Metrics | Smart Gym Coach</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --primary:#7C3AED;--primary-dark:#5B21B6;--green:#22C55E;
+      --navy:#0B1220;--sidebar:#111827;--bg:#F8FAFC;--surface:#FFFFFF;
+      --text:#1E293B;--muted:#64748B;--border:#E2E8F0;
+      --orange:#F59E0B;--red:#EF4444;--blue:#3B82F6;
+      --purple-soft:#F3E8FF;--shadow:0 5px 22px rgba(15,23,42,.045);
+      --sidebar-width:250px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,sans-serif;font-size:14px;line-height:1.55}
+    button,input,select{font:inherit}
+    button,a,input,select{touch-action:manipulation}
+    a{color:inherit;text-decoration:none}
+    button{cursor:pointer}
+    button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #A78BFA;outline-offset:3px}
+    .sidebar{position:fixed;inset:0 auto 0 0;width:var(--sidebar-width);background:var(--sidebar);color:#F8FAFC;z-index:100;display:flex;flex-direction:column;overflow-y:auto;transition:transform .25s}
+    .brand{display:flex;align-items:center;gap:12px;padding:24px 19px 29px;font-weight:800;font-size:16px;white-space:nowrap}
+    .brand-icon{width:40px;height:40px;border-radius:13px;background:linear-gradient(135deg,#7C3AED,#A78BFA);display:grid;place-items:center;font-size:19px}
+    .nav-label{padding:0 23px 10px;color:#94A3B8;font-size:10px;text-transform:uppercase;letter-spacing:1.3px;font-weight:700}
+    .nav-list{display:grid;gap:6px;padding:0 12px}
+    .nav-link{display:flex;align-items:center;gap:13px;padding:12px 14px;border-radius:10px;color:#CBD5E1;font-size:12px;font-weight:500;transition:background .2s}
+    .nav-link i{width:20px;text-align:center;font-size:15px}
+    .nav-link:hover{background:#1F2937;color:#fff}
+    .nav-link.active{background:linear-gradient(100deg,#7C3AED,#6D28D9);color:#fff}
+    .sidebar-spacer{flex:1;min-height:25px}
+    .sidebar-user{margin:18px 12px 12px;padding:14px 8px;border-top:1px solid #293548;display:flex;align-items:center;gap:10px;min-width:0}
+    .avatar{width:37px;height:37px;border-radius:50%;background:#EDE9FE;color:#5B21B6;display:grid;place-items:center;font-weight:800;flex-shrink:0;overflow:hidden}
+    .avatar img{width:100%;height:100%;object-fit:cover}
+    .user-details{min-width:0}
+    .user-details strong,.user-details span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .user-details strong{font-size:12px;color:#F8FAFC}
+    .user-details span{font-size:10px;color:#94A3B8}
+    .sidebar-bottom{padding:0 12px 20px;display:grid;gap:5px}
+    .side-action{display:flex;align-items:center;gap:12px;width:100%;padding:10px 13px;border:0;border-radius:9px;color:#CBD5E1;background:transparent;text-align:left;font-size:12px}
+    .side-action:hover{background:#1F2937;color:#fff}
+    .side-action i{width:19px;text-align:center}
+    .switch{margin-left:auto;width:32px;height:18px;border-radius:20px;background:#475569;position:relative;flex-shrink:0}
+    .switch:after{content:"";position:absolute;left:3px;top:3px;width:12px;height:12px;border-radius:50%;background:white;transition:transform .2s}
+    body.dark .switch{background:var(--primary)}
+    body.dark .switch:after{transform:translateX(14px)}
+    .main{margin-left:var(--sidebar-width);min-width:0}
+    .topbar{height:68px;position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:0 30px;background:var(--surface);border-bottom:1px solid var(--border)}
+    .top-left,.top-right{display:flex;align-items:center;gap:12px;min-width:0}
+    .icon-btn{width:37px;height:37px;display:grid;place-items:center;border:0;border-radius:10px;background:transparent;color:var(--muted);font-size:15px}
+    .icon-btn:hover{background:var(--bg);color:var(--primary)}
+    .mobile-menu{display:none}
+    .search{display:flex;align-items:center;gap:9px;width:min(340px,35vw);padding:9px 12px;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--muted)}
+    .search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--text);font-size:12px}
+    .search input:focus-visible{outline:0}
+    .top-user{display:flex;align-items:center;gap:9px}
+    .top-user .avatar{width:33px;height:33px}
+    .top-user strong{max-width:135px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
+    .content{max-width:1700px;margin:auto;padding:30px 32px}
+    .page-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:23px}
+    .eyebrow{display:flex;align-items:center;gap:7px;color:var(--primary);font-size:10px;font-weight:800;letter-spacing:.5px;margin-bottom:7px}
+    h1,h2,h3,p{margin-top:0}
+    h1{font-size:clamp(25px,3vw,32px);line-height:1.25;letter-spacing:-1px;margin-bottom:8px}
+    .description{color:var(--muted);font-size:12px;max-width:740px;margin:0}
+    .btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-size:11px;font-weight:700;transition:background .2s,border-color .2s}
+    .btn:hover{border-color:#C4B5FD}
+    .btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-dark);border-color:var(--primary-dark)}
+    .btn-soft{background:var(--purple-soft);border-color:transparent;color:var(--primary-dark)}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+    .notice{display:flex;align-items:flex-start;gap:11px;padding:14px 15px;border:1px solid #DDD6FE;background:#F5F3FF;color:#5B21B6;border-radius:12px;margin-bottom:20px}
+    .notice>i{margin-top:3px}
+    .notice strong{display:block;font-size:11px;margin-bottom:3px}
+    .notice p{font-size:10px;line-height:1.7;margin:0}
+    .panel{background:var(--surface);border:1px solid var(--border);border-radius:15px;padding:21px;box-shadow:var(--shadow);min-width:0}
+    .panel-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:19px}
+    .panel-title{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:750;margin:0}
+    .panel-title i{color:var(--primary)}
+    .panel-subtitle{font-size:10px;color:var(--muted);margin:5px 0 0}
+    .layout-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,.85fr);gap:19px;align-items:start}
+    .form-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px 14px}
+    .field{min-width:0}
+    .field label{display:block;font-size:10px;font-weight:700;margin-bottom:7px}
+    .hint{color:var(--muted);font-size:9px;font-weight:400}
+    .input-wrap{position:relative}
+    .field input,.field select{width:100%;min-width:0;min-height:42px;padding:10px 11px;border:1px solid var(--border);border-radius:9px;background:var(--surface);color:var(--text);font-size:11px;outline:none}
+    .field input:focus,.field select:focus{border-color:var(--primary);box-shadow:0 0 0 3px #7C3AED18}
+    .field input.unit-input{padding-right:39px}
+    .unit{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:10px;pointer-events:none}
+    .field-error{display:none;color:var(--red);font-size:9px;margin-top:5px}
+    .field.invalid input,.field.invalid select{border-color:var(--red)}
+    .field.invalid .field-error{display:block}
+    .field-hint{font-size:9px;color:var(--muted);line-height:1.65;margin-top:5px}
+    .form-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:22px;padding-top:17px;border-top:1px solid var(--border)}
+    .form-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .form-message{font-size:10px;color:var(--muted)}
+    .form-message.error{color:var(--red)}
+    .form-message.success{color:#16A34A}
+    .profile-list{display:grid}
+    .profile-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:10px}
+    .profile-row:last-child{border-bottom:0}
+    .profile-row span{color:var(--muted)}
+    .profile-row strong{text-align:right;overflow-wrap:anywhere}
+    .profile-status{display:flex;align-items:flex-start;gap:10px;padding:11px;margin-top:14px;border-radius:10px;background:#F0FDF4;border:1px solid #BBF7D0;color:#166534;font-size:10px}
+    .profile-status i{font-size:15px;margin-top:2px}
+    .profile-status strong,.profile-status span{display:block}
+    .profile-status span{font-size:9px;opacity:.85;margin-top:2px}
+    .results-section{margin-top:22px}
+    .section-heading{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:13px}
+    .section-heading h2{font-size:16px;margin:0}
+    .section-heading p{font-size:10px;color:var(--muted);margin:4px 0 0}
+    .metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+    .metric-card{position:relative;overflow:hidden;padding:16px;border:1px solid var(--border);border-radius:14px;background:var(--surface);box-shadow:var(--shadow);min-width:0}
+    .metric-card:after{content:"";position:absolute;right:-24px;top:-26px;width:82px;height:82px;border-radius:50%;background:var(--tint);opacity:.65}
+    .metric-card.purple{--color:var(--primary);--tint:#EDE9FE}
+    .metric-card.green{--color:#16A34A;--tint:#DCFCE7}
+    .metric-card.blue{--color:var(--blue);--tint:#DBEAFE}
+    .metric-card.orange{--color:#D97706;--tint:#FEF3C7}
+    .metric-top{position:relative;z-index:1;display:flex;align-items:center;gap:9px}
+    .metric-icon{display:grid;place-items:center;width:32px;height:32px;border-radius:9px;background:var(--tint);color:var(--color);flex-shrink:0}
+    .metric-label{font-size:10px;color:var(--muted);font-weight:650}
+    .metric-value{font-size:clamp(21px,2vw,28px);font-weight:800;letter-spacing:-.8px;line-height:1.3;margin:16px 0 4px;overflow-wrap:anywhere}
+    .metric-value small{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:0}
+    .metric-foot{position:relative;z-index:1;font-size:9px;color:var(--color)}
+    .chart-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:19px;margin-top:19px}
+    .chart-container{height:230px;position:relative;width:100%}
+    .bmi-line{height:12px;border-radius:20px;background:linear-gradient(90deg,#60A5FA 0%,#60A5FA 28.5%,#34D399 28.5%,#34D399 57%,#FBBF24 57%,#FBBF24 75%,#EF4444 75%,#EF4444 100%);position:relative;margin:16px 0 9px}
+    .bmi-marker{position:absolute;top:-5px;left:0;width:3px;height:22px;border-radius:4px;background:var(--text);transform:translateX(-50%);transition:left .2s}
+    .bmi-marker:after{content:"";position:absolute;top:-3px;left:-4px;width:11px;height:11px;border:2px solid var(--surface);border-radius:50%;background:var(--text)}
+    .bmi-labels{display:grid;grid-template-columns:1.1fr 1.1fr 1fr .8fr;gap:4px;text-align:center;font-size:8px;color:var(--muted)}
+    .bmi-labels strong{display:block;font-size:9px;color:var(--text)}
+    .bmi-note{display:flex;gap:8px;margin-top:17px;padding:11px;border-radius:9px;background:var(--bg);color:var(--muted);font-size:9px;line-height:1.7}
+    .bmi-note i{color:var(--blue);margin-top:2px}
+    .macro-legend{display:grid;gap:12px;margin-top:15px}
+    .macro-row{display:grid;grid-template-columns:9px 1fr auto auto;align-items:center;gap:8px;font-size:10px}
+    .macro-dot{width:9px;height:9px;border-radius:50%}
+    .macro-name{color:var(--muted)}
+    .macro-row strong{font-size:10px}
+    .macro-kcal{min-width:56px;text-align:right;color:var(--muted);font-size:9px}
+    .bottom-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:19px;margin-top:19px}
+    .stat-line{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);font-size:10px}
+    .stat-line:last-child{border-bottom:0}
+    .stat-line i{width:20px;text-align:center;color:var(--primary)}
+    .stat-line span{flex:1;color:var(--muted)}
+    .stat-line strong{text-align:right}
+    .range-box{padding:14px;border:1px solid #DDD6FE;border-radius:10px;background:#F5F3FF}
+    .range-title{font-size:10px;color:#6D28D9;font-weight:650}
+    .range-box strong{display:block;font-size:18px;color:#5B21B6;margin:5px 0}
+    .range-box p{font-size:9px;color:#7C3AED;margin:0;line-height:1.7}
+    .caution{display:flex;gap:8px;padding:11px;margin-top:12px;border:1px solid #FDE68A;border-radius:9px;background:#FFFBEB;color:#92400E;font-size:9px;line-height:1.7}
+    .caution i{margin-top:2px}
+    .caution p{margin:0}
+    .formula-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .formula{border-left:2px solid var(--border);padding-left:11px}
+    .formula strong{display:block;font-size:10px;margin-bottom:5px}
+    .formula p{font-size:9px;color:var(--muted);line-height:1.8;margin:0}
+    .quick-actions{display:grid;gap:9px}
+    .quick-actions .btn{justify-content:flex-start;width:100%}
+    .quick-actions .btn-primary{justify-content:center}
+    .footer-note{display:flex;gap:8px;padding:22px 2px 0;color:var(--muted);font-size:9px;line-height:1.7}
+    .footer-note i{color:var(--blue);margin-top:3px}
+    .overlay{display:none;position:fixed;inset:0;z-index:90;background:#0F172A88}
+    .toast-region{position:fixed;right:20px;bottom:20px;z-index:300;display:grid;gap:8px;pointer-events:none}
+    .toast{width:min(340px,calc(100vw - 32px));display:flex;gap:10px;padding:13px 15px;border-radius:11px;background:#111827;color:white;box-shadow:0 12px 35px #0003;font-size:11px;animation:appear .2s ease}
+    .toast i{color:#86EFAC;margin-top:2px}
+    .toast.error i{color:#FCA5A5}
+    @keyframes appear{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+    .modal-backdrop{position:fixed;inset:0;z-index:250;display:none;align-items:center;justify-content:center;padding:18px;background:#02061799}
+    .modal-backdrop.open{display:flex}
+    .modal{width:min(440px,100%);padding:23px;border-radius:16px;background:var(--surface);color:var(--text);box-shadow:0 20px 60px #0004}
+    .modal h2{font-size:17px;margin-bottom:8px}
+    .modal p{font-size:11px;color:var(--muted);line-height:1.8;margin-bottom:19px}
+    .modal-actions{display:flex;justify-content:flex-end;gap:9px}
+    body.dark{--bg:#0B1220;--surface:#111827;--text:#E5E7EB;--muted:#9CA3AF;--border:#293548;--purple-soft:#2E1A50;--shadow:0 5px 22px #0002}
+    body.dark .topbar{background:#111827}
+    body.dark .notice{background:#24173B;border-color:#4C1D95;color:#DDD6FE}
+    body.dark .profile-status{background:#102A20;border-color:#14532D;color:#86EFAC}
+    body.dark .range-box{background:#24173B;border-color:#4C1D95}
+    body.dark .range-title,body.dark .range-box strong,body.dark .range-box p{color:#DDD6FE}
+    body.dark .caution{background:#33260F;border-color:#854D0E;color:#FDE68A}
+    body.dark .bmi-note{background:#0B1220}
+    body.dark .btn-soft{background:#2E1A50;color:#DDD6FE}
+    body.dark .metric-card:after{opacity:.15}
+    body.dark .search{background:#0B1220}
+    @media(min-width:1500px){.content{padding-left:40px;padding-right:40px}}
+    @media(max-width:1200px){
+      :root{--sidebar-width:225px}
+      .content{padding:25px 22px}
+      .topbar{padding:0 22px}
+      .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .bottom-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .bottom-grid>.panel:last-child{grid-column:1/-1}
+    }
+    @media(max-width:900px){
+      .sidebar{transform:translateX(-100%);width:260px}
+      body.sidebar-open .sidebar{transform:translateX(0)}
+      body.sidebar-open .overlay{display:block}
+      .main{margin-left:0}
+      .mobile-menu{display:grid}
+      .layout-grid{grid-template-columns:1fr}
+      .profile-panel{order:-1}
+      .profile-panel .profile-list{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:20px}
+      .chart-grid{grid-template-columns:1fr}
+      .search{width:min(350px,42vw)}
+    }
+    @media(max-width:600px){
+      .topbar{height:60px;padding:0 12px;gap:6px}
+      .top-left,.top-right{gap:4px}
+      .search{width:36px;padding:9px;border:0;background:transparent}
+      .search input{display:none}
+      .search:focus-within{width:155px;border:1px solid var(--border);background:var(--bg)}
+      .search:focus-within input{display:block}
+      .top-user strong,.top-user .chevron{display:none}
+      .top-user .avatar{width:31px;height:31px}
+      .content{padding:20px 13px}
+      .page-heading{flex-direction:column;align-items:stretch;gap:13px}
+      .page-heading>.btn{align-self:flex-start}
+      h1{font-size:25px}
+      .panel{padding:16px}
+      .metric-grid{gap:9px}
+      .metric-card{padding:12px}
+      .metric-icon{width:28px;height:28px}
+      .metric-value{font-size:22px;margin-top:13px}
+      .metric-label{font-size:9px}
+      .metric-foot{font-size:8px}
+      .profile-panel .profile-list{grid-template-columns:1fr}
+      .form-footer{align-items:flex-start}
+      .form-actions{width:100%}
+      .form-actions .btn{flex:1}
+      .bottom-grid{grid-template-columns:1fr}
+      .bottom-grid>.panel:last-child{grid-column:auto}
+      .formula-grid{grid-template-columns:1fr}
+      .chart-container{height:215px}
+      .section-heading{align-items:flex-start}
+    }
+    @media(max-width:360px){.form-grid,.metric-grid{grid-template-columns:1fr}}
+    @media(prefers-reduced-motion:reduce){
+      *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+    <a href="dashboard.html" class="brand"><span class="brand-icon"><i class="fa-solid fa-dumbbell"></i></span><span>Smart Gym Coach</span></a>
+    <div class="nav-label">Workspace</div>
+    <nav class="nav-list">
+      <a class="nav-link" href="dashboard.html"><i class="fa-solid fa-house"></i><span>Overview</span></a>
+      <a class="nav-link active" href="fitness-metrics.html" aria-current="page"><i class="fa-solid fa-chart-simple"></i><span>Fitness Metrics</span></a>
+      <a class="nav-link" href="workouts.html"><i class="fa-solid fa-dumbbell"></i><span>Workouts</span></a>
+      <a class="nav-link" href="nutrition.html"><i class="fa-solid fa-apple-whole"></i><span>Nutrition</span></a>
+      <a class="nav-link" href="progress.html"><i class="fa-solid fa-chart-line"></i><span>Progress</span></a>
+      <a class="nav-link" href="profile.html"><i class="fa-regular fa-user"></i><span>Profile</span></a>
+    </nav>
+    <div class="sidebar-spacer"></div>
+    <div class="sidebar-user">
+      <div class="avatar" id="sidebarAvatar">U</div>
+      <div class="user-details"><strong id="sidebarUserName">Your Account</strong><span id="sidebarUserEmail">Fitness journey</span></div>
+    </div>
+    <div class="sidebar-bottom">
+      <a href="profile.html" class="side-action"><i class="fa-solid fa-gear"></i><span>Settings & Profile</span></a>
+      <button class="side-action" type="button" id="themeToggle" aria-pressed="false"><i class="fa-regular fa-moon"></i><span id="themeLabel">Dark Mode</span><span class="switch" aria-hidden="true"></span></button>
+      <button class="side-action" type="button" id="logoutBtn"><i class="fa-solid fa-arrow-right-from-bracket"></i><span>Log Out</span></button>
+    </div>
+  </aside>
+  <div class="overlay" id="overlay" aria-hidden="true"></div>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="top-left">
+        <button class="icon-btn mobile-menu" id="mobileMenuBtn" aria-label="Open navigation" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
+        <label class="search" aria-label="Search this page"><i class="fa-solid fa-magnifying-glass"></i><input id="pageSearch" type="search" placeholder="Search metrics and formulas..."></label>
+      </div>
+      <div class="top-right">
+        <button class="icon-btn" id="topThemeToggle" aria-label="Toggle theme" title="Toggle theme"><i class="fa-regular fa-moon"></i></button>
+        <div class="top-user"><div class="avatar" id="topAvatar">U</div><strong id="topUserName">Your Account</strong><i class="fa-solid fa-chevron-down chevron" style="font-size:9px;color:var(--muted)"></i></div>
+      </div>
+    </header>
+
+    <div class="content">
+      <section class="page-heading">
+        <div>
+          <div class="eyebrow"><i class="fa-solid fa-chart-line"></i> YOUR HEALTH OVERVIEW</div>
+          <h1>Fitness Metrics</h1>
+          <p class="description">Understand your estimated energy needs, BMI, calorie targets, and suggested macronutrients. Update your details whenever your routine or goals change.</p>
+        </div>
+        <button class="btn btn-primary" id="saveTopBtn" type="button"><i class="fa-solid fa-floppy-disk"></i> Save to Profile</button>
+      </section>
+
+      <div class="notice" role="note">
+        <i class="fa-solid fa-circle-info"></i>
+        <div><strong>Estimates, not medical advice</strong><p>These calculations use general formulas and the details you enter. BMI is a screening measure, not a direct measurement of body fat or overall health. Individual needs vary. Consult a qualified healthcare professional or registered dietitian for personal advice.</p></div>
+      </div>
+
+      <section class="layout-grid">
+        <article class="panel" id="inputPanel">
+          <div class="panel-heading">
+            <div><h2 class="panel-title"><i class="fa-solid fa-sliders"></i> Your Information</h2><p class="panel-subtitle">Enter your current details to calculate your estimates.</p></div>
+            <span class="eyebrow"><i class="fa-regular fa-pen-to-square"></i> EDITABLE</span>
+          </div>
+          <form id="metricsForm" novalidate>
+            <div class="form-grid">
+              <div class="field" id="ageField">
+                <label for="age">Age <span class="hint">(years)</span></label>
+                <input id="age" name="age" type="number" min="18" max="100" step="1" inputmode="numeric" placeholder="e.g. 28" required aria-describedby="ageError">
+                <div class="field-error" id="ageError">Enter an age between 18 and 100.</div>
+              </div>
+              <div class="field" id="heightField">
+                <label for="height">Height <span class="hint">(cm)</span></label>
+                <div class="input-wrap"><input class="unit-input" id="height" name="height" type="number" min="100" max="250" step="0.1" inputmode="decimal" placeholder="e.g. 175" required aria-describedby="heightError"><span class="unit">cm</span></div>
+                <div class="field-error" id="heightError">Enter a height between 100 and 250 cm.</div>
+              </div>
+              <div class="field" id="weightField">
+                <label for="weight">Current Weight <span class="hint">(kg)</span></label>
+                <div class="input-wrap"><input class="unit-input" id="weight" name="weight" type="number" min="25" max="350" step="0.1" inputmode="decimal" placeholder="e.g. 70" required aria-describedby="weightError"><span class="unit">kg</span></div>
+                <div class="field-error" id="weightError">Enter a weight between 25 and 350 kg.</div>
+              </div>
+              <div class="field" id="sexField">
+                <label for="sex">Sex for BMR formula <span class="hint">(optional)</span></label>
+                <select id="sex" name="sex">
+                  <option value="">Not specified</option><option value="male">Male equation</option><option value="female">Female equation</option>
+                </select>
+                <div class="field-hint">Used only to select a Mifflin–St Jeor equation. No selection means BMR and derived calorie targets are unavailable.</div>
+              </div>
+              <div class="field" id="activityField">
+                <label for="activity">Activity Level</label>
+                <select id="activity" name="activity" required>
+                  <option value="sedentary">Sedentary</option>
+                  <option value="light">Lightly active</option>
+                  <option value="moderate" selected>Moderately active</option>
+                  <option value="very">Very active</option>
+                  <option value="extreme">Extremely active</option>
+                </select>
+                <div class="field-error">Select your usual activity level.</div>
+              </div>
+              <div class="field" id="goalField">
+                <label for="goal">Fitness Goal</label>
+                <select id="goal" name="goal" required>
+                  <option value="lose">Lose weight</option><option value="maintain" selected>Maintain weight</option><option value="build">Build muscle</option>
+                </select>
+                <div class="field-error">Select a fitness goal.</div>
+              </div>
+              <div class="field" id="adjustmentField">
+                <label for="adjustment">Calorie Adjustment <span class="hint">(kcal/day)</span></label>
+                <div class="input-wrap"><input class="unit-input" id="adjustment" name="adjustment" type="number" min="0" max="500" step="25" value="250" inputmode="numeric"><span class="unit">kcal</span></div>
+                <div class="field-hint" id="adjustmentHint">A modest daily change from estimated maintenance calories.</div>
+                <div class="field-error" id="adjustmentError">Choose an adjustment between 0 and 500 kcal.</div>
+              </div>
+              <div class="field" id="proteinField">
+                <label for="proteinPct">Protein <span class="hint">(% calories)</span></label>
+                <select id="proteinPct" name="proteinPct"><option value="20">20%</option><option value="25" selected>25%</option><option value="30">30%</option><option value="35">35%</option></select>
+              </div>
+              <div class="field" id="fatField">
+                <label for="fatPct">Fat <span class="hint">(% calories)</span></label>
+                <select id="fatPct" name="fatPct"><option value="20">20%</option><option value="25" selected>25%</option><option value="30">30%</option><option value="35">35%</option></select>
+              </div>
+            </div>
+            <div class="form-footer">
+              <div class="form-message" id="formMessage" role="status" aria-live="polite">Enter your details, then recalculate.</div>
+              <div class="form-actions">
+                <button class="btn btn-primary" type="submit"><i class="fa-solid fa-calculator"></i> Recalculate</button>
+                <button class="btn" type="button" id="resetBtn"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+              </div>
+            </div>
+          </form>
+        </article>
+
+        <aside class="panel profile-panel">
+          <div class="panel-heading"><div><h2 class="panel-title"><i class="fa-solid fa-user"></i> Saved Profile</h2><p class="panel-subtitle">Stored details for your active account.</p></div></div>
+          <div class="profile-list">
+            <div class="profile-row"><span>Name</span><strong id="summaryName">—</strong></div>
+            <div class="profile-row"><span>Age</span><strong id="summaryAge">Not set</strong></div>
+            <div class="profile-row"><span>Height</span><strong id="summaryHeight">Not set</strong></div>
+            <div class="profile-row"><span>Weight</span><strong id="summaryWeight">Not set</strong></div>
+            <div class="profile-row"><span>BMI</span><strong id="summaryBMI">Not calculated</strong></div>
+            <div class="profile-row"><span>Goal</span><strong id="summaryGoal">Maintain weight</strong></div>
+            <div class="profile-row"><span>Activity</span><strong id="summaryActivity">Moderately active</strong></div>
+            <div class="profile-row"><span>BMR equation</span><strong id="summarySex">Not specified</strong></div>
+          </div>
+          <div class="profile-status"><i class="fa-solid fa-circle-info"></i><div><strong id="profileStatusTitle">Profile not saved yet</strong><span id="profileStatusText">Recalculate and save to keep these values.</span></div></div>
+        </aside>
+      </section>
+
+      <section class="results-section" aria-labelledby="resultsTitle">
+        <div class="section-heading"><div><h2 id="resultsTitle">Your Estimated Results</h2><p>Calculated from your current form values.</p></div><span class="eyebrow" id="resultStatus"><i class="fa-solid fa-calculator"></i> AWAITING INPUT</span></div>
+        <div class="metric-grid">
+          <article class="metric-card purple"><div class="metric-top"><div class="metric-icon"><i class="fa-solid fa-weight-scale"></i></div><span class="metric-label">Body Mass Index</span></div><div class="metric-value" id="bmiValue">—</div><div class="metric-foot" id="bmiCategory">Enter height and weight</div></article>
+          <article class="metric-card green"><div class="metric-top"><div class="metric-icon"><i class="fa-solid fa-fire-flame-curved"></i></div><span class="metric-label">Basal Metabolic Rate</span></div><div class="metric-value" id="bmrValue">—</div><div class="metric-foot" id="bmrFoot">Estimated calories at rest</div></article>
+          <article class="metric-card blue"><div class="metric-top"><div class="metric-icon"><i class="fa-solid fa-bolt"></i></div><span class="metric-label">Maintenance Calories</span></div><div class="metric-value" id="tdeeValue">—</div><div class="metric-foot" id="tdeeFoot">Estimated daily energy expenditure</div></article>
+          <article class="metric-card orange"><div class="metric-top"><div class="metric-icon"><i class="fa-solid fa-bullseye"></i></div><span class="metric-label">Daily Goal Target</span></div><div class="metric-value" id="targetValue">—</div><div class="metric-foot" id="targetFoot">Based on your selected goal</div></article>
+        </div>
+      </section>
+
+      <section class="chart-grid">
+        <article class="panel">
+          <div class="panel-heading"><div><h2 class="panel-title"><i class="fa-solid fa-weight-scale"></i> BMI Scale</h2><p class="panel-subtitle">Adult BMI reference categories.</p></div></div>
+          <div class="bmi-value-row"><span>Your calculated BMI</span><strong id="bmiScaleValue">—</strong></div>
+          <div class="bmi-line" role="img" aria-label="BMI scale from underweight through normal range, overweight, and obesity"><div class="bmi-marker" id="bmiMarker"></div></div>
+          <div class="bmi-labels"><div><strong>&lt; 18.5</strong>Underweight</div><div><strong>18.5–24.9</strong>Normal range</div><div><strong>25–29.9</strong>Overweight</div><div><strong>30+</strong>Obesity</div></div>
+          <div class="bmi-note"><i class="fa-solid fa-circle-info"></i><span id="bmiExplanation">Enter a valid height and weight to display your BMI category. Categories are general adult screening references.</span></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-heading"><div><h2 class="panel-title"><i class="fa-solid fa-chart-pie"></i> Suggested Macronutrients</h2><p class="panel-subtitle">Based on your daily goal calorie estimate.</p></div></div>
+          <div class="chart-container"><canvas id="macroChart" role="img" aria-label="Doughnut chart of suggested protein, carbohydrate, and fat calorie percentages"></canvas><div id="chartFallback" hidden style="text-align:center;padding:45px 10px;color:var(--muted);font-size:11px">Chart unavailable. Your macro values are shown below when calculated.</div></div>
+          <div class="macro-legend">
+            <div class="macro-row"><span class="macro-dot" style="background:#7C3AED"></span><span class="macro-name">Protein</span><strong id="proteinGrams">—</strong><span class="macro-kcal" id="proteinKcal">—</span></div>
+            <div class="macro-row"><span class="macro-dot" style="background:#22C55E"></span><span class="macro-name">Carbohydrates</span><strong id="carbGrams">—</strong><span class="macro-kcal" id="carbKcal">—</span></div>
+            <div class="macro-row"><span class="macro-dot" style="background:#F59E0B"></span><span class="macro-name">Fat</span><strong id="fatGrams">—</strong><span class="macro-kcal" id="fatKcal">—</span></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="bottom-grid">
+        <article class="panel">
+          <div class="panel-heading"><div><h2 class="panel-title"><i class="fa-solid fa-fire"></i> Calorie Planning</h2><p class="panel-subtitle">Your goal-based estimate.</p></div></div>
+          <div class="range-box"><span class="range-title">Suggested daily target</span><strong id="planningTarget">—</strong><p id="planningDescription">Calculate your metrics to see a suggested target.</p></div>
+          <div class="stat-line"><i class="fa-solid fa-gauge-high"></i><span>Maintenance estimate</span><strong id="planningTdee">—</strong></div>
+          <div class="stat-line"><i class="fa-solid fa-arrow-trend-down"></i><span>Daily deficit / surplus</span><strong id="planningAdjustment">—</strong></div>
+          <div class="stat-line"><i class="fa-solid fa-utensils"></i><span>Calories from macros</span><strong id="macroTotal">—</strong></div>
+          <div class="caution" id="calorieCaution" hidden><i class="fa-solid fa-triangle-exclamation"></i><p id="cautionText"></p></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-heading"><div><h2 class="panel-title"><i class="fa-solid fa-flask"></i> How It Works</h2><p class="panel-subtitle">Formula and assumptions used.</p></div></div>
+          <div class="formula-grid">
+            <div class="formula"><strong>BMI</strong><p>Weight (kg) ÷ height (m)². A screening index, not a body-fat measurement.</p></div>
+            <div class="formula"><strong>BMR</strong><p>Mifflin–St Jeor: 10W + 6.25H − 5A + 5 (male equation), or −161 (female equation).</p></div>
+            <div class="formula"><strong>TDEE</strong><p>BMR × activity multiplier: 1.2, 1.375, 1.55, 1.725, or 1.9.</p></div>
+            <div class="formula"><strong>Macros</strong><p>Protein 4 kcal/g, carbs 4 kcal/g, fat 9 kcal/g. Carbs receive remaining calories.</p></div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-heading"><div><h2 class="panel-title"><i class="fa-solid fa-bolt"></i> Quick Actions</h2><p class="panel-subtitle">Continue with your fitness plan.</p></div></div>
+          <div class="quick-actions">
+            <button type="button" class="btn btn-primary" id="saveBtn"><i class="fa-solid fa-floppy-disk"></i> Save Metrics to Profile</button>
+            <a class="btn" href="nutrition.html"><i class="fa-solid fa-apple-whole"></i> Open Nutrition Planner</a>
+            <a class="btn" href="progress.html"><i class="fa-solid fa-chart-line"></i> View Progress</a>
+            <a class="btn" href="profile.html"><i class="fa-regular fa-user"></i> Edit My Profile</a>
+          </div>
+        </article>
+      </section>
+
+      <div class="footer-note"><i class="fa-solid fa-shield-heart"></i><span>Smart Gym Coach provides general educational estimates only. The formulas do not account for every factor, including medical conditions, pregnancy, body composition, or individual metabolic differences. Do not use these numbers as a substitute for professional care.</span></div>
+    </div>
+  </main>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="modal-backdrop" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalText">
+    <div class="modal">
+      <h2 id="modalTitle">Confirm action</h2>
+      <p id="modalText">Are you sure you want to continue?</p>
+      <div class="modal-actions"><button class="btn" id="modalCancel" type="button">Cancel</button><button class="btn btn-primary" id="modalConfirm" type="button">Continue</button></div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const KEYS = {
+        users: "smartGym_users",
+        currentUser: "smartGym_currentUser",
+        profile: "smartGym_profile",
+        settings: "smartGym_settings",
+        theme: "smartGym_theme"
+      };
+
+      const $ = id => document.getElementById(id);
+      let currentUser = null;
+      let savedProfile = null;
+      let currentMetrics = null;
+      let macroChart = null;
+      let pendingConfirm = null;
+      let lastFocusedElement = null;
+
+      function safeParse(value, fallback) {
+        if (value == null) return fallback;
+        try { return JSON.parse(value); } catch (_) { return fallback; }
+      }
+
+      function readJSON(key, fallback) {
+        try { return safeParse(localStorage.getItem(key), fallback); }
+        catch (_) { return fallback; }
+      }
+
+      function writeJSON(key, value) {
+        try {
+          localStorage.setItem(key, JSON.stringify(value));
+          return true;
+        } catch (_) {
+          toast("Could not save data to this browser. Check available storage.", true);
+          return false;
+        }
+      }
+
+      function getUserId(user) {
+        return user && (user.id ?? user.userId ?? user.email ?? null);
+      }
+
+      function normalizeEmail(value) {
+        return String(value || "").trim().toLowerCase();
+      }
+
+      function sameUser(a, b) {
+        if (!a || !b) return false;
+        const idA = getUserId(a);
+        const idB = getUserId(b);
+        if (idA != null && idB != null) return String(idA) === String(idB);
+        return !!(a.email && b.email && normalizeEmail(a.email) === normalizeEmail(b.email));
+      }
+
+      function getProfileForUser(data, user) {
+        if (!data || !user) return null;
+        if (Array.isArray(data)) {
+          return data.find(item => item && sameUser({ id: item.userId ?? item.id, email: item.email }, user)) || null;
+        }
+        if (typeof data !== "object") return null;
+        if (data.userId != null || data.id != null) {
+          return sameUser({ id: data.userId ?? data.id, email: data.email }, user) ? data : null;
+        }
+        // Legacy unscoped profile objects are not assigned to an account automatically.
+        return null;
+      }
+
+      function getSettingsForUser(data, user) {
+        if (!data || typeof data !== "object" || Array.isArray(data)) return {};
+        if (data.userId != null || data.id != null) {
+          return sameUser({ id: data.userId ?? data.id, email: data.email }, user) ? data : {};
+        }
+        return data;
+      }
+
+      function firstValue(objects, keys) {
+        for (const obj of objects) {
+          if (!obj || typeof obj !== "object") continue;
+          for (const key of keys) {
+            const value = obj[key];
+            if (value !== undefined && value !== null && value !== "") return value;
+          }
+        }
+        return "";
+      }
+
+      function getUserName(user) {
+        return String(firstValue([user], ["name", "fullName", "username", "displayName"]) || "Member");
+      }
+
+      function setAvatar(el, user) {
+        const imageUrl = firstValue([user, savedProfile], ["avatar", "photoURL", "profileImage", "image"]);
+        if (imageUrl && typeof imageUrl === "string" && /^data:image\/|^https?:\/\//i.test(imageUrl)) {
+          const img = document.createElement("img");
+          img.src = imageUrl;
+          img.alt = "";
+          img.onerror = () => { el.textContent = getUserName(user).charAt(0).toUpperCase(); };
+          el.replaceChildren(img);
+        } else {
+          el.textContent = getUserName(user).trim().charAt(0).toUpperCase() || "U";
+        }
+      }
+
+      function redirectToLogin() {
+        window.location.replace("login.html");
+      }
+
+      function initializeSession() {
+        currentUser = readJSON(KEYS.currentUser, null);
+        if (!currentUser || typeof currentUser !== "object" || Array.isArray(currentUser) || !getUserId(currentUser)) {
+          redirectToLogin();
+          return false;
+        }
+
+        savedProfile = getProfileForUser(readJSON(KEYS.profile, null), currentUser);
+        const name = getUserName(currentUser);
+        $("sidebarUserName").textContent = name;
+        $("topUserName").textContent = name;
+        $("sidebarUserEmail").textContent = String(currentUser.email || "Fitness journey");
+        setAvatar($("sidebarAvatar"), currentUser);
+        setAvatar($("topAvatar"), currentUser);
+        return true;
+      }
+
+      function toast(message, error = false) {
+        const region = $("toastRegion");
+        if (!region) return;
+        const item = document.createElement("div");
+        item.className = "toast" + (error ? " error" : "");
+        const icon = document.createElement("i");
+        icon.className = error ? "fa-solid fa-circle-exclamation" : "fa-solid fa-circle-check";
+        icon.setAttribute("aria-hidden", "true");
+        const text = document.createElement("span");
+        text.textContent = message;
+        item.append(icon, text);
+        region.appendChild(item);
+        window.setTimeout(() => item.remove(), 3800);
+      }
+
+      function askConfirm(title, text, actionLabel, callback) {
+        lastFocusedElement = document.activeElement;
+        $("modalTitle").textContent = title;
+        $("modalText").textContent = text;
+        $("modalConfirm").textContent = actionLabel || "Continue";
+        pendingConfirm = callback;
+        $("confirmModal").classList.add("open");
+        $("modalCancel").focus();
+      }
+
+      function closeConfirm() {
+        $("confirmModal").classList.remove("open");
+        pendingConfirm = null;
+        if (lastFocusedElement && typeof lastFocusedElement.focus === "function") lastFocusedElement.focus();
+      }
+
+      $("modalCancel").addEventListener("click", closeConfirm);
+      $("confirmModal").addEventListener("click", event => {
+        if (event.target === $("confirmModal")) closeConfirm();
+      });
+      $("modalConfirm").addEventListener("click", () => {
+        const action = pendingConfirm;
+        closeConfirm();
+        if (typeof action === "function") action();
+      });
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape" && $("confirmModal").classList.contains("open")) closeConfirm();
+        if (event.key === "Escape" && document.body.classList.contains("sidebar-open")) closeSidebar();
+      });
+
+      function applyTheme(theme) {
+        const dark = theme === "dark";
+        document.body.classList.toggle("dark", dark);
+        $("themeToggle").setAttribute("aria-pressed", String(dark));
+        $("themeLabel").textContent = dark ? "Light Mode" : "Dark Mode";
+        const iconClass = dark ? "fa-solid fa-sun" : "fa-regular fa-moon";
+        $("themeToggle").querySelector("i").className = iconClass;
+        $("topThemeToggle").querySelector("i").className = iconClass;
+      }
+
+      function getSavedTheme() {
+        let theme = "light";
+        try {
+          const stored = localStorage.getItem(KEYS.theme);
+          if (stored === "dark" || stored === "light") theme = stored;
+          const settings = getSettingsForUser(readJSON(KEYS.settings, {}), currentUser);
+          if (settings.theme === "dark" || settings.theme === "light") theme = settings.theme;
+        } catch (_) {}
+        return theme;
+      }
+
+      function saveTheme(theme) {
+        try { localStorage.setItem(KEYS.theme, theme); } catch (_) {}
+        const settings = readJSON(KEYS.settings, {});
+        const userId = getUserId(currentUser);
+        if (Array.isArray(settings)) {
+          const index = settings.findIndex(item => item && String(item.userId ?? item.id) === String(userId));
+          if (index >= 0) settings[index] = { ...settings[index], userId, theme };
+          else settings.push({ userId, theme });
+          writeJSON(KEYS.settings, settings);
+        } else {
+          const old = settings && typeof settings === "object" ? settings : {};
+          // Preserve the global theme key and any settings explicitly belonging to this user.
+          const settingsArray = Array.isArray(old.users) ? old.users : [];
+          const index = settingsArray.findIndex(item => item && String(item.userId ?? item.id) === String(userId));
+          if (index >= 0) settingsArray[index] = { ...settingsArray[index], userId, theme };
+          else settingsArray.push({ userId, theme });
+          writeJSON(KEYS.settings, { ...old, users: settingsArray });
+        }
+      }
+
+      function closeSidebar() {
+        document.body.classList.remove("sidebar-open");
+        $("mobileMenuBtn").setAttribute("aria-expanded", "false");
+      }
+
+      $("mobileMenuBtn").addEventListener("click", () => {
+        const open = !document.body.classList.contains("sidebar-open");
+        document.body.classList.toggle("sidebar-open", open);
+        $("mobileMenuBtn").setAttribute("aria-expanded", String(open));
+      });
+      $("overlay").addEventListener("click", closeSidebar);
+
+      function updateAdjustmentHint() {
+        const goal = $("goal").value;
+        $("adjustment").max = "500";
+        if (goal === "maintain") {
+          $("adjustment").value = "0";
+          $("adjustment").disabled = true;
+          $("adjustmentHint").textContent = "Maintenance goal uses no calorie deficit or surplus.";
+        } else {
+          $("adjustment").disabled = false;
+          if (Number($("adjustment").value) === 0) $("adjustment").value = "250";
+          $("adjustmentHint").textContent = goal === "lose"
+            ? "Daily deficit from maintenance, limited to 500 kcal."
+            : "Daily surplus above maintenance, limited to 500 kcal.";
+        }
+      }
+
+      $("goal").addEventListener("change", updateAdjustmentHint);
+
+      function setFieldError(id, message) {
+        const field = $(id + "Field");
+        if (!field) return;
+        field.classList.toggle("invalid", !!message);
+        const error = field.querySelector(".field-error");
+        if (error && message) error.textContent = message;
+        const input = field.querySelector("input,select");
+        if (input) input.setAttribute("aria-invalid", String(!!message));
+      }
+
+      function validateForm() {
+        let valid = true;
+        const checks = [
+          ["age", "Age", 18, 100, true],
+          ["height", "Height", 100, 250, true],
+          ["weight", "Weight", 25, 350, true],
+          ["adjustment", "Calorie adjustment", 0, 500, false]
+        ];
+
+        checks.forEach(([id, label, min, max, required]) => {
+          const input = $(id);
+          const value = input.value.trim() === "" ? NaN : Number(input.value);
+          let message = "";
+          if (!Number.isFinite(value)) {
+            if (required) message = "Please enter " + label.toLowerCase() + ".";
+          } else if (value < min || value > max) {
+            message = label + " must be between " + min + " and " + max + (id === "height" ? " cm." : id === "weight" ? " kg." : id === "adjustment" ? " kcal." : ".");
+          }
+          if (id === "age" && Number.isFinite(value) && !Number.isInteger(value)) message = "Age must be a whole number.";
+          setFieldError(id, message);
+          if (message) valid = false;
+        });
+
+        ["activity", "goal"].forEach(id => {
+          const allowed = id === "activity"
+            ? ["sedentary", "light", "moderate", "very", "extreme"]
+            : ["lose", "maintain", "build"];
+          const message = allowed.includes($(id).value) ? "" : "Choose a valid option.";
+          setFieldError(id, message);
+          if (message) valid = false;
+        });
+
+        const protein = Number($("proteinPct").value);
+        const fat = Number($("fatPct").value);
+        if (![20,25,30,35].includes(protein) || ![20,25,30,35].includes(fat) || protein + fat >= 100) {
+          valid = false;
+          toast("Choose macro percentages that leave at least 1% for carbohydrates.", true);
+        }
+
+        if (!valid) {
+          $("formMessage").textContent = "Please correct the highlighted fields.";
+          $("formMessage").className = "form-message error";
+          const first = document.querySelector(".field.invalid input, .field.invalid select");
+          if (first) first.focus();
+        }
+        return valid;
+      }
+
+      const activityMultipliers = {
+        sedentary: 1.2,
+        light: 1.375,
+        moderate: 1.55,
+        very: 1.725,
+        extreme: 1.9
+      };
+
+      const activityNames = {
+        sedentary: "Sedentary",
+        light: "Lightly active",
+        moderate: "Moderately active",
+        very: "Very active",
+        extreme: "Extremely active"
+      };
+
+      const goalNames = {
+        lose: "Lose weight",
+        maintain: "Maintain weight",
+        build: "Build muscle"
+      };
+
+      function getFormData() {
+        return {
+          age: Number($("age").value),
+          height: Number($("height").value),
+          weight: Number($("weight").value),
+          sex: $("sex").value,
+          activity: $("activity").value,
+          goal: $("goal").value,
+          adjustment: $("goal").value === "maintain" ? 0 : Number($("adjustment").value),
+          proteinPct: Number($("proteinPct").value),
+          fatPct: Number($("fatPct").value)
+        };
+      }
+
+      function calculate(data) {
+        const bmi = data.weight / Math.pow(data.height / 100, 2);
+        let bmr = null;
+        if (data.sex === "male") {
+          bmr = 10 * data.weight + 6.25 * data.height - 5 * data.age + 5;
+        } else if (data.sex === "female") {
+          bmr = 10 * data.weight + 6.25 * data.height - 5 * data.age - 161;
+        }
+
+        const tdee = bmr === null ? null : bmr * activityMultipliers[data.activity];
+        let target = null;
+        if (tdee !== null) {
+          target = data.goal === "lose" ? tdee - data.adjustment
+            : data.goal === "build" ? tdee + data.adjustment : tdee;
+        }
+
+        let macros = null;
+        if (target !== null && target > 0) {
+          const proteinKcal = target * data.proteinPct / 100;
+          const fatKcal = target * data.fatPct / 100;
+          const carbPct = 100 - data.proteinPct - data.fatPct;
+          const carbKcal = target * carbPct / 100;
+          macros = {
+            proteinKcal,
+            fatKcal,
+            carbKcal,
+            proteinGrams: proteinKcal / 4,
+            fatGrams: fatKcal / 9,
+            carbGrams: carbKcal / 4,
+            carbPct
+          };
+        }
+
+        let bmiCategory = "Not categorized";
+        if (bmi < 18.5) bmiCategory = "Underweight range";
+        else if (bmi < 25) bmiCategory = "Normal weight range";
+        else if (bmi < 30) bmiCategory = "Overweight range";
+        else bmiCategory = "Obesity range";
+
+        return { ...data, bmi, bmiCategory, bmr, tdee, target, macros };
+      }
+
+      function fmt(value, digits = 0) {
+        if (value === null || value === undefined || !Number.isFinite(Number(value))) return "—";
+        return Number(value).toLocaleString(undefined, {
+          minimumFractionDigits: digits,
+          maximumFractionDigits: digits
+        });
+      }
+
+      function bmiMarkerPosition(bmi) {
+        // Display range 12–40; clamp extreme values to the edges.
+        return Math.max(0, Math.min(100, ((bmi - 12) / 28) * 100));
+      }
+
+      function renderBMI(result) {
+        $("bmiValue").textContent = fmt(result.bmi, 1);
+        $("bmiScaleValue").textContent = fmt(result.bmi, 1);
+        $("bmiCategory").textContent = result.bmiCategory;
+        $("bmiMarker").style.left = bmiMarkerPosition(result.bmi) + "%";
+        $("bmiExplanation").textContent =
+          "Your BMI is " + fmt(result.bmi, 1) + ", within the " + result.bmiCategory.toLowerCase() +
+          ". Adult categories are broad screening references and may not reflect muscle mass, body composition, or individual health.";
+      }
+
+      function renderChart(result) {
+        const canvas = $("macroChart");
+        if (!result.macros) {
+          if (macroChart) { macroChart.destroy(); macroChart = null; }
+          canvas.style.display = "none";
+          $("chartFallback").hidden = false;
+          return;
+        }
+        canvas.style.display = "block";
+        $("chartFallback").hidden = true;
+        if (typeof Chart === "undefined") {
+          canvas.style.display = "none";
+          $("chartFallback").hidden = false;
+          $("chartFallback").textContent = "Chart library unavailable. Macro values are still calculated below.";
+          return;
+        }
+
+        const values = [result.proteinPct, result.macros.carbPct, result.fatPct];
+        const dark = document.body.classList.contains("dark");
+        const config = {
+          type: "doughnut",
+          data: {
+            labels: ["Protein", "Carbohydrates", "Fat"],
+            datasets: [{
+              data: values,
+              backgroundColor: ["#7C3AED", "#22C55E", "#F59E0B"],
+              borderColor: dark ? "#111827" : "#FFFFFF",
+              borderWidth: 3,
+              hoverOffset: 5
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: "72%",
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: context => " " + context.label + ": " + context.raw + "% (" + fmt(result.target * context.raw / 100) + " kcal)"
+                }
+              }
+            }
+          }
+        };
+        if (macroChart) {
+          macroChart.data.datasets[0].data = values;
+          macroChart.data.datasets[0].borderColor = dark ? "#111827" : "#FFFFFF";
+          macroChart.options.plugins.tooltip.callbacks.label = context =>
+            " " + context.label + ": " + context.raw + "% (" + fmt(result.target * context.raw / 100) + " kcal)";
+          macroChart.update();
+        } else {
+          macroChart = new Chart(canvas, config);
+        }
+      }
+
+      function renderResults(result) {
+        currentMetrics = result;
+        renderBMI(result);
+        $("bmrValue").textContent = result.bmr === null ? "N/A" : fmt(result.bmr);
+        $("bmrFoot").textContent = result.bmr === null ? "Choose a BMR equation to estimate" : "Estimated kcal per day at rest";
+        $("tdeeValue").textContent = result.tdee === null ? "N/A" : fmt(result.tdee);
+        $("tdeeFoot").textContent = result.tdee === null ? "Requires a BMR estimate" : "Activity multiplier: " + activityMultipliers[result.activity];
+        $("targetValue").textContent = result.target === null ? "N/A" : fmt(result.target);
+        $("targetFoot").textContent = result.target === null ? "Select a BMR equation first" : result.goal === "lose" ? "Modest calorie deficit" : result.goal === "build" ? "Modest calorie surplus" : "Maintenance estimate";
+        $("resultStatus").innerHTML = '<i class="fa-solid fa-calculator"></i> CALCULATED';
+        $("planningTarget").textContent = result.target === null ? "Unavailable" : fmt(result.target) + " kcal/day";
+        $("planningDescription").textContent = result.target === null
+          ? "Select a sex equation to estimate BMR, maintenance calories, and goal targets."
+          : "Goal: " + goalNames[result.goal] + ". This is a starting estimate, not a guaranteed requirement.";
+        $("planningTdee").textContent = result.tdee === null ? "Unavailable" : fmt(result.tdee) + " kcal";
+        const direction = result.goal === "lose" ? "−" : result.goal === "build" ? "+" : "";
+        $("planningAdjustment").textContent = result.goal === "maintain" ? "0 kcal" : direction + fmt(result.adjustment) + " kcal";
+        $("macroTotal").textContent = result.macros ? fmt(result.macros.proteinKcal + result.macros.carbKcal + result.macros.fatKcal) + " kcal" : "Unavailable";
+
+        if (result.macros) {
+          $("proteinGrams").textContent = fmt(result.macros.proteinGrams) + " g";
+          $("carbGrams").textContent = fmt(result.macros.carbGrams) + " g";
+          $("fatGrams").textContent = fmt(result.macros.fatGrams) + " g";
+          $("proteinKcal").textContent = fmt(result.macros.proteinKcal) + " kcal";
+          $("carbKcal").textContent = fmt(result.macros.carbKcal) + " kcal";
+          $("fatKcal").textContent = fmt(result.macros.fatKcal) + " kcal";
+        } else {
+          ["proteinGrams","carbGrams","fatGrams","proteinKcal","carbKcal","fatKcal"].forEach(id => $(id).textContent = "—");
+        }
+
+        const cautions = [];
+        if (result.target !== null && result.target < 1200) {
+          cautions.push("This estimated target is below 1,200 kcal/day. That may be too low for many adults; do not follow it without advice from a qualified healthcare professional.");
+        }
+        if (result.target !== null && result.bmr !== null && result.target < result.bmr) {
+          cautions.push("Your target is below your estimated resting energy expenditure. This is not automatically a safety threshold, but it is a reason to review the plan with a qualified professional.");
+        }
+        if (result.goal === "lose" && result.adjustment > 500) {
+          cautions.push("Use a conservative deficit no greater than 500 kcal/day in this calculator.");
+        }
+        $("calorieCaution").hidden = cautions.length === 0;
+        $("cautionText").textContent = cautions.join(" ");
+        renderChart(result);
+        updateProfileSummary(result);
+        $("formMessage").textContent = "Estimates updated. Save if you want to keep these values.";
+        $("formMessage").className = "form-message success";
+      }
+
+      function updateProfileSummary(result) {
+        $("summaryName").textContent = getUserName(currentUser);
+        $("summaryAge").textContent = result.age + " years";
+        $("summaryHeight").textContent = fmt(result.height, 1) + " cm";
+        $("summaryWeight").textContent = fmt(result.weight, 1) + " kg";
+        $("summaryBMI").textContent = fmt(result.bmi, 1) + " · " + result.bmiCategory;
+        $("summaryGoal").textContent = goalNames[result.goal] || "Not set";
+        $("summaryActivity").textContent = activityNames[result.activity] || "Not set";
+        $("summarySex").textContent = result.sex === "male" ? "Male equation" : result.sex === "female" ? "Female equation" : "Not specified";
+      }
+
+      function prefillFromProfile(profile) {
+        const p = profile || {};
+        const metrics = p.metrics && typeof p.metrics === "object" ? p.metrics : {};
+        const sources = [metrics, p, currentUser];
+
+        const age = firstValue(sources, ["age"]);
+        const height = firstValue(sources, ["heightCm", "height", "heightInCm"]);
+        const weight = firstValue(sources, ["weightKg", "currentWeight", "weight", "current_weight"]);
+        const sex = firstValue(sources, ["sex", "gender", "bmrSex"]);
+        const activity = firstValue(sources, ["activityLevel", "activity", "activity_level"]);
+        const goal = firstValue(sources, ["goal", "fitnessGoal", "fitness_goal"]);
+        const adjustment = firstValue([metrics, p], ["calorieAdjustment", "adjustment"]);
+        const proteinPct = firstValue([metrics, p], ["proteinPct", "proteinPercentage"]);
+        const fatPct = firstValue([metrics, p], ["fatPct", "fatPercentage"]);
+
+        if (age !== "") $("age").value = age;
+        if (height !== "") $("height").value = height;
+        if (weight !== "") $("weight").value = weight;
+        if (["male","female"].includes(String(sex).toLowerCase())) $("sex").value = String(sex).toLowerCase();
+
+        const activityMap = {
+          sedentary: "sedentary", light: "light", lightly_active: "light", lightlyactive: "light",
+          moderate: "moderate", moderately_active: "moderate", moderatelyactive: "moderate",
+          very: "very", very_active: "very", veryactive: "very",
+          extreme: "extreme", extremely_active: "extreme", extremelyactive: "extreme"
+        };
+        const normalizedActivity = String(activity).toLowerCase().replace(/[\s-]+/g, "_");
+        if (activityMap[normalizedActivity]) $("activity").value = activityMap[normalizedActivity];
+
+        const goalMap = {
+          lose: "lose", "lose weight": "lose", weight_loss: "lose",
+          maintain: "maintain", "maintain weight": "maintain",
+          build: "build", "build muscle": "build", muscle_gain: "build"
+        };
+        const normalizedGoal = String(goal).toLowerCase().replace(/[\s-]+/g, "_");
+        if (goalMap[normalizedGoal]) $("goal").value = goalMap[normalizedGoal];
+
+        if (adjustment !== "" && Number(adjustment) >= 0 && Number(adjustment) <= 500) $("adjustment").value = adjustment;
+        if (["20","25","30","35"].includes(String(proteinPct))) $("proteinPct").value = String(proteinPct);
+        if (["20","25","30","35"].includes(String(fatPct))) $("fatPct").value = String(fatPct);
+
+        updateAdjustmentHint();
+        if (savedProfile && savedProfile.metricsSavedAt) {
+          $("profileStatusTitle").textContent = "Saved metrics available";
+          $("profileStatusText").textContent = "Your saved measurements were loaded.";
+        } else if (savedProfile) {
+          $("profileStatusTitle").textContent = "Profile loaded";
+          $("profileStatusText").textContent = "Some values may come from your onboarding profile.";
+        }
+      }
+
+      function getProfileStorageForSave(newProfile) {
+        const raw = readJSON(KEYS.profile, null);
+        const uid = getUserId(currentUser);
+        const profile = newProfile;
+        if (Array.isArray(raw)) {
+          const index = raw.findIndex(item => item && sameUser({ id: item.userId ?? item.id, email: item.email }, currentUser));
+          if (index >= 0) raw[index] = { ...raw[index], ...profile };
+          else raw.push(profile);
+          return raw;
+        }
+
+        if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+          if (raw.userId != null || raw.id != null) {
+            if (sameUser({ id: raw.userId ?? raw.id, email: raw.email }, currentUser)) return { ...raw, ...profile };
+            // Do not replace another user's legacy single-profile record.
+            return [raw, profile];
+          }
+          // An unscoped legacy object is preserved, not attributed to the active user.
+          return [ { ...raw, legacyUnscoped: true }, profile ];
+        }
+        return [profile];
+      }
+
+      function saveMetrics() {
+        if (!validateForm()) {
+          $("inputPanel").scrollIntoView({ behavior: "smooth", block: "start" });
+          return;
+        }
+        if (!currentMetrics) {
+          renderResults(calculate(getFormData()));
+        }
+        const data = getFormData();
+        const result = calculate(data);
+        const uid = getUserId(currentUser);
+        const now = new Date().toISOString();
+        const profileRecord = {
+          ...(savedProfile || {}),
+          userId: uid,
+          email: currentUser.email || savedProfile?.email || "",
+          age: data.age,
+          height: data.height,
+          heightCm: data.height,
+          weight: data.weight,
+          weightKg: data.weight,
+          currentWeight: data.weight,
+          sex: data.sex,
+          activityLevel: data.activity,
+          activity: data.activity,
+          goal: data.goal,
+          calorieAdjustment: data.adjustment,
+          proteinPct: data.proteinPct,
+          fatPct: data.fatPct,
+          metrics: {
+            age: data.age,
+            heightCm: data.height,
+            weightKg: data.weight,
+            sex: data.sex,
+            activityLevel: data.activity,
+            goal: data.goal,
+            calorieAdjustment: data.adjustment,
+            proteinPct: data.proteinPct,
+            fatPct: data.fatPct,
+            bmi: result.bmi,
+            bmiCategory: result.bmiCategory,
+            bmr: result.bmr,
+            tdee: result.tdee,
+            targetCalories: result.target,
+            macros: result.macros
+          },
+          metricsSavedAt: now
+        };
+
+        const storageValue = getProfileStorageForSave(profileRecord);
+        if (!writeJSON(KEYS.profile, storageValue)) return;
+        savedProfile = profileRecord;
+
+        // Update only the authenticated user's user record; keep all other users unchanged.
+        const users = readJSON(KEYS.users, null);
+        if (Array.isArray(users)) {
+          const index = users.findIndex(user => user && sameUser(user, currentUser));
+          if (index >= 0) {
+            users[index] = {
+              ...users[index],
+              age: data.age,
+              height: data.height,
+              weight: data.weight,
+              onboardingCompleted: users[index].onboardingCompleted === true
+            };
+            writeJSON(KEYS.users, users);
+          }
+        }
+
+        $("profileStatusTitle").textContent = "Metrics saved successfully";
+        $("profileStatusText").textContent = "Last saved " + new Date(now).toLocaleString();
+        $("formMessage").textContent = "Your metrics have been saved to this account.";
+        $("formMessage").className = "form-message success";
+        toast("Fitness metrics saved to your profile.");
+        updateProfileSummary(result);
+      }
+
+      $("metricsForm").addEventListener("submit", event => {
+        event.preventDefault();
+        if (!validateForm()) return;
+        renderResults(calculate(getFormData()));
+      });
+
+      $("saveBtn").addEventListener("click", saveMetrics);
+      $("saveTopBtn").addEventListener("click", saveMetrics);
+
+      $("resetBtn").addEventListener("click", () => {
+        askConfirm(
+          "Reset fitness metrics?",
+          "This resets the form to the values loaded from your saved profile. Unsaved changes will be lost.",
+          "Reset form",
+          () => {
+            document.querySelectorAll(".field.invalid").forEach(field => field.classList.remove("invalid"));
+            prefillFromProfile(savedProfile);
+            const data = getFormData();
+            if (validateForm()) renderResults(calculate(data));
+            else clearResults();
+            $("formMessage").textContent = "Form reset to saved profile values.";
+            $("formMessage").className = "form-message";
+            toast("Form reset.");
+          }
+        );
+      });
+
+      function clearResults() {
+        currentMetrics = null;
+        ["bmiValue","bmrValue","tdeeValue","targetValue","bmiScaleValue","planningTarget","planningTdee","planningAdjustment","macroTotal","proteinGrams","carbGrams","fatGrams","proteinKcal","carbKcal","fatKcal"].forEach(id => $(id).textContent = "—");
+        $("bmiCategory").textContent = "Enter valid measurements";
+        $("bmrFoot").textContent = "Estimated calories at rest";
+        $("tdeeFoot").textContent = "Estimated daily energy expenditure";
+        $("targetFoot").textContent = "Based on your selected goal";
+        $("bmiExplanation").textContent = "Enter a valid height and weight to display your BMI category.";
+        $("bmiMarker").style.left = "0%";
+        $("resultStatus").innerHTML = '<i class="fa-solid fa-calculator"></i> AWAITING INPUT';
+        $("calorieCaution").hidden = true;
+        if (macroChart) { macroChart.destroy(); macroChart = null; }
+        $("macroChart").style.display = "none";
+        $("chartFallback").hidden = false;
+        $("chartFallback").textContent = "Enter your measurements and select a BMR equation to calculate macros.";
+      }
+
+      function updateTheme() {
+        const current = document.body.classList.contains("dark") ? "dark" : "light";
+        const next = current === "dark" ? "light" : "dark";
+        applyTheme(next);
+        saveTheme(next);
+        if (currentMetrics) renderChart(currentMetrics);
+      }
+
+      $("themeToggle").addEventListener("click", updateTheme);
+      $("topThemeToggle").addEventListener("click", updateTheme);
+
+      $("logoutBtn").addEventListener("click", () => {
+        askConfirm("Log out?", "You will leave this session. Your saved profile and fitness metrics will remain in this browser.", "Log out", () => {
+          try { localStorage.removeItem(KEYS.currentUser); } catch (_) {}
+          window.location.replace("login.html");
+        });
+      });
+
+      // A lightweight search filters visible navigation links and highlights matching content.
+      $("pageSearch").addEventListener("input", event => {
+        const query = event.target.value.trim().toLowerCase();
+        document.querySelectorAll(".nav-link").forEach(link => {
+          link.style.display = !query || link.textContent.toLowerCase().includes(query) ? "flex" : "none";
+        });
+        document.querySelectorAll(".panel, .metric-card, .notice").forEach(section => {
+          if (!query) {
+            section.style.outline = "";
+            return;
+          }
+          const match = section.textContent.toLowerCase().includes(query);
+          section.style.outline = match ? "2px solid #7C3AED66" : "";
+        });
+      });
+
+      function init() {
+        if (!initializeSession()) return;
+        applyTheme(getSavedTheme());
+        prefillFromProfile(savedProfile);
+
+        // Only calculate immediately when all required measurements are available and valid.
+        const data = getFormData();
+        const hasValidMeasurements =
+          Number.isFinite(data.age) && data.age >= 18 && data.age <= 100 &&
+          Number.isFinite(data.height) && data.height >= 100 && data.height <= 250 &&
+          Number.isFinite(data.weight) && data.weight >= 25 && data.weight <= 350;
+
+        if (hasValidMeasurements) {
+          renderResults(calculate(data));
+        } else {
+          clearResults();
+          $("summaryName").textContent = getUserName(currentUser);
+          $("summaryAge").textContent = data.age ? data.age + " years" : "Not set";
+          $("summaryHeight").textContent = data.height ? data.height + " cm" : "Not set";
+          $("summaryWeight").textContent = data.weight ? data.weight + " kg" : "Not set";
+          $("summaryGoal").textContent = goalNames[data.goal] || "Not set";
+          $("summaryActivity").textContent = activityNames[data.activity] || "Not set";
+          $("summarySex").textContent = data.sex === "male" ? "Male equation" : data.sex === "female" ? "Female equation" : "Not specified";
+        }
+
+        if (savedProfile && savedProfile.metricsSavedAt) {
+          $("profileStatusTitle").textContent = "Saved metrics available";
+          $("profileStatusText").textContent = "Your saved measurements were loaded.";
+        }
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,3683 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#7C3AED">
+  <meta name="description" content="Personalize your Smart Gym Coach fitness plan with this six-step onboarding wizard.">
+  <title>Fitness Setup | Smart Gym Coach</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <style>
+    :root {
+      color-scheme: light;
+      --primary: #7C3AED;
+      --primary-dark: #5B21B6;
+      --primary-light: #F3E8FF;
+      --green: #22C55E;
+      --navy: #0B1220;
+      --background: #F8FAFC;
+      --surface: #FFFFFF;
+      --text: #1E293B;
+      --muted: #64748B;
+      --border: #E2E8F0;
+      --danger: #EF4444;
+      --warning: #F59E0B;
+      --input-bg: #FFFFFF;
+      --shadow: 0 12px 40px rgba(15, 23, 42, 0.055);
+      --radius: 18px;
+    }
+
+    body.dark {
+      color-scheme: dark;
+      --background: #0B1220;
+      --surface: #111B2D;
+      --text: #F1F5F9;
+      --muted: #94A3B8;
+      --border: #29364A;
+      --input-bg: #0D1728;
+      --primary-light: #251944;
+      --shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--background);
+      color: var(--text);
+      font-family: "Inter", sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    button, a, input, select, textarea {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button:focus-visible,
+    a:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+      outline: 3px solid rgba(124, 58, 237, 0.45);
+      outline-offset: 3px;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 15px clamp(18px, 5vw, 72px);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      flex-shrink: 0;
+    }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, #8B5CF6, #5B21B6);
+      box-shadow: 0 7px 18px rgba(124, 58, 237, 0.2);
+      color: #FFFFFF;
+      font-size: 18px;
+    }
+
+    .brand-name {
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+    }
+
+    .brand-name span {
+      color: var(--primary);
+    }
+
+    .header-center {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .header-center i {
+      color: var(--green);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .save-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .save-status i {
+      color: var(--green);
+    }
+
+    .theme-toggle {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: var(--surface);
+      color: var(--muted);
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Page layout */
+
+    .main {
+      flex: 1;
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 35px 28px 48px;
+    }
+
+    .page-heading {
+      margin-bottom: 28px;
+      text-align: center;
+    }
+
+    .page-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 11px;
+      color: var(--primary);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .page-heading h1 {
+      margin-bottom: 9px;
+      font-size: clamp(25px, 3vw, 34px);
+      font-weight: 800;
+      letter-spacing: -1.2px;
+      line-height: 1.3;
+    }
+
+    .page-heading p {
+      max-width: 530px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .wizard-layout {
+      display: grid;
+      grid-template-columns: 265px minmax(0, 1fr);
+      align-items: start;
+      gap: 24px;
+    }
+
+    /* Step sidebar */
+
+    .steps-sidebar {
+      position: sticky;
+      top: 90px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar-intro {
+      padding: 22px 20px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-intro h2 {
+      margin-bottom: 5px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .sidebar-intro p {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .progress-track {
+      height: 6px;
+      margin-top: 15px;
+      overflow: hidden;
+      border-radius: 10px;
+      background: var(--border);
+    }
+
+    .progress-fill {
+      width: 16.6667%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), #A78BFA);
+      transition: width 0.3s ease;
+    }
+
+    .step-list {
+      display: grid;
+      gap: 4px;
+      padding: 12px;
+      list-style: none;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 12px 10px;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--muted);
+      text-align: left;
+      cursor: default;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .step-item.current {
+      border-color: rgba(124, 58, 237, 0.17);
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .step-item.completed {
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .step-item.completed:hover {
+      background: var(--background);
+    }
+
+    .step-number {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .step-item.current .step-number {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #FFFFFF;
+    }
+
+    .step-item.completed .step-number {
+      border-color: rgba(34, 197, 94, 0.2);
+      background: rgba(34, 197, 94, 0.12);
+      color: var(--green);
+    }
+
+    .step-label {
+      min-width: 0;
+    }
+
+    .step-label strong {
+      display: block;
+      color: inherit;
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.5;
+    }
+
+    .step-label span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .sidebar-note {
+      display: flex;
+      gap: 10px;
+      margin: 0 14px 14px;
+      padding: 12px;
+      border-radius: 12px;
+      background: var(--background);
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.7;
+    }
+
+    .sidebar-note i {
+      margin-top: 3px;
+      color: var(--primary);
+    }
+
+    /* Main form card */
+
+    .wizard-card {
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 25px 28px 22px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-step-caption {
+      margin-bottom: 5px;
+      color: var(--primary);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .card-header h2 {
+      margin-bottom: 5px;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.7px;
+      line-height: 1.35;
+    }
+
+    .card-header p {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .header-step-icon {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      flex-shrink: 0;
+      border-radius: 14px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 19px;
+    }
+
+    .form-content {
+      padding: 27px 28px 30px;
+    }
+
+    .step-panel {
+      display: none;
+      animation: panel-in 0.22s ease both;
+    }
+
+    .step-panel.active {
+      display: block;
+    }
+
+    @keyframes panel-in {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-heading {
+      margin-bottom: 19px;
+    }
+
+    .section-heading h3 {
+      margin-bottom: 5px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .section-heading p {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px 17px;
+    }
+
+    .field {
+      display: grid;
+      align-content: start;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .field-label .unit {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .field-help {
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.7;
+    }
+
+    .control,
+    .select-control,
+    .textarea-control {
+      width: 100%;
+      min-height: 45px;
+      padding: 11px 13px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: var(--input-bg);
+      color: var(--text);
+      font-size: 12px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .control::placeholder,
+    .textarea-control::placeholder {
+      color: #94A3B8;
+      opacity: 1;
+    }
+
+    .control:hover,
+    .select-control:hover,
+    .textarea-control:hover {
+      border-color: #C4B5FD;
+    }
+
+    .control:focus,
+    .select-control:focus,
+    .textarea-control:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    }
+
+    .control[aria-invalid="true"],
+    .select-control[aria-invalid="true"],
+    .textarea-control[aria-invalid="true"] {
+      border-color: var(--danger);
+    }
+
+    .select-control {
+      cursor: pointer;
+    }
+
+    .textarea-control {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    .inline-error {
+      display: none;
+      align-items: flex-start;
+      gap: 6px;
+      color: var(--danger);
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    .inline-error.visible {
+      display: flex;
+    }
+
+    .inline-error i {
+      margin-top: 3px;
+    }
+
+    /* Choice cards */
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .choice-grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .choice-grid.four {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .choice-option {
+      position: relative;
+      min-width: 0;
+    }
+
+    .choice-option input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    .choice-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      min-height: 83px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: var(--surface);
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+
+    .choice-card:hover {
+      border-color: #C4B5FD;
+    }
+
+    .choice-option input:checked + .choice-card {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.07);
+    }
+
+    .choice-option input:focus-visible + .choice-card {
+      outline: 3px solid rgba(124, 58, 237, 0.45);
+      outline-offset: 3px;
+    }
+
+    .choice-icon {
+      display: grid;
+      place-items: center;
+      width: 37px;
+      height: 37px;
+      flex-shrink: 0;
+      border-radius: 11px;
+      background: var(--background);
+      color: var(--primary);
+      font-size: 15px;
+    }
+
+    .choice-option input:checked + .choice-card .choice-icon {
+      background: var(--primary);
+      color: #FFFFFF;
+    }
+
+    .choice-copy {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .choice-copy strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .choice-copy span {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.65;
+    }
+
+    .choice-check {
+      display: grid;
+      place-items: center;
+      width: 17px;
+      height: 17px;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      background: var(--surface);
+      color: transparent;
+      font-size: 9px;
+    }
+
+    .choice-option input[type="checkbox"] + .choice-card .choice-check {
+      border-radius: 5px;
+    }
+
+    .choice-option input:checked + .choice-card .choice-check {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #FFFFFF;
+    }
+
+    .choice-grid.compact .choice-card {
+      min-height: 68px;
+      align-items: center;
+      padding: 11px;
+    }
+
+    .choice-grid.compact .choice-icon {
+      width: 32px;
+      height: 32px;
+      font-size: 13px;
+    }
+
+    .choice-grid.compact .choice-copy strong {
+      margin: 0;
+    }
+
+    .choice-grid.compact .choice-copy span {
+      margin-top: 3px;
+    }
+
+    .subsection {
+      margin-top: 27px;
+    }
+
+    .subsection:first-child {
+      margin-top: 0;
+    }
+
+    .subsection-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 13px;
+    }
+
+    .subsection-header h3 {
+      margin-bottom: 4px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .subsection-header p {
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .optional-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 8px;
+      border-radius: 20px;
+      background: var(--background);
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .info-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      margin-top: 22px;
+      padding: 13px 14px;
+      border: 1px solid rgba(124, 58, 237, 0.14);
+      border-radius: 12px;
+      background: var(--primary-light);
+      color: var(--text);
+      font-size: 10px;
+      line-height: 1.8;
+    }
+
+    .info-banner i {
+      margin-top: 3px;
+      color: var(--primary);
+    }
+
+    .info-banner strong {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 11px;
+    }
+
+    /* Range input */
+
+    .range-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .range-value {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 5px;
+      color: var(--primary);
+      font-size: 21px;
+      font-weight: 800;
+    }
+
+    .range-value span {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    /* Review */
+
+    .review-intro {
+      display: flex;
+      align-items: flex-start;
+      gap: 13px;
+      margin-bottom: 22px;
+      padding: 15px;
+      border-radius: 13px;
+      background: rgba(34, 197, 94, 0.08);
+    }
+
+    .review-intro-icon {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      flex-shrink: 0;
+      border-radius: 11px;
+      background: rgba(34, 197, 94, 0.14);
+      color: var(--green);
+    }
+
+    .review-intro strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+
+    .review-intro p {
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.7;
+    }
+
+    .review-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 13px;
+    }
+
+    .review-card {
+      min-width: 0;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: var(--surface);
+    }
+
+    .review-card.full {
+      grid-column: 1 / -1;
+    }
+
+    .review-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 13px;
+    }
+
+    .review-card-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .review-card-title i {
+      color: var(--primary);
+    }
+
+    .edit-link {
+      border: 0;
+      background: transparent;
+      color: var(--primary);
+      font-size: 10px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .edit-link:hover {
+      text-decoration: underline;
+    }
+
+    .review-values {
+      display: grid;
+      gap: 10px;
+    }
+
+    .review-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 10px;
+    }
+
+    .review-row span {
+      color: var(--muted);
+    }
+
+    .review-row strong {
+      max-width: 65%;
+      color: var(--text);
+      text-align: right;
+      overflow-wrap: anywhere;
+      font-weight: 700;
+    }
+
+    .review-empty {
+      color: var(--muted);
+      font-size: 10px;
+      font-style: italic;
+    }
+
+    /* Footer navigation */
+
+    .wizard-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 19px 28px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .footer-left,
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 43px;
+      padding: 0 16px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 800;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    }
+
+    .btn:hover:not(:disabled) {
+      border-color: #C4B5FD;
+      background: var(--background);
+    }
+
+    .btn-primary {
+      border-color: var(--primary);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #FFFFFF;
+      box-shadow: 0 6px 15px rgba(124, 58, 237, 0.17);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      border-color: var(--primary-dark);
+      background: var(--primary-dark);
+      color: #FFFFFF;
+      transform: translateY(-1px);
+    }
+
+    .btn-quiet {
+      border-color: transparent;
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .btn-quiet:hover:not(:disabled) {
+      border-color: var(--border);
+      background: var(--background);
+      color: var(--text);
+    }
+
+    .save-btn {
+      color: var(--primary);
+    }
+
+    .step-counter-mobile {
+      display: none;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .medical-disclaimer {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 8px;
+      max-width: 850px;
+      margin: 23px auto 0;
+      color: var(--muted);
+      text-align: center;
+      font-size: 10px;
+      line-height: 1.8;
+    }
+
+    .medical-disclaimer i {
+      margin-top: 4px;
+      color: var(--warning);
+    }
+
+    .page-bottom {
+      padding: 17px 20px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      text-align: center;
+      font-size: 10px;
+    }
+
+    /* Dialogs */
+
+    .dialog-backdrop {
+      position: fixed;
+      z-index: 200;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(11, 18, 32, 0.58);
+      backdrop-filter: blur(4px);
+    }
+
+    .dialog-backdrop.open {
+      display: flex;
+    }
+
+    .dialog {
+      width: 100%;
+      max-width: 420px;
+      padding: 25px;
+      border: 1px solid var(--border);
+      border-radius: 19px;
+      background: var(--surface);
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2);
+      animation: panel-in 0.18s ease both;
+    }
+
+    .dialog-icon {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      margin-bottom: 16px;
+      border-radius: 14px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 19px;
+    }
+
+    .dialog h2 {
+      margin-bottom: 8px;
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+    }
+
+    .dialog p {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 22px;
+    }
+
+    /* Login-required state */
+
+    .login-required {
+      display: none;
+      width: min(500px, calc(100% - 36px));
+      margin: 80px auto;
+      padding: 34px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .login-required.visible {
+      display: block;
+    }
+
+    .login-required .empty-icon {
+      display: grid;
+      place-items: center;
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 20px;
+      border-radius: 20px;
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 25px;
+    }
+
+    .login-required h1 {
+      margin-bottom: 10px;
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .login-required p {
+      margin-bottom: 20px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .login-required .btn {
+      display: inline-flex;
+    }
+
+    /* Toasts */
+
+    .toast-container {
+      position: fixed;
+      z-index: 500;
+      top: 18px;
+      right: 18px;
+      display: grid;
+      gap: 10px;
+      width: min(360px, calc(100vw - 36px));
+      pointer-events: none;
+    }
+
+    .toast {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      animation: toast-in 0.22s ease both;
+      pointer-events: auto;
+    }
+
+    .toast.removing {
+      animation: toast-out 0.18s ease both;
+    }
+
+    .toast-icon {
+      display: grid;
+      place-items: center;
+      width: 31px;
+      height: 31px;
+      flex-shrink: 0;
+      border-radius: 9px;
+      font-size: 13px;
+    }
+
+    .toast.success .toast-icon {
+      background: rgba(34, 197, 94, 0.12);
+      color: var(--green);
+    }
+
+    .toast.error .toast-icon {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+
+    .toast.info .toast-icon {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .toast-copy {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .toast-copy strong {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 11px;
+    }
+
+    .toast-copy p {
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .toast-close {
+      display: grid;
+      place-items: center;
+      width: 25px;
+      height: 25px;
+      border: 0;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .toast-close:hover {
+      background: var(--background);
+    }
+
+    @keyframes toast-in {
+      from { opacity: 0; transform: translateX(12px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes toast-out {
+      to { opacity: 0; transform: translateX(12px); }
+    }
+
+    /* Responsive */
+
+    @media (max-width: 1000px) {
+      .wizard-layout {
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: 16px;
+      }
+
+      .main {
+        padding-right: 20px;
+        padding-left: 20px;
+      }
+
+      .card-header,
+      .form-content {
+        padding-right: 22px;
+        padding-left: 22px;
+      }
+
+      .wizard-footer {
+        padding-right: 22px;
+        padding-left: 22px;
+      }
+
+      .choice-grid.three {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      .topbar {
+        padding: 12px 17px;
+      }
+
+      .header-center {
+        display: none;
+      }
+
+      .save-status {
+        font-size: 0;
+      }
+
+      .save-status i {
+        font-size: 13px;
+      }
+
+      .main {
+        padding: 25px 16px 35px;
+      }
+
+      .page-heading {
+        margin-bottom: 20px;
+      }
+
+      .wizard-layout {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+
+      .steps-sidebar {
+        position: static;
+      }
+
+      .sidebar-intro {
+        padding: 15px 17px 12px;
+      }
+
+      .sidebar-intro h2 {
+        font-size: 12px;
+      }
+
+      .sidebar-intro p {
+        font-size: 10px;
+      }
+
+      .progress-track {
+        margin-top: 10px;
+      }
+
+      .step-list {
+        display: flex;
+        gap: 8px;
+        padding: 12px;
+        overflow-x: auto;
+        scrollbar-width: thin;
+      }
+
+      .step-item {
+        flex: 0 0 53px;
+        justify-content: center;
+        padding: 3px;
+      }
+
+      .step-number {
+        width: 34px;
+        height: 34px;
+      }
+
+      .step-label,
+      .sidebar-note {
+        display: none;
+      }
+
+      .step-item.current {
+        border-color: transparent;
+        background: transparent;
+      }
+
+      .step-item.current .step-number {
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.13);
+      }
+
+      .step-item.completed {
+        background: transparent;
+      }
+
+      .card-header {
+        padding: 21px 20px 18px;
+      }
+
+      .card-header h2 {
+        font-size: 20px;
+      }
+
+      .form-content {
+        padding: 22px 20px 25px;
+      }
+
+      .wizard-footer {
+        padding: 15px 20px;
+      }
+
+      .medical-disclaimer {
+        font-size: 9px;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .brand-name {
+        font-size: 13px;
+      }
+
+      .brand-mark {
+        width: 37px;
+        height: 37px;
+        font-size: 16px;
+      }
+
+      .topbar {
+        gap: 8px;
+      }
+
+      .header-actions {
+        gap: 8px;
+      }
+
+      .theme-toggle {
+        width: 35px;
+        height: 35px;
+      }
+
+      .page-heading h1 {
+        font-size: 25px;
+      }
+
+      .page-heading p {
+        font-size: 11px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 17px;
+      }
+
+      .field.full {
+        grid-column: auto;
+      }
+
+      .choice-grid,
+      .choice-grid.three,
+      .choice-grid.four {
+        grid-template-columns: 1fr;
+      }
+
+      .choice-card {
+        min-height: 72px;
+      }
+
+      .choice-grid.compact .choice-card {
+        min-height: 62px;
+      }
+
+      .review-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .review-card.full {
+        grid-column: auto;
+      }
+
+      .header-step-icon {
+        width: 39px;
+        height: 39px;
+        border-radius: 12px;
+        font-size: 16px;
+      }
+
+      .card-header,
+      .form-content {
+        padding-right: 16px;
+        padding-left: 16px;
+      }
+
+      .wizard-footer {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 14px 16px;
+      }
+
+      .footer-left,
+      .footer-right {
+        gap: 6px;
+      }
+
+      .footer-left {
+        flex: 1;
+      }
+
+      .footer-right {
+        flex: 1;
+        justify-content: flex-end;
+      }
+
+      .btn {
+        min-height: 41px;
+        padding: 0 11px;
+        font-size: 10px;
+      }
+
+      #skipBtn {
+        padding: 0 5px;
+      }
+
+      .step-counter-mobile {
+        display: block;
+        width: 100%;
+        order: -1;
+      }
+
+      .dialog {
+        padding: 21px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-shell" id="appShell">
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="Smart Gym Coach home">
+        <span class="brand-mark">
+          <i class="fa-solid fa-dumbbell" aria-hidden="true"></i>
+        </span>
+        <span class="brand-name">Smart Gym <span>Coach</span></span>
+      </a>
+
+      <div class="header-center">
+        <i class="fa-solid fa-shield-heart" aria-hidden="true"></i>
+        Your plan. Your pace. Your progress.
+      </div>
+
+      <div class="header-actions">
+        <span class="save-status" id="saveStatus" role="status" aria-live="polite">
+          <i class="fa-solid fa-cloud-check" aria-hidden="true"></i>
+          <span id="saveStatusText">Ready to personalize</span>
+        </span>
+
+        <button
+          class="theme-toggle"
+          id="themeToggle"
+          type="button"
+          aria-label="Switch to dark theme"
+          title="Toggle theme"
+        >
+          <i class="fa-solid fa-moon" aria-hidden="true"></i>
+        </button>
+      </div>
+    </header>
+
+    <main class="main" id="wizardMain">
+      <section class="page-heading">
+        <div class="page-eyebrow">
+          <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
+          Your personalized fitness setup
+        </div>
+        <h1>Let's build your fitness profile</h1>
+        <p>
+          Tell us a little about yourself so your fitness experience can better
+          match your goals, preferences, and lifestyle.
+        </p>
+      </section>
+
+      <div class="wizard-layout">
+        <aside class="steps-sidebar" aria-label="Onboarding progress">
+          <div class="sidebar-intro">
+            <h2>Your setup journey</h2>
+            <p id="sidebarProgressText">Step 1 of 6 · 17% complete</p>
+            <div
+              class="progress-track"
+              id="sidebarProgressTrack"
+              role="progressbar"
+              aria-label="Onboarding progress"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="17"
+            >
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+          </div>
+
+          <ol class="step-list" id="stepList">
+            <li>
+              <button class="step-item current" type="button" data-step="0" aria-current="step">
+                <span class="step-number">1</span>
+                <span class="step-label">
+                  <strong>Personal Details</strong>
+                  <span>About you</span>
+                </span>
+              </button>
+            </li>
+            <li>
+              <button class="step-item" type="button" data-step="1">
+                <span class="step-number">2</span>
+                <span class="step-label">
+                  <strong>Fitness Goal</strong>
+                  <span>What you want</span>
+                </span>
+              </button>
+            </li>
+            <li>
+              <button class="step-item" type="button" data-step="2">
+                <span class="step-number">3</span>
+                <span class="step-label">
+                  <strong>Experience & Activity</strong>
+                  <span>Your routine</span>
+                </span>
+              </button>
+            </li>
+            <li>
+              <button class="step-item" type="button" data-step="3">
+                <span class="step-number">4</span>
+                <span class="step-label">
+                  <strong>Training Preferences</strong>
+                  <span>How you train</span>
+                </span>
+              </button>
+            </li>
+            <li>
+              <button class="step-item" type="button" data-step="4">
+                <span class="step-number">5</span>
+                <span class="step-label">
+                  <strong>Nutrition</strong>
+                  <span>Your food choices</span>
+                </span>
+              </button>
+            </li>
+            <li>
+              <button class="step-item" type="button" data-step="5">
+                <span class="step-number">6</span>
+                <span class="step-label">
+                  <strong>Review Profile</strong>
+                  <span>Ready to begin</span>
+                </span>
+              </button>
+            </li>
+          </ol>
+
+          <div class="sidebar-note">
+            <i class="fa-solid fa-lock" aria-hidden="true"></i>
+            <span>Your preferences are saved in this browser for this demo. You can update them later.</span>
+          </div>
+        </aside>
+
+        <section class="wizard-card" aria-labelledby="stepTitle">
+          <div class="card-header">
+            <div>
+              <div class="card-step-caption" id="cardStepCaption">Step 01 / 06</div>
+              <h2 id="stepTitle">Personal details</h2>
+              <p id="stepDescription">Let's start with the basics.</p>
+            </div>
+            <div class="header-step-icon" aria-hidden="true">
+              <i class="fa-solid fa-user"></i>
+            </div>
+          </div>
+
+          <form id="onboardingForm" novalidate>
+            <div class="form-content">
+              <!-- STEP 1 -->
+              <section class="step-panel active" data-panel="0" aria-labelledby="personalHeading">
+                <div class="section-heading">
+                  <h3 id="personalHeading">Tell us about yourself</h3>
+                  <p>Use the units shown beside each field. These details are used to personalize general fitness guidance.</p>
+                </div>
+
+                <div class="form-grid">
+                  <div class="field">
+                    <label class="field-label" for="age">
+                      Age
+                      <span class="unit">years</span>
+                    </label>
+                    <input
+                      class="control"
+                      id="age"
+                      name="age"
+                      type="number"
+                      min="18"
+                      max="100"
+                      step="1"
+                      inputmode="numeric"
+                      placeholder="e.g. 25"
+                      required
+                      aria-describedby="ageError"
+                    >
+                    <p class="inline-error" id="ageError" aria-live="polite">
+                      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                      <span>Enter an age between 18 and 100.</span>
+                    </p>
+                  </div>
+
+                  <div class="field">
+                    <label class="field-label" for="sex">
+                      Sex
+                      <span class="unit">optional</span>
+                    </label>
+                    <select class="select-control" id="sex" name="sex" aria-describedby="sexHelp">
+                      <option value="">Prefer not to say</option>
+                      <option value="female">Female</option>
+                      <option value="male">Male</option>
+                      <option value="other">Other</option>
+                    </select>
+                    <p class="field-help" id="sexHelp">Optional. May be relevant to some estimates; it is not required to create your profile.</p>
+                  </div>
+
+                  <div class="field">
+                    <label class="field-label" for="height">
+                      Height
+                      <span class="unit">centimeters (cm)</span>
+                    </label>
+                    <input
+                      class="control"
+                      id="height"
+                      name="height"
+                      type="number"
+                      min="100"
+                      max="250"
+                      step="0.1"
+                      inputmode="decimal"
+                      placeholder="e.g. 175"
+                      required
+                      aria-describedby="heightError"
+                    >
+                    <p class="inline-error" id="heightError" aria-live="polite">
+                      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                      <span>Enter a height between 100 and 250 cm.</span>
+                    </p>
+                  </div>
+
+                  <div class="field">
+                    <label class="field-label" for="weight">
+                      Current weight
+                      <span class="unit">kilograms (kg)</span>
+                    </label>
+                    <input
+                      class="control"
+                      id="weight"
+                      name="weight"
+                      type="number"
+                      min="25"
+                      max="350"
+                      step="0.1"
+                      inputmode="decimal"
+                      placeholder="e.g. 75"
+                      required
+                      aria-describedby="weightError"
+                    >
+                    <p class="inline-error" id="weightError" aria-live="polite">
+                      <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                      <span>Enter a weight between 25 and 350 kg.</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div class="info-banner">
+                  <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                  <div>
+                    <strong>Your information stays yours</strong>
+                    These measurements are used for your fitness profile. Smart Gym Coach does not diagnose conditions or replace advice from a qualified professional.
+                  </div>
+                </div>
+              </section>
+
+              <!-- STEP 2 -->
+              <section class="step-panel" data-panel="1" aria-labelledby="goalHeading" hidden>
+                <div class="section-heading">
+                  <h3 id="goalHeading">What would you like to achieve?</h3>
+                  <p>Choose the main goal you want your fitness routine to support.</p>
+                </div>
+
+                <div class="choice-grid" role="radiogroup" aria-labelledby="goalHeading" aria-describedby="goalError">
+                  <div class="choice-option">
+                    <input type="radio" id="goalLose" name="goal" value="lose_weight">
+                    <label class="choice-card" for="goalLose">
+                      <span class="choice-icon"><i class="fa-solid fa-arrow-trend-down" aria-hidden="true"></i></span>
+                      <span class="choice-copy">
+                        <strong>Lose weight</strong>
+                        <span>Work toward weight-management goals.</span>
+                      </span>
+                      <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                    </label>
+                  </div>
+
+                  <div class="choice-option">
+                    <input type="radio" id="goalMaintain" name="goal" value="maintain_weight">
+                    <label class="choice-card" for="goalMaintain">
+                      <span class="choice-icon"><i class="fa-solid fa-scale-balanced" aria-hidden="true"></i></span>
+                      <span class="choice-copy">
+                        <strong>Maintain weight</strong>
+                        <span>Support a consistent routine and balance.</span>
+                      </span>
+                      <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                    </label>
+                  </div>
+
+                  <div class="choice-option">
+                    <input type="radio" id="goalMuscle" name="goal" value="build_muscle">
+                    <label class="choice-card" for="goalMuscle">
+                      <span class="choice-icon"><i class="fa-solid fa-dumbbell" aria-hidden="true"></i></span>
+                      <span class="choice-copy">
+                        <strong>Build muscle</strong>
+                        <span>Develop strength and muscular fitness.</span>
+                      </span>
+                      <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                    </label>
+                  </div>
+
+                  <div class="choice-option">
+                    <input type="radio" id="goalEndurance" name="goal" value="improve_endurance">
+                    <label class="choice-card" for="goalEndurance">
+                      <span class="choice-icon"><i class="fa-solid fa-heart-pulse" aria-hidden="true"></i></span>
+                      <span class="choice-copy">
+                        <strong>Improve endurance</strong>
+                        <span>Build stamina for everyday activities.</span>
+                      </span>
+                      <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                    </label>
+                  </div>
+
+                  <div class="choice-option">
+                    <input type="radio" id="goalGeneral" name="goal" value="general_fitness">
+                    <label class="choice-card" for="goalGeneral">
+                      <span class="choice-icon"><i class="fa-solid fa-person-running" aria-hidden="true"></i></span>
+                      <span class="choice-copy">
+                        <strong>General fitness</strong>
+                        <span>Improve overall movement and well-being.</span>
+                      </span>
+                      <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                    </label>
+                  </div>
+                </div>
+
+                <p class="inline-error" id="goalError" aria-live="polite" style="margin-top:12px">
+                  <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                  <span>Select a fitness goal to continue.</span>
+                </p>
+
+                <div class="field" style="margin-top:23px">
+                  <label class="field-label" for="goalNotes">
+                    Anything else you'd like to work toward?
+                    <span class="unit">optional</span>
+                  </label>
+                  <textarea
+                    class="textarea-control"
+                    id="goalNotes"
+                    name="goalNotes"
+                    maxlength="500"
+                    placeholder="e.g. Feel more energetic, improve my running, or build a consistent habit."
+                  ></textarea>
+                </div>
+              </section>
+
+              <!-- STEP 3 -->
+              <section class="step-panel" data-panel="2" aria-labelledby="experienceHeading" hidden>
+                <div class="section-heading">
+                  <h3 id="experienceHeading">Let's understand your routine</h3>
+                  <p>Choose what best describes your experience and everyday activity.</p>
+                </div>
+
+                <div class="subsection">
+                  <div class="subsection-header">
+                    <div>
+                      <h3>Fitness experience</h3>
+                      <p>How familiar are you with structured workouts?</p>
+                    </div>
+                  </div>
+
+                  <div class="choice-grid three" role="radiogroup" aria-labelledby="experienceHeading" aria-describedby="experienceError">
+                    <div class="choice-option">
+                      <input type="radio" id="expBeginner" name="experience" value="beginner">
+                      <label class="choice-card" for="expBeginner">
+                        <span class="choice-icon"><i class="fa-solid fa-seedling" aria-hidden="true"></i></span>
+                        <span class="choice-copy">
+                          <strong>Beginner</strong>
+                          <span>New or returning after a break.</span>
+                        </span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+
+                    <div class="choice-option">
+                      <input type="radio" id="expIntermediate" name="experience" value="intermediate">
+                      <label class="choice-card" for="expIntermediate">
+                        <span class="choice-icon"><i class="fa-solid fa-person-walking" aria-hidden="true"></i></span>
+                        <span class="choice-copy">
+                          <strong>Intermediate</strong>
+                          <span>Some consistent training experience.</span>
+                        </span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+
+                    <div class="choice-option">
+                      <input type="radio" id="expAdvanced" name="experience" value="advanced">
+                      <label class="choice-card" for="expAdvanced">
+                        <span class="choice-icon"><i class="fa-solid fa-bolt" aria-hidden="true"></i></span>
+                        <span class="choice-copy">
+                          <strong>Advanced</strong>
+                          <span>Experienced with structured training.</span>
+                        </span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <p class="inline-error" id="experienceError" aria-live="polite" style="margin-top:10px">
+                    <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                    <span>Select your experience level.</span>
+                  </p>
+                </div>
+
+                <div class="subsection">
+                  <div class="subsection-header">
+                    <div>
+                      <h3>Everyday activity level</h3>
+                      <p>Think about your typical day outside planned workouts.</p>
+                    </div>
+                  </div>
+
+                  <div class="choice-grid" role="radiogroup" aria-label="Everyday activity level" aria-describedby="activityError">
+                    <div class="choice-option">
+                      <input type="radio" id="activitySedentary" name="activityLevel" value="sedentary">
+                      <label class="choice-card" for="activitySedentary">
+                        <span class="choice-icon"><i class="fa-solid fa-chair" aria-hidden="true"></i></span>
+                        <span class="choice-copy">
+                          <strong>Mostly sitting</strong>
+                          <span>Desk-based or limited daily movement.</span>
+                        </span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+
+                    <div class="choice-option">
+                      <input type="radio" id="activityLight" name="activityLevel" value="light">
+                      <label class="choice-card" for="activityLight">
+                        <span class="choice-icon"><i class="fa-solid fa-person-walking" aria-hidden="true"></i></span>
+                        <span class="choice-copy">
+                          <strong>Lightly active</strong>
+                          <span>Some walking and light movement.</span>
+                        </span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+
+                    <div class="choice-option">
+                      <input type="radio" id="activityModerate" name="activityLevel" value="moderate">
+                      <label class="choice-card" for="activityModerate">
+                        <span class="choice-icon"><i class="fa-solid fa-person-biking" aria-hidden="true"></i></span>
+                        <span class="choice-copy">
+                          <strong>Moderately active</strong>
+                          <span>Regular movement through the day.</span>
+                        </span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+
+                    <div class="choice-option">
+                      <input type="radio" id="activityHigh" name="activityLevel" value="very_active">
+                      <label class="choice-card" for="activityHigh">
+                        <span class="choice-icon"><i class="fa-solid fa-person-running" aria-hidden="true"></i></span>
+                        <span class="choice-copy">
+                          <strong>Very active</strong>
+                          <span>Physically demanding days or lots of movement.</span>
+                        </span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <p class="inline-error" id="activityError" aria-live="polite" style="margin-top:10px">
+                    <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                    <span>Select your everyday activity level.</span>
+                  </p>
+                </div>
+
+                <div class="subsection">
+                  <div class="form-grid">
+                    <div class="field">
+                      <div class="range-header">
+                        <label class="field-label" for="trainingDays">Workout days per week</label>
+                        <output class="range-value" id="trainingDaysOutput" for="trainingDays">3 <span>days</span></output>
+                      </div>
+                      <input id="trainingDays" name="trainingDays" type="range" min="1" max="7" step="1" value="3">
+                      <div class="range-labels">
+                        <span>1 day</span>
+                        <span>7 days</span>
+                      </div>
+                      <p class="field-help">Choose a schedule that feels realistic for you.</p>
+                    </div>
+
+                    <div class="field">
+                      <label class="field-label" for="sessionDuration">Preferred session duration</label>
+                      <select class="select-control" id="sessionDuration" name="sessionDuration" required>
+                        <option value="">Choose duration</option>
+                        <option value="15">15 minutes</option>
+                        <option value="20">20 minutes</option>
+                        <option value="30">30 minutes</option>
+                        <option value="45">45 minutes</option>
+                        <option value="60">60 minutes</option>
+                        <option value="75">75 minutes</option>
+                        <option value="90">90 minutes</option>
+                      </select>
+                      <p class="inline-error" id="sessionDurationError" aria-live="polite">
+                        <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                        <span>Select a session duration.</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- STEP 4 -->
+              <section class="step-panel" data-panel="3" aria-labelledby="trainingHeading" hidden>
+                <div class="section-heading">
+                  <h3 id="trainingHeading">Make your workouts fit you</h3>
+                  <p>Select what you have access to and the areas you'd like to train. You can leave optional fields blank.</p>
+                </div>
+
+                <div class="subsection">
+                  <div class="subsection-header">
+                    <div>
+                      <h3>Available equipment</h3>
+                      <p>Select all equipment you can use.</p>
+                    </div>
+                  </div>
+
+                  <div class="choice-grid compact" role="group" aria-labelledby="trainingHeading" aria-describedby="equipmentError">
+                    <div class="choice-option">
+                      <input type="checkbox" id="equipBodyweight" name="equipment" value="bodyweight">
+                      <label class="choice-card" for="equipBodyweight">
+                        <span class="choice-icon"><i class="fa-solid fa-person" aria-hidden="true"></i></span>
+                        <span class="choice-copy">
+                          <strong>Bodyweight</strong>
+                          <span>No equipment needed</span>
+                        </span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+
+                    <div class="choice-option">
+                      <input type="checkbox" id="equipDumbbells" name="equipment" value="dumbbells">
+                      <label class="choice-card" for="equipDumbbells">
+                        <span class="choice-icon"><i class="fa-solid fa-dumbbell" aria-hidden="true"></i></span>
+                        <span class="choice-copy">
+                          <strong>Dumbbells</strong>
+                          <span>Free weights</span>
+                        </span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+
+                    <div class="choice-option">
+                      <input type="checkbox" id="equipBands" name="equipment" value="resistance_bands">
+                      <label class="choice-card" for="equipBands">
+                        <span class="choice-icon"><i class="fa-solid fa-link" aria-hidden="true"></i></span>
+                        <span class="choice-copy">
+                          <strong>Resistance bands</strong>
+                          <span>Portable resistance tools</span>
+                        </span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+
+                    <div class="choice-option">
+                      <input type="checkbox" id="equipGym" name="equipment" value="gym_equipment">
+                      <label class="choice-card" for="equipGym">
+                        <span class="choice-icon"><i class="fa-solid fa-building" aria-hidden="true"></i></span>
+                        <span class="choice-copy">
+                          <strong>Gym equipment</strong>
+                          <span>Machines, cables, barbells</span>
+                        </span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <p class="inline-error" id="equipmentError" aria-live="polite" style="margin-top:10px">
+                    <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                    <span>Select at least one available equipment option.</span>
+                  </p>
+                </div>
+
+                <div class="subsection">
+                  <div class="subsection-header">
+                    <div>
+                      <h3>Preferred muscle groups</h3>
+                      <p>Choose areas you'd like to focus on.</p>
+                    </div>
+                    <span class="optional-tag">Optional</span>
+                  </div>
+
+                  <div class="choice-grid three compact" role="group" aria-label="Preferred muscle groups">
+                    <div class="choice-option">
+                      <input type="checkbox" id="muscleChest" name="muscleGroups" value="chest">
+                      <label class="choice-card" for="muscleChest">
+                        <span class="choice-icon"><i class="fa-solid fa-dumbbell" aria-hidden="true"></i></span>
+                        <span class="choice-copy"><strong>Chest</strong></span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+
+                    <div class="choice-option">
+                      <input type="checkbox" id="muscleBack" name="muscleGroups" value="back">
+                      <label class="choice-card" for="muscleBack">
+                        <span class="choice-icon"><i class="fa-solid fa-person" aria-hidden="true"></i></span>
+                        <span class="choice-copy"><strong>Back</strong></span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+
+                    <div class="choice-option">
+                      <input type="checkbox" id="muscleLegs" name="muscleGroups" value="legs">
+                      <label class="choice-card" for="muscleLegs">
+                        <span class="choice-icon"><i class="fa-solid fa-person-walking" aria-hidden="true"></i></span>
+                        <span class="choice-copy"><strong>Legs</strong></span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+
+                    <div class="choice-option">
+                      <input type="checkbox" id="muscleShoulders" name="muscleGroups" value="shoulders">
+                      <label class="choice-card" for="muscleShoulders">
+                        <span class="choice-icon"><i class="fa-solid fa-child-reaching" aria-hidden="true"></i></span>
+                        <span class="choice-copy"><strong>Shoulders</strong></span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+
+                    <div class="choice-option">
+                      <input type="checkbox" id="muscleArms" name="muscleGroups" value="arms">
+                      <label class="choice-card" for="muscleArms">
+                        <span class="choice-icon"><i class="fa-solid fa-hand-fist" aria-hidden="true"></i></span>
+                        <span class="choice-copy"><strong>Arms</strong></span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+
+                    <div class="choice-option">
+                      <input type="checkbox" id="muscleCore" name="muscleGroups" value="core">
+                      <label class="choice-card" for="muscleCore">
+                        <span class="choice-icon"><i class="fa-solid fa-person" aria-hidden="true"></i></span>
+                        <span class="choice-copy"><strong>Core</strong></span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+
+                    <div class="choice-option">
+                      <input type="checkbox" id="muscleFullBody" name="muscleGroups" value="full_body">
+                      <label class="choice-card" for="muscleFullBody">
+                        <span class="choice-icon"><i class="fa-solid fa-person-running" aria-hidden="true"></i></span>
+                        <span class="choice-copy"><strong>Full body</strong></span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="subsection">
+                  <div class="form-grid">
+                    <div class="field">
+                      <label class="field-label" for="excludedExercises">
+                        Exercises to exclude
+                        <span class="unit">optional</span>
+                      </label>
+                      <textarea
+                        class="textarea-control"
+                        id="excludedExercises"
+                        name="excludedExercises"
+                        maxlength="1000"
+                        placeholder="e.g. Burpees, jumping exercises"
+                      ></textarea>
+                      <p class="field-help">Separate exercises with commas.</p>
+                    </div>
+
+                    <div class="field">
+                      <label class="field-label" for="limitations">
+                        Limitations or considerations
+                        <span class="unit">optional</span>
+                      </label>
+                      <textarea
+                        class="textarea-control"
+                        id="limitations"
+                        name="limitations"
+                        maxlength="1000"
+                        placeholder="Anything you'd like your routine to take into account."
+                      ></textarea>
+                      <p class="field-help">Share only what you're comfortable sharing. This demo does not provide medical assessment.</p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <!-- STEP 5 -->
+              <section class="step-panel" data-panel="4" aria-labelledby="nutritionHeading" hidden>
+                <div class="section-heading">
+                  <h3 id="nutritionHeading">Tell us about your food preferences</h3>
+                  <p>These details help organize general nutrition preferences. No strict diet is required.</p>
+                </div>
+
+                <div class="field">
+                  <label class="field-label" for="dietaryPreference">Dietary preference</label>
+                  <select class="select-control" id="dietaryPreference" name="dietaryPreference" required aria-describedby="dietaryPreferenceError">
+                    <option value="">Choose your preference</option>
+                    <option value="no_restrictions">No specific restrictions</option>
+                    <option value="vegetarian">Vegetarian</option>
+                    <option value="vegan">Vegan</option>
+                    <option value="pescatarian">Pescatarian</option>
+                    <option value="halal">Halal</option>
+                    <option value="gluten_free">Gluten-free</option>
+                    <option value="dairy_free">Dairy-free</option>
+                    <option value="other">Other preference</option>
+                  </select>
+                  <p class="inline-error" id="dietaryPreferenceError" aria-live="polite">
+                    <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                    <span>Select a dietary preference or choose no specific restrictions.</span>
+                  </p>
+                </div>
+
+                <div class="form-grid" style="margin-top:20px">
+                  <div class="field">
+                    <label class="field-label" for="allergies">
+                      Food allergies
+                      <span class="unit">optional</span>
+                    </label>
+                    <textarea
+                      class="textarea-control"
+                      id="allergies"
+                      name="allergies"
+                      maxlength="1000"
+                      placeholder="e.g. Peanuts, shellfish, milk"
+                    ></textarea>
+                    <p class="field-help">List any food allergies you want to record. This is not an allergy-safety system.</p>
+                  </div>
+
+                  <div class="field">
+                    <label class="field-label" for="dislikedFoods">
+                      Foods you dislike
+                      <span class="unit">optional</span>
+                    </label>
+                    <textarea
+                      class="textarea-control"
+                      id="dislikedFoods"
+                      name="dislikedFoods"
+                      maxlength="1000"
+                      placeholder="e.g. Mushrooms, olives"
+                    ></textarea>
+                    <p class="field-help">Separate foods with commas if helpful.</p>
+                  </div>
+                </div>
+
+                <div class="subsection">
+                  <div class="subsection-header">
+                    <div>
+                      <h3>Meals per day</h3>
+                      <p>Choose the meal frequency that usually works for you.</p>
+                    </div>
+                  </div>
+
+                  <div class="choice-grid three" role="radiogroup" aria-label="Meal frequency" aria-describedby="mealFrequencyError">
+                    <div class="choice-option">
+                      <input type="radio" id="mealsTwo" name="mealFrequency" value="2">
+                      <label class="choice-card" for="mealsTwo">
+                        <span class="choice-icon"><i class="fa-solid fa-bowl-food" aria-hidden="true"></i></span>
+                        <span class="choice-copy">
+                          <strong>2 meals</strong>
+                          <span>Two main meals daily.</span>
+                        </span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+
+                    <div class="choice-option">
+                      <input type="radio" id="mealsThree" name="mealFrequency" value="3">
+                      <label class="choice-card" for="mealsThree">
+                        <span class="choice-icon"><i class="fa-solid fa-utensils" aria-hidden="true"></i></span>
+                        <span class="choice-copy">
+                          <strong>3 meals</strong>
+                          <span>Breakfast, lunch and dinner.</span>
+                        </span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+
+                    <div class="choice-option">
+                      <input type="radio" id="mealsFour" name="mealFrequency" value="4">
+                      <label class="choice-card" for="mealsFour">
+                        <span class="choice-icon"><i class="fa-solid fa-apple-whole" aria-hidden="true"></i></span>
+                        <span class="choice-copy">
+                          <strong>4+ meals</strong>
+                          <span>Smaller meals or snacks included.</span>
+                        </span>
+                        <span class="choice-check"><i class="fa-solid fa-check" aria-hidden="true"></i></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <p class="inline-error" id="mealFrequencyError" aria-live="polite" style="margin-top:10px">
+                    <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                    <span>Select your usual meal frequency.</span>
+                  </p>
+                </div>
+
+                <div class="info-banner">
+                  <i class="fa-solid fa-heart" aria-hidden="true"></i>
+                  <div>
+                    <strong>Keep it sustainable</strong>
+                    Your preferences help describe your routine. For allergies, medical nutrition needs, or therapeutic diets, consult a qualified healthcare professional.
+                  </div>
+                </div>
+              </section>
+
+              <!-- STEP 6 -->
+              <section class="step-panel" data-panel="5" aria-labelledby="reviewHeading" hidden>
+                <div class="review-intro">
+                  <span class="review-intro-icon">
+                    <i class="fa-solid fa-check-double" aria-hidden="true"></i>
+                  </span>
+                  <div>
+                    <strong>You're almost ready to go!</strong>
+                    <p>Review your answers below. You can edit any section before completing your profile.</p>
+                  </div>
+                </div>
+
+                <div class="review-grid" id="reviewGrid" aria-live="polite">
+                  <!-- Summary is generated safely from the form values. -->
+                </div>
+
+                <div class="info-banner">
+                  <i class="fa-solid fa-shield-heart" aria-hidden="true"></i>
+                  <div>
+                    <strong>A personalized starting point</strong>
+                    Your profile records your preferences and goals. It does not automatically create a medically validated training or nutrition plan.
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <div class="wizard-footer">
+              <div class="footer-left">
+                <button class="btn" id="backBtn" type="button" disabled>
+                  <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                  Back
+                </button>
+
+                <button class="btn btn-quiet" id="skipBtn" type="button">
+                  Skip for now
+                </button>
+              </div>
+
+              <div class="step-counter-mobile" id="mobileStepCounter">Step 1 of 6</div>
+
+              <div class="footer-right">
+                <button class="btn btn-quiet save-btn" id="saveBtn" type="button">
+                  <i class="fa-regular fa-floppy-disk" aria-hidden="true"></i>
+                  Save progress
+                </button>
+
+                <button class="btn btn-primary" id="nextBtn" type="button">
+                  Continue
+                  <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                </button>
+
+                <button class="btn btn-primary" id="completeBtn" type="button" hidden>
+                  <i class="fa-solid fa-check" aria-hidden="true"></i>
+                  Complete Profile
+                </button>
+              </div>
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <p class="medical-disclaimer">
+        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+        <span>
+          <strong>Health disclaimer:</strong> Smart Gym Coach provides general fitness guidance for informational purposes only. It is not medical advice, diagnosis, or treatment. Consult a qualified professional before making significant exercise or dietary changes, especially if you have health concerns.
+        </span>
+      </p>
+    </main>
+
+    <footer class="page-bottom">
+      &copy; <span id="currentYear"></span> Smart Gym Coach. Every journey starts with one step.
+    </footer>
+  </div>
+
+  <section class="login-required" id="loginRequired" aria-labelledby="loginRequiredTitle">
+    <div class="empty-icon">
+      <i class="fa-solid fa-user-lock" aria-hidden="true"></i>
+    </div>
+    <h1 id="loginRequiredTitle">Let's get you signed in</h1>
+    <p>
+      You need a valid Smart Gym Coach session to save your fitness profile.
+      Log in to continue where your fitness journey begins.
+    </p>
+    <a class="btn btn-primary" href="login.html">
+      <i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i>
+      Go to login
+    </a>
+    <a class="btn" href="index.html" style="margin-left:6px">Back home</a>
+  </section>
+
+  <!-- Skip/save confirmation dialog -->
+  <div class="dialog-backdrop" id="confirmDialog" role="presentation">
+    <section
+      class="dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="dialogTitle"
+      aria-describedby="dialogMessage"
+    >
+      <div class="dialog-icon">
+        <i class="fa-solid fa-bookmark" id="dialogIcon" aria-hidden="true"></i>
+      </div>
+      <h2 id="dialogTitle">Save your progress?</h2>
+      <p id="dialogMessage">Your current answers can be saved without marking your onboarding as complete.</p>
+      <div class="dialog-actions">
+        <button class="btn" type="button" id="dialogCancelBtn">Keep editing</button>
+        <button class="btn btn-primary" type="button" id="dialogConfirmBtn">Save and continue</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="false"></div>
+
+  <script>
+    "use strict";
+
+    /*
+      Shared localStorage contract:
+      - smartGym_users: array of user records
+      - smartGym_currentUser: safe current session object
+      - smartGym_profile: either a legacy single profile object or an array
+        of profile objects, each containing userId
+      - smartGym_theme: "light" or "dark"
+
+      This wizard stores profile records in an array keyed by userId.
+      Existing profile records for other users are preserved.
+    */
+
+    const STORAGE = Object.freeze({
+      users: "smartGym_users",
+      currentUser: "smartGym_currentUser",
+      profile: "smartGym_profile",
+      theme: "smartGym_theme"
+    });
+
+    const STEP_META = [
+      {
+        title: "Personal details",
+        description: "Let's start with the basics.",
+        icon: "fa-user"
+      },
+      {
+        title: "Your fitness goal",
+        description: "Choose what matters most to you.",
+        icon: "fa-bullseye"
+      },
+      {
+        title: "Experience & activity",
+        description: "Let's find a routine that fits your life.",
+        icon: "fa-person-running"
+      },
+      {
+        title: "Training preferences",
+        description: "Make your workouts work for you.",
+        icon: "fa-dumbbell"
+      },
+      {
+        title: "Nutrition preferences",
+        description: "Share the food choices that suit you.",
+        icon: "fa-utensils"
+      },
+      {
+        title: "Review your profile",
+        description: "Check your answers before completing setup.",
+        icon: "fa-clipboard-check"
+      }
+    ];
+
+    const GOAL_LABELS = {
+      lose_weight: "Lose weight",
+      maintain_weight: "Maintain weight",
+      build_muscle: "Build muscle",
+      improve_endurance: "Improve endurance",
+      general_fitness: "General fitness"
+    };
+
+    const EXPERIENCE_LABELS = {
+      beginner: "Beginner",
+      intermediate: "Intermediate",
+      advanced: "Advanced"
+    };
+
+    const ACTIVITY_LABELS = {
+      sedentary: "Mostly sitting",
+      light: "Lightly active",
+      moderate: "Moderately active",
+      very_active: "Very active"
+    };
+
+    const EQUIPMENT_LABELS = {
+      bodyweight: "Bodyweight",
+      dumbbells: "Dumbbells",
+      resistance_bands: "Resistance bands",
+      gym_equipment: "Gym equipment"
+    };
+
+    const MUSCLE_LABELS = {
+      chest: "Chest",
+      back: "Back",
+      legs: "Legs",
+      shoulders: "Shoulders",
+      arms: "Arms",
+      core: "Core",
+      full_body: "Full body"
+    };
+
+    const DIET_LABELS = {
+      no_restrictions: "No specific restrictions",
+      vegetarian: "Vegetarian",
+      vegan: "Vegan",
+      pescatarian: "Pescatarian",
+      halal: "Halal",
+      gluten_free: "Gluten-free",
+      dairy_free: "Dairy-free",
+      other: "Other preference"
+    };
+
+    const SEX_LABELS = {
+      female: "Female",
+      male: "Male",
+      other: "Other"
+    };
+
+    const panels = [...document.querySelectorAll(".step-panel")];
+    const stepButtons = [...document.querySelectorAll(".step-item")];
+
+    const appShell = document.getElementById("appShell");
+    const wizardMain = document.getElementById("wizardMain");
+    const loginRequired = document.getElementById("loginRequired");
+
+    const stepTitle = document.getElementById("stepTitle");
+    const stepDescription = document.getElementById("stepDescription");
+    const cardStepCaption = document.getElementById("cardStepCaption");
+    const headerStepIcon = document.querySelector(".header-step-icon i");
+
+    const progressFill = document.getElementById("progressFill");
+    const sidebarProgressTrack = document.getElementById("sidebarProgressTrack");
+    const sidebarProgressText = document.getElementById("sidebarProgressText");
+    const mobileStepCounter = document.getElementById("mobileStepCounter");
+
+    const backBtn = document.getElementById("backBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const skipBtn = document.getElementById("skipBtn");
+    const completeBtn = document.getElementById("completeBtn");
+    const themeToggle = document.getElementById("themeToggle");
+    const saveStatusText = document.getElementById("saveStatusText");
+
+    const confirmDialog = document.getElementById("confirmDialog");
+    const dialogTitle = document.getElementById("dialogTitle");
+    const dialogMessage = document.getElementById("dialogMessage");
+    const dialogIcon = document.getElementById("dialogIcon");
+    const dialogCancelBtn = document.getElementById("dialogCancelBtn");
+    const dialogConfirmBtn = document.getElementById("dialogConfirmBtn");
+
+    const toastContainer = document.getElementById("toastContainer");
+
+    let currentStep = 0;
+    let currentUser = null;
+    let currentProfile = null;
+    let isBusy = false;
+    let pendingDialogAction = null;
+    let previousDialogFocus = null;
+    let toastSequence = 0;
+
+    document.getElementById("currentYear").textContent = new Date().getFullYear();
+
+    /* Safe storage helpers */
+
+    function safeGetItem(key) {
+      try {
+        return localStorage.getItem(key);
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function safeParseJSON(raw) {
+      try {
+        return { ok: true, value: JSON.parse(raw) };
+      } catch (error) {
+        return { ok: false, value: null };
+      }
+    }
+
+    function readJSON(key) {
+      let raw;
+
+      try {
+        raw = localStorage.getItem(key);
+      } catch (error) {
+        throw new Error("Browser storage is unavailable. Enable local storage and reload this page.");
+      }
+
+      if (raw === null) {
+        return { exists: false, value: null };
+      }
+
+      const parsed = safeParseJSON(raw);
+
+      if (!parsed.ok) {
+        throw new Error(`Saved ${key} data is corrupted. Please repair or clear the Smart Gym Coach demo data before continuing.`);
+      }
+
+      return { exists: true, value: parsed.value };
+    }
+
+    function writeJSON(key, value) {
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch (error) {
+        throw new Error("Could not save your changes. Browser storage may be full or unavailable.");
+      }
+    }
+
+    function isPlainObject(value) {
+      return value !== null && typeof value === "object" && !Array.isArray(value);
+    }
+
+    function normalizeEmail(email) {
+      return typeof email === "string" ? email.trim().toLowerCase() : "";
+    }
+
+    function isValidUserRecord(user) {
+      return (
+        isPlainObject(user) &&
+        typeof user.id === "string" &&
+        user.id.trim().length > 0 &&
+        typeof user.email === "string" &&
+        normalizeEmail(user.email).includes("@")
+      );
+    }
+
+    function getUsers() {
+      const result = readJSON(STORAGE.users);
+
+      if (!result.exists) return [];
+
+      if (!Array.isArray(result.value)) {
+        throw new Error("The saved user list has an invalid format. Please repair or clear the Smart Gym Coach demo data.");
+      }
+
+      if (!result.value.every(isValidUserRecord)) {
+        throw new Error("The saved user list contains invalid records. Your data was not changed.");
+      }
+
+      return result.value;
+    }
+
+    function getProfileCollection() {
+      const result = readJSON(STORAGE.profile);
+
+      if (!result.exists || result.value === null) {
+        return [];
+      }
+
+      if (Array.isArray(result.value)) {
+        const valid = result.value.every(profile =>
+          isPlainObject(profile) &&
+          typeof profile.userId === "string" &&
+          profile.userId.trim().length > 0
+        );
+
+        if (!valid) {
+          throw new Error("Saved profiles contain invalid records. Your data was not changed.");
+        }
+
+        return result.value;
+      }
+
+      /*
+        Backward compatibility: previous versions stored a single profile
+        object. Convert it in memory to the documented profile-array format.
+      */
+      if (isPlainObject(result.value) && typeof result.value.userId === "string") {
+        return [result.value];
+      }
+
+      throw new Error("The saved profile data has an invalid format. Your data was not changed.");
+    }
+
+    function getProfileForUser(profiles, userId) {
+      return profiles.find(profile => profile.userId === userId) || null;
+    }
+
+    function getCurrentSession() {
+      const result = readJSON(STORAGE.currentUser);
+
+      if (!result.exists || !isPlainObject(result.value)) {
+        return null;
+      }
+
+      const session = result.value;
+
+      if (
+        typeof session.id !== "string" ||
+        !session.id.trim() ||
+        typeof session.email !== "string" ||
+        !normalizeEmail(session.email).includes("@")
+      ) {
+        return null;
+      }
+
+      return session;
+    }
+
+    function showLoginRequired() {
+      appShell.style.display = "none";
+      loginRequired.classList.add("visible");
+    }
+
+    function loadSession() {
+      let session;
+      let users;
+      let profiles;
+
+      try {
+        session = getCurrentSession();
+
+        if (!session) {
+          showLoginRequired();
+          return false;
+        }
+
+        users = getUsers();
+        profiles = getProfileCollection();
+
+      } catch (error) {
+        showLoginRequired();
+        showToast("Unable to load profile", error.message, "error");
+        return false;
+      }
+
+      const matchingUser = users.find(user => user.id === session.id);
+
+      /*
+        Require a matching stored user. A stale session must not create or
+        overwrite a profile for an account that no longer exists.
+      */
+      if (!matchingUser) {
+        showLoginRequired();
+        showToast(
+          "Session not found",
+          "Please log in with an existing Smart Gym Coach account.",
+          "error"
+        );
+        return false;
+      }
+
+      currentUser = {
+        id: matchingUser.id,
+        name: typeof matchingUser.name === "string" ? matchingUser.name : "",
+        email: matchingUser.email,
+        role: typeof matchingUser.role === "string" ? matchingUser.role : "user",
+        onboardingCompleted: matchingUser.onboardingCompleted === true
+      };
+
+      if (currentUser.onboardingCompleted) {
+        window.location.href = "dashboard.html";
+        return false;
+      }
+
+      currentProfile = getProfileForUser(profiles, currentUser.id);
+
+      if (currentProfile) {
+        hydrateForm(currentProfile);
+      }
+
+      return true;
+    }
+
+    /* Theme */
+
+    function applyTheme(theme, persist = true) {
+      const normalized = theme === "dark" ? "dark" : "light";
+
+      document.body.classList.toggle("dark", normalized === "dark");
+
+      const icon = themeToggle.querySelector("i");
+      const next = normalized === "dark" ? "light" : "dark";
+
+      icon.className = normalized === "dark"
+        ? "fa-solid fa-sun"
+        : "fa-solid fa-moon";
+
+      themeToggle.setAttribute("aria-label", `Switch to ${next} theme`);
+      themeToggle.title = `Switch to ${next} theme`;
+
+      if (persist) {
+        try {
+          localStorage.setItem(STORAGE.theme, normalized);
+        } catch (error) {
+          showToast("Theme not saved", "Your browser may be blocking local storage.", "info");
+        }
+      }
+    }
+
+    applyTheme(safeGetItem(STORAGE.theme) || "light", false);
+
+    themeToggle.addEventListener("click", () => {
+      applyTheme(document.body.classList.contains("dark") ? "light" : "dark");
+    });
+
+    /* Toast notifications */
+
+    function showToast(title, message, type = "info") {
+      const icons = {
+        success: "fa-circle-check",
+        error: "fa-circle-exclamation",
+        info: "fa-circle-info"
+      };
+
+      const toast = document.createElement("div");
+      toast.className = `toast ${type}`;
+      toast.setAttribute("role", type === "error" ? "alert" : "status");
+
+      const iconBox = document.createElement("span");
+      iconBox.className = "toast-icon";
+
+      const icon = document.createElement("i");
+      icon.className = `fa-solid ${icons[type] || icons.info}`;
+      icon.setAttribute("aria-hidden", "true");
+      iconBox.appendChild(icon);
+
+      const copy = document.createElement("div");
+      copy.className = "toast-copy";
+
+      const heading = document.createElement("strong");
+      heading.textContent = title;
+
+      const paragraph = document.createElement("p");
+      paragraph.textContent = message;
+
+      copy.append(heading, paragraph);
+
+      const close = document.createElement("button");
+      close.type = "button";
+      close.className = "toast-close";
+      close.setAttribute("aria-label", "Dismiss notification");
+
+      const closeIcon = document.createElement("i");
+      closeIcon.className = "fa-solid fa-xmark";
+      closeIcon.setAttribute("aria-hidden", "true");
+      close.appendChild(closeIcon);
+
+      const remove = () => {
+        if (!toast.isConnected) return;
+        toast.classList.add("removing");
+        window.setTimeout(() => toast.remove(), 200);
+      };
+
+      close.addEventListener("click", remove);
+      toast.append(iconBox, copy, close);
+      toastContainer.appendChild(toast);
+
+      toast.dataset.toastId = String(++toastSequence);
+      window.setTimeout(remove, 5200);
+
+      return toast;
+    }
+
+    /* Dialogs */
+
+    function openDialog(options) {
+      previousDialogFocus = document.activeElement;
+      pendingDialogAction = options.onConfirm;
+
+      dialogTitle.textContent = options.title;
+      dialogMessage.textContent = options.message;
+      dialogConfirmBtn.textContent = options.confirmText || "Confirm";
+      dialogCancelBtn.textContent = options.cancelText || "Cancel";
+
+      dialogIcon.className = `fa-solid ${options.icon || "fa-bookmark"}`;
+
+      confirmDialog.classList.add("open");
+      dialogConfirmBtn.focus();
+    }
+
+    function closeDialog() {
+      confirmDialog.classList.remove("open");
+      pendingDialogAction = null;
+
+      if (previousDialogFocus && typeof previousDialogFocus.focus === "function") {
+        previousDialogFocus.focus();
+      }
+    }
+
+    dialogCancelBtn.addEventListener("click", closeDialog);
+
+    dialogConfirmBtn.addEventListener("click", async () => {
+      const action = pendingDialogAction;
+      closeDialog();
+
+      if (typeof action === "function") {
+        await action();
+      }
+    });
+
+    confirmDialog.addEventListener("click", event => {
+      if (event.target === confirmDialog) {
+        closeDialog();
+      }
+    });
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && confirmDialog.classList.contains("open")) {
+        closeDialog();
+      }
+    });
+
+    /* Form value helpers */
+
+    function getValue(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function getCheckedValue(name) {
+      const selected = document.querySelector(`input[name="${name}"]:checked`);
+      return selected ? selected.value : "";
+    }
+
+    function getCheckedValues(name) {
+      return [...document.querySelectorAll(`input[name="${name}"]:checked`)]
+        .map(input => input.value);
+    }
+
+    function setRadioValue(name, value) {
+      document.querySelectorAll(`input[name="${name}"]`).forEach(input => {
+        input.checked = input.value === String(value ?? "");
+      });
+    }
+
+    function setCheckboxValues(name, values) {
+      const selected = Array.isArray(values) ? values : [];
+
+      document.querySelectorAll(`input[name="${name}"]`).forEach(input => {
+        input.checked = selected.includes(input.value);
+      });
+    }
+
+    function hydrateForm(profile) {
+      const set = (id, value) => {
+        const element = document.getElementById(id);
+        if (element && value !== undefined && value !== null) {
+          element.value = String(value);
+        }
+      };
+
+      set("age", profile.age);
+      set("height", profile.height);
+      set("weight", profile.weight);
+      set("sex", profile.sex);
+      set("goalNotes", profile.goalNotes);
+      set("trainingDays", profile.trainingDays || 3);
+      set("sessionDuration", profile.sessionDuration);
+      set("excludedExercises", profile.excludedExercises);
+      set("limitations", profile.limitations);
+      set("dietaryPreference", profile.dietaryPreference);
+      set("allergies", profile.allergies);
+      set("dislikedFoods", profile.dislikedFoods);
+
+      setRadioValue("goal", profile.goal);
+      setRadioValue("experience", profile.experience);
+      setRadioValue("activityLevel", profile.activityLevel);
+      setRadioValue("mealFrequency", profile.mealFrequency);
+
+      setCheckboxValues("equipment", profile.equipment);
+      setCheckboxValues("muscleGroups", profile.muscleGroups);
+
+      updateTrainingDaysOutput();
+    }
+
+    function collectProfile(completed = false) {
+      const now = new Date().toISOString();
+
+      return {
+        userId: currentUser.id,
+        age: getValue("age") ? Number(getValue("age")) : null,
+        sex: getValue("sex") || "",
+        height: getValue("height") ? Number(getValue("height")) : null,
+        weight: getValue("weight") ? Number(getValue("weight")) : null,
+
+        goal: getCheckedValue("goal"),
+        goalNotes: getValue("goalNotes"),
+
+        experience: getCheckedValue("experience"),
+        activityLevel: getCheckedValue("activityLevel"),
+        trainingDays: Number(document.getElementById("trainingDays").value),
+        sessionDuration: getValue("sessionDuration")
+          ? Number(getValue("sessionDuration"))
+          : null,
+
+        equipment: getCheckedValues("equipment"),
+        muscleGroups: getCheckedValues("muscleGroups"),
+        excludedExercises: getValue("excludedExercises"),
+        limitations: getValue("limitations"),
+
+        dietaryPreference: getValue("dietaryPreference"),
+        allergies: getValue("allergies"),
+        dislikedFoods: getValue("dislikedFoods"),
+        mealFrequency: getCheckedValue("mealFrequency"),
+
+        onboardingCompleted: completed,
+        updatedAt: now,
+        createdAt: currentProfile && currentProfile.createdAt
+          ? currentProfile.createdAt
+          : now
+      };
+    }
+
+    /*
+      Persist a profile array without replacing any other user's profile.
+      A legacy single-profile object is migrated to an array before writing.
+    */
+    function saveProfile(completed = false) {
+      if (!currentUser || !currentUser.id) {
+        throw new Error("Your session has expired. Please log in again.");
+      }
+
+      const users = getUsers();
+      const userIndex = users.findIndex(user => user.id === currentUser.id);
+
+      if (userIndex < 0) {
+        throw new Error("Your account could not be found. Please log in again.");
+      }
+
+      const profiles = getProfileCollection();
+      const profile = collectProfile(completed);
+      const existingIndex = profiles.findIndex(item => item.userId === currentUser.id);
+
+      if (existingIndex >= 0) {
+        profiles[existingIndex] = {
+          ...profiles[existingIndex],
+          ...profile
+        };
+      } else {
+        profiles.push(profile);
+      }
+
+      const previousUsersRaw = safeGetItem(STORAGE.users);
+      const previousSessionRaw = safeGetItem(STORAGE.currentUser);
+      const previousProfileRaw = safeGetItem(STORAGE.profile);
+
+      const updatedUsers = users.map(user => {
+        if (user.id !== currentUser.id) return user;
+
+        return {
+          ...user,
+          onboardingCompleted: completed,
+          updatedAt: new Date().toISOString()
+        };
+      });
+
+      const updatedSession = {
+        ...currentUser,
+        onboardingCompleted: completed
+      };
+
+      try {
+        /*
+          Save the matching user list, all users' profiles, and current session.
+          No password field is written to the current session.
+        */
+        writeJSON(STORAGE.users, updatedUsers);
+        writeJSON(STORAGE.profile, profiles);
+        writeJSON(STORAGE.currentUser, updatedSession);
+
+        // Verify each write before treating the save as successful.
+        const verifyUsers = readJSON(STORAGE.users);
+        const verifyProfiles = readJSON(STORAGE.profile);
+        const verifySession = readJSON(STORAGE.currentUser);
+
+        if (
+          !verifyUsers.exists ||
+          !Array.isArray(verifyUsers.value) ||
+          !verifyProfiles.exists ||
+          !Array.isArray(verifyProfiles.value) ||
+          !verifySession.exists ||
+          !isPlainObject(verifySession.value) ||
+          verifySession.value.id !== currentUser.id
+        ) {
+          throw new Error("The saved profile could not be verified.");
+        }
+
+        currentProfile = profile;
+        currentUser = updatedSession;
+
+        return profile;
+
+      } catch (error) {
+        /*
+          Best-effort rollback of all affected keys if any write or verification
+          fails. Existing profile records are otherwise left untouched.
+        */
+        const restore = (key, raw) => {
+          try {
+            if (raw === null) {
+              localStorage.removeItem(key);
+            } else {
+              localStorage.setItem(key, raw);
+            }
+          } catch (restoreError) {
+            // Storage may remain unavailable; do not hide the original error.
+          }
+        };
+
+        restore(STORAGE.users, previousUsersRaw);
+        restore(STORAGE.profile, previousProfileRaw);
+        restore(STORAGE.currentUser, previousSessionRaw);
+
+        throw error;
+      }
+    }
+
+    /* Validation */
+
+    function clearError(errorId, control = null) {
+      const error = document.getElementById(errorId);
+      if (error) error.classList.remove("visible");
+      if (control) control.removeAttribute("aria-invalid");
+    }
+
+    function setError(errorId, message, control = null) {
+      const error = document.getElementById(errorId);
+
+      if (error) {
+        const span = error.querySelector("span");
+        if (span) span.textContent = message;
+        error.classList.add("visible");
+      }
+
+      if (control) {
+        control.setAttribute("aria-invalid", "true");
+      }
+    }
+
+    function clearStepErrors(step) {
+      const panel = panels[step];
+
+      panel.querySelectorAll(".inline-error").forEach(error => {
+        error.classList.remove("visible");
+      });
+
+      panel.querySelectorAll('[aria-invalid="true"]').forEach(control => {
+        control.removeAttribute("aria-invalid");
+      });
+    }
+
+    function focusFirstError(step) {
+      const panel = panels[step];
+      const firstError = panel.querySelector(".inline-error.visible");
+
+      if (!firstError) return;
+
+      const describedControlId = firstError.id.replace(/Error$/, "");
+      const directControl = describedControlId
+        ? document.getElementById(describedControlId)
+        : null;
+
+      if (directControl && typeof directControl.focus === "function") {
+        directControl.focus();
+        return;
+      }
+
+      const labelledBy = firstError.previousElementSibling;
+
+      if (labelledBy && labelledBy.matches("input, select, textarea, button")) {
+        labelledBy.focus();
+        return;
+      }
+
+      const group = firstError.parentElement;
+      const firstInput = group.querySelector("input, select, textarea, button");
+
+      if (firstInput) {
+        firstInput.focus();
+      }
+    }
+
+    function validateStep(step) {
+      clearStepErrors(step);
+      let valid = true;
+
+      if (step === 0) {
+        const age = getValue("age");
+        const height = getValue("height");
+        const weight = getValue("weight");
+
+        const ageInput = document.getElementById("age");
+        const heightInput = document.getElementById("height");
+        const weightInput = document.getElementById("weight");
+
+        if (!age || !Number.isFinite(Number(age)) || Number(age) < 18 || Number(age) > 100) {
+          setError("ageError", "Enter an age between 18 and 100.", ageInput);
+          valid = false;
+        }
+
+        if (!height || !Number.isFinite(Number(height)) || Number(height) < 100 || Number(height) > 250) {
+          setError("heightError", "Enter a height between 100 and 250 cm.", heightInput);
+          valid = false;
+        }
+
+        if (!weight || !Number.isFinite(Number(weight)) || Number(weight) < 25 || Number(weight) > 350) {
+          setError("weightError", "Enter a weight between 25 and 350 kg.", weightInput);
+          valid = false;
+        }
+      }
+
+      if (step === 1) {
+        if (!getCheckedValue("goal")) {
+          setError("goalError", "Select a fitness goal to continue.");
+          valid = false;
+        }
+      }
+
+      if (step === 2) {
+        if (!getCheckedValue("experience")) {
+          setError("experienceError", "Select your experience level.");
+          valid = false;
+        }
+
+        if (!getCheckedValue("activityLevel")) {
+          setError("activityError", "Select your everyday activity level.");
+          valid = false;
+        }
+
+        const duration = document.getElementById("sessionDuration");
+        if (!duration.value) {
+          setError("sessionDurationError", "Choose a preferred session duration.", duration);
+          valid = false;
+        }
+      }
+
+      if (step === 3) {
+        if (getCheckedValues("equipment").length === 0) {
+          setError("equipmentError", "Select at least one available equipment option.");
+          valid = false;
+        }
+      }
+
+      if (step === 4) {
+        const diet = document.getElementById("dietaryPreference");
+
+        if (!diet.value) {
+          setError(
+            "dietaryPreferenceError",
+            "Select a dietary preference or choose no specific restrictions.",
+            diet
+          );
+          valid = false;
+        }
+
+        if (!getCheckedValue("mealFrequency")) {
+          setError("mealFrequencyError", "Select your usual meal frequency.");
+          valid = false;
+        }
+      }
+
+      if (!valid) {
+        focusFirstError(step);
+        showToast(
+          "A little more information",
+          "Please review the highlighted fields before continuing.",
+          "error"
+        );
+      }
+
+      return valid;
+    }
+
+    /* Wizard navigation */
+
+    function updateTrainingDaysOutput() {
+      const days = Number(document.getElementById("trainingDays").value);
+      document.getElementById("trainingDaysOutput").innerHTML =
+        `${days} <span>${days === 1 ? "day" : "days"}</span>`;
+    }
+
+    document.getElementById("trainingDays").addEventListener("input", updateTrainingDaysOutput);
+
+    function renderStep() {
+      panels.forEach((panel, index) => {
+        const active = index === currentStep;
+
+        panel.classList.toggle("active", active);
+        panel.hidden = !active;
+      });
+
+      stepButtons.forEach((button, index) => {
+        const active = index === currentStep;
+        const completed = index < currentStep;
+
+        button.classList.toggle("current", active);
+        button.classList.toggle("completed", completed);
+
+        if (active) {
+          button.setAttribute("aria-current", "step");
+        } else {
+          button.removeAttribute("aria-current");
+        }
+
+        const number = button.querySelector(".step-number");
+        number.innerHTML = completed
+          ? '<i class="fa-solid fa-check" aria-hidden="true"></i>'
+          : String(index + 1);
+
+        button.disabled = index > currentStep;
+      });
+
+      const meta = STEP_META[currentStep];
+
+      stepTitle.textContent = meta.title;
+      stepDescription.textContent = meta.description;
+      cardStepCaption.textContent = `Step ${String(currentStep + 1).padStart(2, "0")} / 06`;
+      headerStepIcon.className = `fa-solid ${meta.icon}`;
+
+      const progress = Math.round(((currentStep + 1) / panels.length) * 100);
+
+      progressFill.style.width = `${progress}%`;
+      sidebarProgressTrack.setAttribute("aria-valuenow", String(progress));
+      sidebarProgressText.textContent = `Step ${currentStep + 1} of 6 · ${progress}% complete`;
+      mobileStepCounter.textContent = `Step ${currentStep + 1} of 6`;
+
+      backBtn.disabled = currentStep === 0 || isBusy;
+      nextBtn.hidden = currentStep === panels.length - 1;
+      completeBtn.hidden = currentStep !== panels.length - 1;
+      skipBtn.disabled = isBusy;
+      saveBtn.disabled = isBusy;
+      nextBtn.disabled = isBusy;
+      completeBtn.disabled = isBusy;
+
+      if (currentStep === panels.length - 1) {
+        renderReview();
+      }
+    }
+
+    function goToStep(step, options = {}) {
+      if (step < 0 || step >= panels.length) return;
+
+      if (step > currentStep && options.validateCurrent !== false) {
+        if (!validateStep(currentStep)) return;
+      }
+
+      currentStep = step;
+      renderStep();
+
+      if (options.scroll !== false) {
+        document.querySelector(".wizard-card").scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+            ? "auto"
+            : "smooth",
+          block: "start"
+        });
+      }
+
+      const heading = document.getElementById("stepTitle");
+      heading.setAttribute("tabindex", "-1");
+      heading.focus({ preventScroll: true });
+    }
+
+    nextBtn.addEventListener("click", () => {
+      if (isBusy) return;
+      if (!validateStep(currentStep)) return;
+
+      if (currentStep < panels.length - 1) {
+        goToStep(currentStep + 1, { validateCurrent: false });
+      }
+    });
+
+    backBtn.addEventListener("click", () => {
+      if (isBusy || currentStep === 0) return;
+      goToStep(currentStep - 1, { validateCurrent: false });
+    });
+
+    stepButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        const target = Number(button.dataset.step);
+
+        if (target < currentStep) {
+          goToStep(target, { validateCurrent: false });
+        }
+      });
+    });
+
+    /* Review summary */
+
+    function readable(value, dictionary, emptyLabel = "Not specified") {
+      if (value === null || value === undefined || value === "") return emptyLabel;
+      return dictionary[value] || String(value);
+    }
+
+    function listReadable(values, dictionary, emptyLabel = "None selected") {
+      if (!Array.isArray(values) || values.length === 0) return emptyLabel;
+      return values.map(value => dictionary[value] || value).join(", ");
+    }
+
+    function createReviewCard(title, icon, rows, stepIndex, full = false) {
+      const card = document.createElement("section");
+      card.className = `review-card${full ? " full" : ""}`;
+
+      const header = document.createElement("div");
+      header.className = "review-card-header";
+
+      const cardTitle = document.createElement("div");
+      cardTitle.className = "review-card-title";
+
+      const titleIcon = document.createElement("i");
+      titleIcon.className = `fa-solid ${icon}`;
+      titleIcon.setAttribute("aria-hidden", "true");
+
+      const titleText = document.createElement("span");
+      titleText.textContent = title;
+
+      cardTitle.append(titleIcon, titleText);
+
+      const edit = document.createElement("button");
+      edit.type = "button";
+      edit.className = "edit-link";
+      edit.textContent = "Edit";
+      edit.setAttribute("aria-label", `Edit ${title}`);
+      edit.addEventListener("click", () => {
+        goToStep(stepIndex, { validateCurrent: false });
+      });
+
+      header.append(cardTitle, edit);
+
+      const values = document.createElement("div");
+      values.className = "review-values";
+
+      rows.forEach(([label, value]) => {
+        const row = document.createElement("div");
+        row.className = "review-row";
+
+        const name = document.createElement("span");
+        name.textContent = label;
+
+        const result = document.createElement("strong");
+        result.textContent = value || "Not specified";
+
+        row.append(name, result);
+        values.appendChild(row);
+      });
+
+      card.append(header, values);
+      return card;
+    }
+
+    function renderReview() {
+      const grid = document.getElementById("reviewGrid");
+      grid.replaceChildren();
+
+      const profile = collectProfile(false);
+
+      grid.append(
+        createReviewCard(
+          "Personal details",
+          "fa-user",
+          [
+            ["Age", profile.age ? `${profile.age} years` : "Not specified"],
+            ["Height", profile.height ? `${profile.height} cm` : "Not specified"],
+            ["Current weight", profile.weight ? `${profile.weight} kg` : "Not specified"],
+            ["Sex", readable(profile.sex, SEX_LABELS, "Prefer not to say")]
+          ],
+          0
+        ),
+
+        createReviewCard(
+          "Fitness goal",
+          "fa-bullseye",
+          [
+            ["Main goal", readable(profile.goal, GOAL_LABELS)],
+            ["Additional goals", profile.goalNotes || "None added"]
+          ],
+          1
+        ),
+
+        createReviewCard(
+          "Experience & activity",
+          "fa-person-running",
+          [
+            ["Experience", readable(profile.experience, EXPERIENCE_LABELS)],
+            ["Activity level", readable(profile.activityLevel, ACTIVITY_LABELS)],
+            ["Training days", `${profile.trainingDays} ${profile.trainingDays === 1 ? "day" : "days"} per week`],
+            ["Session duration", profile.sessionDuration ? `${profile.sessionDuration} minutes` : "Not specified"]
+          ],
+          2
+        ),
+
+        createReviewCard(
+          "Training preferences",
+          "fa-dumbbell",
+          [
+            ["Equipment", listReadable(profile.equipment, EQUIPMENT_LABELS)],
+            ["Muscle groups", listReadable(profile.muscleGroups, MUSCLE_LABELS)],
+            ["Excluded exercises", profile.excludedExercises || "None specified"],
+            ["Limitations / considerations", profile.limitations || "None specified"]
+          ],
+          3,
+          true
+        ),
+
+        createReviewCard(
+          "Nutrition preferences",
+          "fa-utensils",
+          [
+            ["Dietary preference", readable(profile.dietaryPreference, DIET_LABELS)],
+            ["Food allergies", profile.allergies || "None specified"],
+            ["Disliked foods", profile.dislikedFoods || "None specified"],
+            ["Meals per day", profile.mealFrequency
+              ? (profile.mealFrequency === "4" ? "4 or more meals" : `${profile.mealFrequency} meals`)
+              : "Not specified"]
+          ],
+          4,
+          true
+        )
+      );
+    }
+
+    /* Save progress */
+
+    async function runBusyAction(action, button, loadingLabel) {
+      if (isBusy) return;
+
+      isBusy = true;
+      const originalHTML = button.innerHTML;
+      button.disabled = true;
+      button.setAttribute("aria-busy", "true");
+      button.textContent = loadingLabel;
+
+      backBtn.disabled = true;
+      nextBtn.disabled = true;
+      saveBtn.disabled = true;
+      skipBtn.disabled = true;
+      completeBtn.disabled = true;
+
+      try {
+        await action();
+      } finally {
+        isBusy = false;
+        button.innerHTML = originalHTML;
+        button.removeAttribute("aria-busy");
+        renderStep();
+      }
+    }
+
+    saveBtn.addEventListener("click", async () => {
+      if (isBusy) return;
+
+      await runBusyAction(async () => {
+        saveProfile(false);
+        saveStatusText.textContent = "Progress saved";
+        showToast(
+          "Progress saved",
+          "Your current answers have been saved. Your profile remains incomplete until you finish onboarding.",
+          "success"
+        );
+      }, saveBtn, "Saving...");
+    });
+
+    /* Skip and incomplete save */
+
+    skipBtn.addEventListener("click", () => {
+      if (isBusy) return;
+
+      openDialog({
+        title: "Skip onboarding for now?",
+        message: "We'll save the answers you've entered so far as an incomplete profile. You can finish setup later. Your profile will not be marked as completed.",
+        confirmText: "Save and skip",
+        cancelText: "Keep editing",
+        icon: "fa-bookmark",
+        onConfirm: async () => {
+          await runBusyAction(async () => {
+            saveProfile(false);
+            saveStatusText.textContent = "Progress saved";
+
+            showToast(
+              "Progress saved",
+              "Your profile is saved as incomplete. Taking you to your dashboard.",
+              "success"
+            );
+
+            window.setTimeout(() => {
+              window.location.href = "dashboard.html";
+            }, 650);
+          }, skipBtn, "Saving...");
+        }
+      });
+    });
+
+    /* Complete onboarding */
+
+    completeBtn.addEventListener("click", async () => {
+      if (isBusy) return;
+
+      /*
+        Validate all required steps on completion, not just the review panel.
+        If a required value is missing, take the user directly to that step.
+      */
+      for (let step = 0; step < panels.length - 1; step++) {
+        if (!validateStep(step)) {
+          goToStep(step, { validateCurrent: false });
+          return;
+        }
+      }
+
+      await runBusyAction(async () => {
+        saveProfile(true);
+        saveStatusText.textContent = "Profile completed";
+
+        showToast(
+          "Profile completed!",
+          "Your fitness preferences have been saved. Welcome to Smart Gym Coach!",
+          "success"
+        );
+
+        window.setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 700);
+      }, completeBtn, "Completing...");
+    });
+
+    /* Warn before leaving with unsaved edits */
+
+    let hasUnsavedChanges = false;
+
+    document.getElementById("onboardingForm").addEventListener("input", () => {
+      hasUnsavedChanges = true;
+      saveStatusText.textContent = "Unsaved changes";
+    });
+
+    document.getElementById("onboardingForm").addEventListener("change", () => {
+      hasUnsavedChanges = true;
+      saveStatusText.textContent = "Unsaved changes";
+    });
+
+    /*
+      A page-level browser warning protects against accidental refresh or
+      navigation. The wizard's Skip button offers a more helpful confirmation.
+    */
+    window.addEventListener("beforeunload", event => {
+      if (hasUnsavedChanges && !isBusy) {
+        event.preventDefault();
+        event.returnValue = "";
+      }
+    });
+
+    /*
+      Successful saves clear the unsaved flag. Wrap saveProfile so every
+      successful save has the same behavior.
+    */
+    const originalSaveProfile = saveProfile;
+
+    saveProfile = function(completed = false) {
+      const result = originalSaveProfile(completed);
+      hasUnsavedChanges = false;
+      return result;
+    };
+
+    /* Initial load */
+
+    updateTrainingDaysOutput();
+
+    if (loadSession()) {
+      renderStep();
+      saveStatusText.textContent = currentProfile
+        ? "Existing progress loaded"
+        : "Ready to personalize";
+    }
+
+  </script>
+</body>
+</html>

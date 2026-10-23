@@ -1,0 +1,1365 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#7C3AED">
+  <title>Nutrition Management | Smart Gym Coach</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <style>
+    :root {
+      --primary: #7C3AED;
+      --primary-dark: #5B21B6;
+      --primary-soft: #F3E8FF;
+      --green: #22C55E;
+      --green-soft: #DCFCE7;
+      --navy: #0B1220;
+      --sidebar: #111827;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --text: #1E293B;
+      --muted: #64748B;
+      --border: #E2E8F0;
+      --danger: #DC2626;
+      --danger-soft: #FEE2E2;
+      --warning: #D97706;
+      --warning-soft: #FEF3C7;
+      --shadow: 0 8px 28px rgba(15, 23, 42, .06);
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    body.dark {
+      --bg: #0B1220;
+      --surface: #111827;
+      --text: #E5E7EB;
+      --muted: #9CA3AF;
+      --border: #263244;
+      --primary-soft: #30204B;
+      --green-soft: #153823;
+      --danger-soft: #431B22;
+      --warning-soft: #3D2C14;
+      --shadow: 0 8px 28px rgba(0, 0, 0, .18);
+    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, a:focus-visible, input:focus-visible,
+    select:focus-visible, textarea:focus-visible {
+      outline: 3px solid rgba(124, 58, 237, .38);
+      outline-offset: 2px;
+    }
+    a { color: inherit; text-decoration: none; }
+    .app { min-height: 100vh; }
+    .sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 30;
+      width: 252px;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 15px 18px;
+      color: #CBD5E1;
+      background: var(--sidebar);
+      transition: transform .25s;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 0 10px 28px;
+      color: #fff;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -.5px;
+    }
+    .brand-icon {
+      width: 39px;
+      height: 39px;
+      display: grid;
+      place-items: center;
+      color: white;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+      font-size: 19px;
+    }
+    .brand small { display: block; color: #94A3B8; font-size: 10px; font-weight: 500; letter-spacing: .7px; }
+    .nav-label {
+      padding: 9px 11px;
+      color: #64748B;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 43px;
+      margin: 2px 0;
+      padding: 0 12px;
+      border-radius: 9px;
+      color: #9CA3AF;
+      font-size: 12px;
+      font-weight: 600;
+      transition: background .2s, color .2s;
+    }
+    .nav-link i { width: 18px; text-align: center; font-size: 15px; }
+    .nav-link:hover { color: white; background: #1F2937; }
+    .nav-link.active { color: white; background: var(--primary); }
+    .sidebar-bottom { margin-top: auto; }
+    .security-note {
+      padding: 13px;
+      margin: 10px 3px 14px;
+      border: 1px solid #263244;
+      border-radius: 11px;
+      color: #9CA3AF;
+      font-size: 10px;
+      line-height: 1.7;
+    }
+    .security-note i { color: #A78BFA; margin-right: 5px; }
+    .admin-mini {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 7px 0;
+      border-top: 1px solid #263244;
+    }
+    .avatar {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      color: #fff;
+      background: linear-gradient(135deg, #A78BFA, #6D28D9);
+      font-weight: 800;
+    }
+    .admin-mini strong { display: block; color: #F8FAFC; font-size: 11px; overflow-wrap: anywhere; }
+    .admin-mini small { color: #9CA3AF; font-size: 10px; }
+    .main { margin-left: 252px; min-width: 0; }
+    .topbar {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 0 32px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-left, .topbar-actions { display: flex; align-items: center; gap: 14px; }
+    .breadcrumb { color: var(--muted); font-size: 12px; }
+    .breadcrumb strong { color: var(--text); }
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      display: inline-grid;
+      place-items: center;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--muted);
+      background: var(--surface);
+    }
+    .icon-btn:hover { color: var(--primary); border-color: var(--primary); }
+    .mobile-menu { display: none; }
+    .content { max-width: 1600px; padding: 30px 32px 50px; margin: auto; }
+    .page-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+    .eyebrow {
+      color: var(--primary);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    h1 { margin: 5px 0 7px; font-size: clamp(23px, 3vw, 30px); letter-spacing: -1.1px; }
+    h2 { margin: 0; font-size: 15px; letter-spacing: -.3px; }
+    p { margin: 0; }
+    .muted { color: var(--muted); }
+    .subheading { color: var(--muted); font-size: 12px; line-height: 1.8; }
+    .btn {
+      min-height: 39px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 14px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      background: var(--surface);
+      font-size: 11px;
+      font-weight: 700;
+      transition: .18s;
+      white-space: nowrap;
+    }
+    .btn:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-primary { color: white; background: var(--primary); border-color: var(--primary); }
+    .btn-primary:hover { color: white; background: var(--primary-dark); border-color: var(--primary-dark); }
+    .btn-danger { color: var(--danger); }
+    .btn-sm { min-height: 32px; padding: 0 10px; font-size: 10px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 19px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+    .stat-label { color: var(--muted); font-size: 11px; font-weight: 600; }
+    .stat-number { display: block; margin-top: 8px; font-size: 28px; line-height: 1.1; font-weight: 800; letter-spacing: -1px; }
+    .stat-caption { display: block; margin-top: 8px; color: var(--muted); font-size: 10px; }
+    .stat-icon { width: 43px; height: 43px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 12px; background: var(--primary-soft); color: var(--primary); font-size: 17px; }
+    .stat-icon.green { background: var(--green-soft); color: #16A34A; }
+    .stat-icon.orange { background: var(--warning-soft); color: var(--warning); }
+    .stat-icon.blue { background: #DBEAFE; color: #2563EB; }
+    .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .tabs { display: flex; align-items: center; gap: 24px; padding: 0 22px; border-bottom: 1px solid var(--border); }
+    .tab {
+      position: relative;
+      min-height: 57px;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      border: 0;
+      border-bottom: 2px solid transparent;
+      color: var(--muted);
+      background: transparent;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .tab-count { padding: 2px 7px; border-radius: 6px; background: var(--bg); font-size: 10px; }
+    .toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding: 18px 20px; }
+    .toolbar-left, .toolbar-right { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; }
+    .search-box { position: relative; width: min(290px, 100%); }
+    .search-box i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 12px; }
+    .search-box input { width: 100%; padding-left: 34px; }
+    .field, .select-field, .textarea-field {
+      width: 100%;
+      min-height: 39px;
+      padding: 9px 11px;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      outline: none;
+      font-size: 11px;
+    }
+    .field:focus, .select-field:focus, .textarea-field:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(124,58,237,.08); }
+    .select-field { min-width: 135px; }
+    .table-wrap { width: 100%; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; text-align: left; white-space: nowrap; }
+    th {
+      padding: 12px 18px;
+      color: var(--muted);
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .65px;
+      text-transform: uppercase;
+    }
+    th button { border: 0; padding: 0; color: inherit; background: transparent; font-size: inherit; font-weight: inherit; text-transform: inherit; letter-spacing: inherit; }
+    td { padding: 14px 18px; border-bottom: 1px solid var(--border); font-size: 11px; vertical-align: middle; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: color-mix(in srgb, var(--primary) 3%, var(--surface)); }
+    .record-title { display: flex; align-items: center; gap: 11px; min-width: 175px; }
+    .food-avatar { width: 38px; height: 38px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 10px; background: var(--primary-soft); color: var(--primary); font-size: 16px; }
+    .record-title strong { display: block; max-width: 220px; overflow: hidden; text-overflow: ellipsis; font-size: 11px; }
+    .record-title small { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; }
+    .macro { font-weight: 700; font-variant-numeric: tabular-nums; }
+    .status { display: inline-flex; align-items: center; gap: 6px; padding: 5px 8px; border-radius: 6px; font-size: 9px; font-weight: 700; }
+    .status::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+    .status.published { color: #15803D; background: var(--green-soft); }
+    .status.draft { color: var(--warning); background: var(--warning-soft); }
+    .status.archived { color: var(--muted); background: var(--bg); }
+    .actions { display: flex; align-items: center; gap: 5px; }
+    .action-btn { width: 30px; height: 30px; display: inline-grid; place-items: center; color: var(--muted); background: transparent; border: 1px solid transparent; border-radius: 7px; }
+    .action-btn:hover { color: var(--primary); border-color: var(--border); background: var(--surface); }
+    .action-btn.delete:hover { color: var(--danger); }
+    .table-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 15px 20px; border-top: 1px solid var(--border); }
+    .table-info { color: var(--muted); font-size: 10px; }
+    .pagination { display: flex; align-items: center; gap: 5px; }
+    .page-btn { width: 31px; height: 31px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 7px; background: var(--surface); color: var(--muted); font-size: 10px; }
+    .page-btn.active { color: #fff; border-color: var(--primary); background: var(--primary); }
+    .page-btn:disabled { opacity: .35; cursor: not-allowed; }
+    .empty-state { padding: 55px 20px; text-align: center; }
+    .empty-icon { width: 58px; height: 58px; display: grid; place-items: center; margin: 0 auto 16px; border-radius: 18px; background: var(--primary-soft); color: var(--primary); font-size: 23px; }
+    .empty-state h3 { margin: 0 0 8px; font-size: 15px; }
+    .empty-state p { margin-bottom: 17px; color: var(--muted); font-size: 11px; }
+    .notice {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      margin-top: 20px;
+      padding: 14px 16px;
+      border: 1px solid #DDD6FE;
+      border-radius: 11px;
+      color: var(--muted);
+      background: var(--primary-soft);
+      font-size: 10px;
+      line-height: 1.8;
+    }
+    .notice i { margin-top: 3px; color: var(--primary); }
+    .notice strong { color: var(--text); }
+    .notice.warning-notice { border-color: var(--border); background: var(--surface); }
+    .toast-region { position: fixed; right: 22px; bottom: 22px; z-index: 100; display: grid; gap: 10px; width: min(360px, calc(100vw - 32px)); pointer-events: none; }
+    .toast { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 11px; color: white; background: #166534; box-shadow: 0 12px 30px #0002; font-size: 11px; animation: slideIn .2s ease; }
+    .toast.error { background: #991B1B; }
+    .toast.info { background: #3730A3; }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .modal-backdrop { position: fixed; inset: 0; z-index: 70; display: none; align-items: center; justify-content: center; padding: 18px; background: rgba(2, 6, 23, .62); backdrop-filter: blur(4px); }
+    .modal-backdrop.open { display: flex; }
+    .modal { width: min(680px, 100%); max-height: min(90vh, 850px); display: flex; flex-direction: column; overflow: hidden; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 25px 70px #0003; animation: modalIn .18s ease; }
+    .modal.small { width: min(420px, 100%); }
+    @keyframes modalIn { from { opacity: 0; transform: translateY(8px) scale(.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 15px; padding: 21px 23px; border-bottom: 1px solid var(--border); }
+    .modal-header h2 { font-size: 16px; }
+    .modal-header p { margin-top: 5px; color: var(--muted); font-size: 10px; line-height: 1.7; }
+    .modal-body { padding: 22px 23px; overflow-y: auto; }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 9px; padding: 15px 23px; border-top: 1px solid var(--border); }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .form-group { min-width: 0; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label { display: block; margin-bottom: 7px; font-size: 10px; font-weight: 700; }
+    .required { color: var(--danger); }
+    .form-hint { display: block; margin-top: 5px; color: var(--muted); font-size: 9px; line-height: 1.6; }
+    .textarea-field { min-height: 78px; resize: vertical; line-height: 1.6; }
+    .check-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+    .check-option { display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; color: var(--muted); font-size: 10px; cursor: pointer; }
+    .check-option:has(input:checked) { border-color: var(--primary); color: var(--primary); background: var(--primary-soft); }
+    .check-option input { accent-color: var(--primary); }
+    .form-section-title { grid-column: 1/-1; margin: 5px 0 -5px; padding-bottom: 9px; border-bottom: 1px solid var(--border); color: var(--primary); font-size: 10px; font-weight: 800; letter-spacing: .6px; text-transform: uppercase; }
+    .detail-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 20px; }
+    .detail-stat { padding: 13px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); }
+    .detail-stat span { display: block; color: var(--muted); font-size: 9px; }
+    .detail-stat strong { display: block; margin-top: 6px; font-size: 19px; }
+    .detail-section { margin-top: 18px; }
+    .detail-section h3 { margin: 0 0 8px; font-size: 11px; }
+    .detail-section p { color: var(--muted); font-size: 11px; line-height: 1.9; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .detail-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag { display: inline-block; padding: 5px 8px; border-radius: 6px; color: var(--primary); background: var(--primary-soft); font-size: 9px; }
+    .confirm-icon { width: 46px; height: 46px; display: grid; place-items: center; margin-bottom: 14px; border-radius: 13px; color: var(--danger); background: var(--danger-soft); font-size: 18px; }
+    .confirm-copy { color: var(--muted); font-size: 11px; line-height: 1.8; }
+    .confirm-copy strong { color: var(--text); overflow-wrap: anywhere; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    @media (max-width: 1200px) {
+      .sidebar { width: 225px; }
+      .main { margin-left: 225px; }
+      .content { padding: 25px 22px 40px; }
+      .topbar { padding: 0 22px; }
+      .stats-grid { gap: 11px; }
+      .stat-card { padding: 15px; }
+      .stat-icon { width: 36px; height: 36px; }
+    }
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); box-shadow: 10px 0 40px #0003; }
+      .main { margin-left: 0; }
+      .mobile-menu { display: inline-grid; }
+      .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .content { padding: 23px 18px 35px; }
+    }
+    @media (max-width: 560px) {
+      .topbar { height: 62px; padding: 0 13px; }
+      .topbar-actions { gap: 7px; }
+      .topbar-actions .icon-btn { width: 34px; height: 34px; }
+      .breadcrumb { font-size: 10px; }
+      .content { padding: 20px 12px 30px; }
+      .page-heading { flex-direction: column; }
+      .page-heading > .btn { width: 100%; }
+      .stat-card { padding: 13px; }
+      .stat-number { font-size: 24px; }
+      .stat-icon { width: 32px; height: 32px; font-size: 13px; }
+      .stat-caption { line-height: 1.5; }
+      .tabs { gap: 17px; padding: 0 14px; }
+      .tab { min-height: 51px; font-size: 10px; gap: 6px; }
+      .toolbar { padding: 14px; }
+      .toolbar-left, .toolbar-right { width: 100%; }
+      .search-box { width: 100%; }
+      .toolbar-right > * { flex: 1; min-width: 0; }
+      .toolbar-right .btn { padding: 0 8px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-group.full, .form-section-title { grid-column: auto; }
+      .modal-backdrop { padding: 9px; }
+      .modal-header, .modal-body { padding: 17px; }
+      .modal-footer { padding: 13px 17px; }
+      .detail-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .table-footer { padding: 13px; }
+      .table-info { max-width: 100%; }
+      .notice { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar" aria-label="Admin navigation">
+    <a class="brand" href="admin.html">
+      <span class="brand-icon"><i class="fa-solid fa-dumbbell" aria-hidden="true"></i></span>
+      <span>Smart Gym <small>COACH ADMIN</small></span>
+    </a>
+    <div class="nav-label">Workspace</div>
+    <a class="nav-link" href="admin.html"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+    <a class="nav-link" href="admin-users.html"><i class="fa-solid fa-users"></i> User Management</a>
+    <a class="nav-link" href="admin-workouts.html"><i class="fa-solid fa-dumbbell"></i> Workout Library</a>
+    <a class="nav-link active" href="admin-nutrition.html" aria-current="page"><i class="fa-solid fa-utensils"></i> Nutrition Library</a>
+    <a class="nav-link" href="admin-settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+    <div class="sidebar-bottom">
+      <div class="security-note"><i class="fa-solid fa-shield-halved"></i><strong>Local demo mode</strong><br>Role checks in this browser are not a security boundary. Production access requires server-side authentication and authorization.</div>
+      <div class="admin-mini">
+        <div class="avatar" id="sidebarAvatar">A</div>
+        <div style="min-width:0"><strong id="sidebarName">Administrator</strong><small>Administrator</small></div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="icon-btn mobile-menu" id="menuToggle" aria-label="Toggle navigation" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
+        <div class="breadcrumb">Admin / <strong>Nutrition Management</strong></div>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle light or dark theme" title="Toggle theme"><i class="fa-solid fa-moon"></i></button>
+        <button class="icon-btn" id="logoutBtn" aria-label="Sign out" title="Sign out"><i class="fa-solid fa-right-from-bracket"></i></button>
+      </div>
+    </header>
+
+    <section class="content">
+      <div class="page-heading">
+        <div>
+          <div class="eyebrow">Content management</div>
+          <h1>Nutrition Library</h1>
+          <p class="subheading">Manage food nutrition records, meal suggestions, dietary tags, and publication status.</p>
+        </div>
+        <button class="btn btn-primary" id="createBtn"><i class="fa-solid fa-plus"></i> <span id="createBtnText">Add Food Item</span></button>
+      </div>
+
+      <div class="stats-grid" aria-label="Nutrition library statistics">
+        <article class="stat-card">
+          <div><span class="stat-label">Food Items</span><strong class="stat-number" id="foodKpi">0</strong><span class="stat-caption">Records in food library</span></div>
+          <div class="stat-icon"><i class="fa-solid fa-carrot"></i></div>
+        </article>
+        <article class="stat-card">
+          <div><span class="stat-label">Meal Suggestions</span><strong class="stat-number" id="mealKpi">0</strong><span class="stat-caption">Meal ideas in library</span></div>
+          <div class="stat-icon green"><i class="fa-solid fa-bowl-food"></i></div>
+        </article>
+        <article class="stat-card">
+          <div><span class="stat-label">Published Items</span><strong class="stat-number" id="publishedKpi">0</strong><span class="stat-caption">Published foods and meals</span></div>
+          <div class="stat-icon blue"><i class="fa-solid fa-circle-check"></i></div>
+        </article>
+        <article class="stat-card">
+          <div><span class="stat-label">Categories</span><strong class="stat-number" id="categoryKpi">0</strong><span class="stat-caption">Unique categories across both libraries</span></div>
+          <div class="stat-icon orange"><i class="fa-solid fa-layer-group"></i></div>
+        </article>
+      </div>
+
+      <section class="panel" aria-label="Nutrition records">
+        <div class="tabs" role="tablist" aria-label="Nutrition content type">
+          <button class="tab active" id="foodsTab" role="tab" aria-selected="true" aria-controls="recordsPanel" data-type="food"><i class="fa-solid fa-carrot"></i> Food Library <span class="tab-count" id="foodTabCount">0</span></button>
+          <button class="tab" id="mealsTab" role="tab" aria-selected="false" aria-controls="recordsPanel" data-type="meal"><i class="fa-solid fa-bowl-food"></i> Meal Suggestions <span class="tab-count" id="mealTabCount">0</span></button>
+        </div>
+        <div id="recordsPanel" role="tabpanel" aria-labelledby="foodsTab">
+          <div class="toolbar">
+            <div class="toolbar-left">
+              <div class="search-box">
+                <label class="sr-only" for="searchInput">Search nutrition records</label>
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input class="field" id="searchInput" type="search" placeholder="Search name, ingredient, tag..." autocomplete="off">
+              </div>
+              <label class="sr-only" for="statusFilter">Filter by status</label>
+              <select class="select-field" id="statusFilter">
+                <option value="all">All statuses</option>
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+                <option value="archived">Archived</option>
+              </select>
+              <label class="sr-only" for="categoryFilter">Filter by category</label>
+              <select class="select-field" id="categoryFilter"><option value="all">All categories</option></select>
+            </div>
+            <div class="toolbar-right">
+              <label class="sr-only" for="sortSelect">Sort records</label>
+              <select class="select-field" id="sortSelect">
+                <option value="updatedAt">Recently updated</option>
+                <option value="name">Name A–Z</option>
+                <option value="calories">Calories: low to high</option>
+                <option value="protein">Protein: high to low</option>
+                <option value="createdAt">Date created</option>
+              </select>
+              <button class="btn" id="exportBtn" title="Export currently filtered records as JSON"><i class="fa-solid fa-download"></i> Export</button>
+            </div>
+          </div>
+
+          <div class="table-wrap" id="tableWrap">
+            <table>
+              <thead id="tableHead"></thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="emptyState" hidden>
+            <div class="empty-icon"><i class="fa-solid fa-bowl-food"></i></div>
+            <h3 id="emptyTitle">No records found</h3>
+            <p id="emptyMessage">Try another search or create your first record.</p>
+            <button class="btn btn-primary" id="emptyCreateBtn"><i class="fa-solid fa-plus"></i> Create record</button>
+          </div>
+          <div class="table-footer" id="tableFooter">
+            <div class="table-info" id="tableInfo">Showing 0 records</div>
+            <div class="pagination" id="pagination" aria-label="Table pagination"></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="notice">
+        <i class="fa-solid fa-circle-info"></i>
+        <div><strong>Nutrition data disclaimer.</strong> All sample nutrition values are illustrative estimates, not verified nutritional advice. Verify values against reliable sources or product labels before publication. Preserve allergen information, and never assume a food is allergy-safe when allergen information is missing.</div>
+      </div>
+      <div class="notice warning-notice">
+        <i class="fa-solid fa-code"></i>
+        <div><strong>Integration and access note.</strong> Published records are stored in <code>smartGym_foodLibrary</code> and <code>smartGym_mealSuggestions</code> for use by <code>nutrition.html</code>. This page does not modify <code>smartGym_nutrition</code>, which is reserved for users' nutrition logs. Browser storage and local role checks are demo functionality, not production security.</div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="toast-region" id="toastRegion" role="status" aria-live="polite"></div>
+
+<div class="modal-backdrop" id="editorBackdrop" aria-hidden="true">
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
+    <header class="modal-header">
+      <div><h2 id="editorTitle">Create food item</h2><p id="editorDescription">Enter the record details below.</p></div>
+      <button class="icon-btn" data-close="editorBackdrop" aria-label="Close editor"><i class="fa-solid fa-xmark"></i></button>
+    </header>
+    <form id="recordForm" novalidate>
+      <div class="modal-body"><div class="form-grid" id="formFields"></div></div>
+      <footer class="modal-footer">
+        <button type="button" class="btn" data-close="editorBackdrop">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="saveBtn"><i class="fa-solid fa-check"></i> Save record</button>
+      </footer>
+    </form>
+  </section>
+</div>
+
+<div class="modal-backdrop" id="detailBackdrop" aria-hidden="true">
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+    <header class="modal-header">
+      <div><h2 id="detailTitle">Record details</h2><p>Review the complete nutrition record.</p></div>
+      <button class="icon-btn" data-close="detailBackdrop" aria-label="Close details"><i class="fa-solid fa-xmark"></i></button>
+    </header>
+    <div class="modal-body" id="detailBody"></div>
+    <footer class="modal-footer">
+      <button class="btn" data-close="detailBackdrop">Close</button>
+      <button class="btn btn-primary" id="detailEditBtn"><i class="fa-solid fa-pen"></i> Edit record</button>
+    </footer>
+  </section>
+</div>
+
+<div class="modal-backdrop" id="confirmBackdrop" aria-hidden="true">
+  <section class="modal small" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmMessage">
+    <header class="modal-header">
+      <div><h2 id="confirmTitle">Confirm action</h2><p>Please review this action before continuing.</p></div>
+      <button class="icon-btn" data-close="confirmBackdrop" aria-label="Close confirmation"><i class="fa-solid fa-xmark"></i></button>
+    </header>
+    <div class="modal-body">
+      <div class="confirm-icon"><i class="fa-solid fa-trash-can"></i></div>
+      <p class="confirm-copy" id="confirmMessage"></p>
+    </div>
+    <footer class="modal-footer">
+      <button class="btn" data-close="confirmBackdrop">Cancel</button>
+      <button class="btn btn-primary" id="confirmActionBtn">Confirm</button>
+    </footer>
+  </section>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  const KEYS = {
+    user: 'smartGym_currentUser',
+    theme: 'smartGym_theme',
+    foods: 'smartGym_foodLibrary',
+    meals: 'smartGym_mealSuggestions'
+  };
+
+  // Authentication is only a client-side demo guard. Use server-side authorization in production.
+  let currentUser;
+  try {
+    currentUser = JSON.parse(localStorage.getItem(KEYS.user) || 'null');
+  } catch (_) {
+    currentUser = null;
+  }
+
+  if (!currentUser) {
+    window.location.replace('login.html');
+    return;
+  }
+  if (String(currentUser.role || '').toLowerCase() !== 'admin') {
+    window.location.replace('dashboard.html');
+    return;
+  }
+
+  const $ = id => document.getElementById(id);
+  const state = {
+    type: 'food',
+    foods: [],
+    meals: [],
+    page: 1,
+    pageSize: 8,
+    editingId: null,
+    detailId: null,
+    confirmCallback: null,
+    previousFocus: null,
+    search: '',
+    status: 'all',
+    category: 'all',
+    sort: 'updatedAt'
+  };
+
+  const FOOD_CATEGORIES = ['Protein', 'Vegetables', 'Fruits', 'Grains', 'Dairy', 'Healthy Fats', 'Snacks', 'Other'];
+  const MEAL_CATEGORIES = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Pre-workout', 'Post-workout', 'Other'];
+  const DIET_TAGS = ['Vegetarian', 'Vegan', 'Gluten-free', 'Dairy-free', 'High-protein', 'Low-carb', 'Keto', 'Pescatarian'];
+  const GOAL_TAGS = ['Weight loss', 'Muscle gain', 'Toning', 'Maintenance', 'General fitness'];
+
+  const nowISO = () => new Date().toISOString();
+  const makeId = prefix => prefix + '_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+  const splitList = value => Array.isArray(value)
+    ? value.map(v => String(v).trim()).filter(Boolean)
+    : String(value || '').split(/[,;\n]/).map(v => v.trim()).filter(Boolean);
+  const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[ch]);
+  const normalizeStatus = status => ['published', 'draft', 'archived'].includes(status) ? status : 'draft';
+  const safeNum = value => Number.isFinite(Number(value)) ? Number(value) : 0;
+  const numberText = value => Number(safeNum(value)).toLocaleString(undefined, { maximumFractionDigits: 1 });
+  const formatDate = value => {
+    const d = new Date(value);
+    return Number.isNaN(d.getTime()) ? '—' : d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  };
+  const listText = value => splitList(value).join(', ');
+  const allRecords = () => state.type === 'food' ? state.foods : state.meals;
+  const nameOf = record => state.type === 'food' ? record.name : record.title;
+  const recordById = (type, id) => (type === 'food' ? state.foods : state.meals).find(r => r.id === id);
+
+  function normalizeFood(r) {
+    return {
+      id: String(r.id || makeId('food')),
+      name: String(r.name || ''),
+      servingSize: String(r.servingSize || ''),
+      calories: safeNum(r.calories),
+      protein: safeNum(r.protein),
+      carbs: safeNum(r.carbs),
+      fat: safeNum(r.fat),
+      ingredients: splitList(r.ingredients),
+      allergens: splitList(r.allergens),
+      dietTags: splitList(r.dietTags),
+      category: String(r.category || 'Other'),
+      sourceNotes: String(r.sourceNotes || ''),
+      status: normalizeStatus(r.status),
+      createdAt: r.createdAt || nowISO(),
+      updatedAt: r.updatedAt || r.createdAt || nowISO()
+    };
+  }
+
+  function normalizeMeal(r) {
+    return {
+      id: String(r.id || makeId('meal')),
+      title: String(r.title || ''),
+      category: String(r.category || 'Other'),
+      ingredients: splitList(r.ingredients),
+      instructions: String(r.instructions || ''),
+      calories: safeNum(r.calories),
+      protein: safeNum(r.protein),
+      carbs: safeNum(r.carbs),
+      fat: safeNum(r.fat),
+      allergens: splitList(r.allergens),
+      dietTags: splitList(r.dietTags),
+      goalTags: splitList(r.goalTags),
+      status: normalizeStatus(r.status),
+      createdAt: r.createdAt || nowISO(),
+      updatedAt: r.updatedAt || r.createdAt || nowISO()
+    };
+  }
+
+  // All seed nutrition values are explicitly illustrative and should be verified before use.
+  const seedFoods = [
+    { id:'seed_food_1', name:'Rolled Oats', servingSize:'40 g', calories:150, protein:5, carbs:27, fat:3, ingredients:['Rolled oats'], allergens:['May contain gluten; cross-contact possible'], dietTags:['Vegan','Vegetarian'], category:'Grains', sourceNotes:'Illustrative estimate only. Verify packaging and cross-contact details.', status:'published', createdAt:'2026-01-12T09:00:00Z', updatedAt:'2026-01-12T09:00:00Z' },
+    { id:'seed_food_2', name:'Chicken Breast', servingSize:'100 g', calories:165, protein:31, carbs:0, fat:3.6, ingredients:['Chicken breast'], allergens:[], dietTags:['High-protein','Gluten-free'], category:'Protein', sourceNotes:'Illustrative estimate for a generic preparation. Verify cut and cooking method.', status:'published', createdAt:'2026-01-13T09:00:00Z', updatedAt:'2026-01-13T09:00:00Z' },
+    { id:'seed_food_3', name:'Greek Yogurt', servingSize:'170 g', calories:100, protein:17, carbs:6, fat:0, ingredients:['Milk','Live cultures'], allergens:['Milk'], dietTags:['Vegetarian','High-protein'], category:'Dairy', sourceNotes:'Illustrative estimate; brand and fat percentage change values.', status:'published', createdAt:'2026-01-14T09:00:00Z', updatedAt:'2026-01-14T09:00:00Z' },
+    { id:'seed_food_4', name:'Banana', servingSize:'1 medium (118 g)', calories:105, protein:1.3, carbs:27, fat:0.4, ingredients:['Banana'], allergens:[], dietTags:['Vegan','Vegetarian','Gluten-free','Dairy-free'], category:'Fruits', sourceNotes:'Illustrative estimate. Actual values vary by size.', status:'published', createdAt:'2026-01-15T09:00:00Z', updatedAt:'2026-01-15T09:00:00Z' },
+    { id:'seed_food_5', name:'Almonds', servingSize:'28 g', calories:164, protein:6, carbs:6, fat:14, ingredients:['Almonds'], allergens:['Tree nuts (almonds)'], dietTags:['Vegan','Vegetarian','Gluten-free','Dairy-free'], category:'Healthy Fats', sourceNotes:'Illustrative estimate. Confirm package and cross-contact statements.', status:'draft', createdAt:'2026-01-16T09:00:00Z', updatedAt:'2026-01-16T09:00:00Z' },
+    { id:'seed_food_6', name:'Brown Rice', servingSize:'100 g cooked', calories:123, protein:2.7, carbs:26, fat:1, ingredients:['Brown rice'], allergens:[], dietTags:['Vegan','Vegetarian','Gluten-free','Dairy-free'], category:'Grains', sourceNotes:'Illustrative estimate for cooked rice.', status:'published', createdAt:'2026-01-17T09:00:00Z', updatedAt:'2026-01-17T09:00:00Z' }
+  ];
+
+  const seedMeals = [
+    { id:'seed_meal_1', title:'Protein Oatmeal Bowl', category:'Breakfast', ingredients:['Rolled oats','Greek yogurt','Banana'], instructions:'Cook oats according to package directions. Add yogurt and sliced banana. Check ingredient labels and allergen information before serving.', calories:355, protein:23, carbs:60, fat:4, allergens:['Milk','Possible gluten cross-contact'], dietTags:['Vegetarian','High-protein'], goalTags:['Muscle gain','General fitness'], status:'published', createdAt:'2026-01-20T09:00:00Z', updatedAt:'2026-01-20T09:00:00Z' },
+    { id:'seed_meal_2', title:'Chicken and Brown Rice Bowl', category:'Lunch', ingredients:['Chicken breast','Brown rice','Mixed vegetables'], instructions:'Cook chicken thoroughly using a food-safe method. Serve with cooked brown rice and vegetables. Adjust ingredients to preference.', calories:430, protein:39, carbs:48, fat:8, allergens:[], dietTags:['Gluten-free','Dairy-free','High-protein'], goalTags:['Muscle gain','Maintenance','General fitness'], status:'published', createdAt:'2026-01-21T09:00:00Z', updatedAt:'2026-01-21T09:00:00Z' },
+    { id:'seed_meal_3', title:'Yogurt and Fruit Snack', category:'Snack', ingredients:['Greek yogurt','Banana'], instructions:'Place yogurt in a bowl and top with sliced banana. Check the yogurt label for milk and any cross-contact warnings.', calories:205, protein:18, carbs:33, fat:0.5, allergens:['Milk'], dietTags:['Vegetarian','High-protein'], goalTags:['Weight loss','Toning','General fitness'], status:'draft', createdAt:'2026-01-22T09:00:00Z', updatedAt:'2026-01-22T09:00:00Z' }
+  ];
+
+  function readArray(key, normalizer, seeds) {
+    try {
+      const raw = localStorage.getItem(key);
+      if (raw === null) return seeds.map(normalizer);
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) {
+        toast('Stored library data is invalid. It was not replaced.', 'error');
+        return [];
+      }
+      return parsed.map(normalizer);
+    } catch (err) {
+      toast('Could not read saved library data. Check browser storage.', 'error');
+      return [];
+    }
+  }
+
+  function persist(type) {
+    const key = type === 'food' ? KEYS.foods : KEYS.meals;
+    const records = type === 'food' ? state.foods : state.meals;
+    try {
+      localStorage.setItem(key, JSON.stringify(records));
+      return true;
+    } catch (err) {
+      toast('Could not save. Browser storage may be full or unavailable.', 'error');
+      return false;
+    }
+  }
+
+  function initTheme() {
+    let theme;
+    try { theme = localStorage.getItem(KEYS.theme); } catch (_) {}
+    if (theme === 'dark' || theme === 'light') {
+      document.body.classList.toggle('dark', theme === 'dark');
+    } else {
+      document.body.classList.toggle('dark', window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    }
+    updateThemeIcon();
+  }
+
+  function updateThemeIcon() {
+    $('themeToggle').innerHTML = document.body.classList.contains('dark')
+      ? '<i class="fa-solid fa-sun" aria-hidden="true"></i>'
+      : '<i class="fa-solid fa-moon" aria-hidden="true"></i>';
+  }
+
+  $('themeToggle').addEventListener('click', () => {
+    const dark = document.body.classList.toggle('dark');
+    try { localStorage.setItem(KEYS.theme, dark ? 'dark' : 'light'); } catch (_) {}
+    updateThemeIcon();
+  });
+
+  const displayName = String(currentUser.name || currentUser.username || currentUser.email || 'Administrator');
+  $('sidebarName').textContent = displayName;
+  $('sidebarAvatar').textContent = displayName.trim().charAt(0).toUpperCase() || 'A';
+  $('logoutBtn').addEventListener('click', () => {
+    // This demo removes the current-session identity only.
+    try { localStorage.removeItem(KEYS.user); } catch (_) {}
+    window.location.href = 'login.html';
+  });
+
+  $('menuToggle').addEventListener('click', () => {
+    const opened = $('sidebar').classList.toggle('open');
+    $('menuToggle').setAttribute('aria-expanded', String(opened));
+  });
+
+  document.addEventListener('click', event => {
+    if (window.innerWidth <= 900 && $('sidebar').classList.contains('open') &&
+        !$('sidebar').contains(event.target) && !$('menuToggle').contains(event.target)) {
+      $('sidebar').classList.remove('open');
+      $('menuToggle').setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  function toast(message, kind = 'success') {
+    const node = document.createElement('div');
+    node.className = 'toast' + (kind === 'error' ? ' error' : kind === 'info' ? ' info' : '');
+    const icon = kind === 'error' ? 'fa-circle-exclamation' : kind === 'info' ? 'fa-circle-info' : 'fa-circle-check';
+    const iconNode = document.createElement('i');
+    iconNode.className = 'fa-solid ' + icon;
+    iconNode.setAttribute('aria-hidden', 'true');
+    const textNode = document.createElement('span');
+    textNode.textContent = message;
+    node.append(iconNode, textNode);
+    $('toastRegion').appendChild(node);
+    window.setTimeout(() => node.remove(), 3600);
+  }
+
+  function openModal(id) {
+    state.previousFocus = document.activeElement;
+    const modal = $(id);
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    const focusable = modal.querySelector('input:not([type=hidden]),select,textarea,button');
+    if (focusable) window.setTimeout(() => focusable.focus(), 30);
+  }
+
+  function closeModal(id) {
+    const modal = $(id);
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    if (!document.querySelector('.modal-backdrop.open')) document.body.style.overflow = '';
+    if (state.previousFocus && typeof state.previousFocus.focus === 'function') state.previousFocus.focus();
+  }
+
+  document.querySelectorAll('[data-close]').forEach(btn => {
+    btn.addEventListener('click', () => closeModal(btn.dataset.close));
+  });
+
+  document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+    backdrop.addEventListener('mousedown', event => {
+      if (event.target === backdrop && backdrop.id !== 'confirmBackdrop') closeModal(backdrop.id);
+    });
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      const opened = document.querySelector('.modal-backdrop.open');
+      if (opened && opened.id !== 'confirmBackdrop') closeModal(opened.id);
+      else if (opened && opened.id === 'confirmBackdrop') closeModal(opened.id);
+      $('sidebar').classList.remove('open');
+      $('menuToggle').setAttribute('aria-expanded', 'false');
+    }
+    if (event.key === 'Tab') {
+      const modal = document.querySelector('.modal-backdrop.open');
+      if (!modal) return;
+      const focusable = [...modal.querySelectorAll('button:not(:disabled), input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])')]
+        .filter(el => el.offsetParent !== null);
+      if (!focusable.length) return;
+      const first = focusable[0], last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault(); last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault(); first.focus();
+      }
+    }
+  });
+
+  function openConfirm({ title, message, label = 'Confirm', danger = false, callback }) {
+    $('confirmTitle').textContent = title;
+    $('confirmMessage').replaceChildren();
+    $('confirmMessage').append(document.createRange().createContextualFragment(escapeHTML(message)));
+    $('confirmActionBtn').textContent = label;
+    $('confirmActionBtn').className = 'btn ' + (danger ? 'btn-danger' : 'btn-primary');
+    $('confirmActionBtn').onclick = () => {
+      const action = state.confirmCallback;
+      closeModal('confirmBackdrop');
+      state.confirmCallback = null;
+      if (action) action();
+    };
+    state.confirmCallback = callback;
+    openModal('confirmBackdrop');
+  }
+
+  function updateKPIs() {
+    $('foodKpi').textContent = state.foods.length;
+    $('mealKpi').textContent = state.meals.length;
+    $('publishedKpi').textContent = [...state.foods, ...state.meals].filter(r => r.status === 'published').length;
+    $('categoryKpi').textContent = new Set([...state.foods, ...state.meals].map(r => r.category.trim()).filter(Boolean)).size;
+    $('foodTabCount').textContent = state.foods.length;
+    $('mealTabCount').textContent = state.meals.length;
+  }
+
+  function updateCategoryFilter() {
+    const old = state.category;
+    const categories = [...new Set(allRecords().map(r => r.category).filter(Boolean))].sort((a,b) => a.localeCompare(b));
+    $('categoryFilter').replaceChildren();
+    const all = document.createElement('option');
+    all.value = 'all'; all.textContent = 'All categories';
+    $('categoryFilter').appendChild(all);
+    categories.forEach(category => {
+      const option = document.createElement('option');
+      option.value = category;
+      option.textContent = category;
+      $('categoryFilter').appendChild(option);
+    });
+    state.category = categories.includes(old) ? old : 'all';
+    $('categoryFilter').value = state.category;
+  }
+
+  function filteredRecords() {
+    const q = state.search.toLowerCase();
+    const rows = allRecords().filter(r => {
+      const text = state.type === 'food'
+        ? [r.name, r.servingSize, r.category, r.ingredients.join(' '), r.allergens.join(' '), r.dietTags.join(' '), r.sourceNotes].join(' ')
+        : [r.title, r.category, r.ingredients.join(' '), r.instructions, r.allergens.join(' '), r.dietTags.join(' '), r.goalTags.join(' ')].join(' ');
+      return (!q || text.toLowerCase().includes(q))
+        && (state.status === 'all' || r.status === state.status)
+        && (state.category === 'all' || r.category === state.category);
+    });
+    const sort = state.sort;
+    rows.sort((a,b) => {
+      if (sort === 'name') return String(nameOf(a)).localeCompare(String(nameOf(b)));
+      if (['calories','protein'].includes(sort)) {
+        return sort === 'protein' ? safeNum(b.protein)-safeNum(a.protein) : safeNum(a.calories)-safeNum(b.calories);
+      }
+      const av = new Date(a[sort] || 0).getTime() || 0;
+      const bv = new Date(b[sort] || 0).getTime() || 0;
+      return bv - av;
+    });
+    return rows;
+  }
+
+  function statusHTML(status) {
+    return '<span class="status ' + normalizeStatus(status) + '">' + escapeHTML(normalizeStatus(status).charAt(0).toUpperCase() + normalizeStatus(status).slice(1)) + '</span>';
+  }
+
+  function actionsHTML(id) {
+    return '<div class="actions">' +
+      '<button class="action-btn" data-action="view" data-id="' + escapeHTML(id) + '" aria-label="View record" title="View"><i class="fa-regular fa-eye"></i></button>' +
+      '<button class="action-btn" data-action="edit" data-id="' + escapeHTML(id) + '" aria-label="Edit record" title="Edit"><i class="fa-solid fa-pen"></i></button>' +
+      '<button class="action-btn" data-action="duplicate" data-id="' + escapeHTML(id) + '" aria-label="Duplicate record" title="Duplicate"><i class="fa-regular fa-copy"></i></button>' +
+      '<button class="action-btn" data-action="toggle" data-id="' + escapeHTML(id) + '" aria-label="Publish or unpublish record" title="Publish/unpublish"><i class="fa-solid fa-' + (recordById(state.type, id)?.status === 'published' ? 'eye-slash' : 'globe') + '"></i></button>' +
+      '<button class="action-btn delete" data-action="delete" data-id="' + escapeHTML(id) + '" aria-label="Delete record" title="Delete"><i class="fa-regular fa-trash-can"></i></button>' +
+      '</div>';
+  }
+
+  function renderTable() {
+    updateKPIs();
+    updateCategoryFilter();
+    const type = state.type;
+    const head = $('tableHead');
+    head.innerHTML = type === 'food'
+      ? '<tr><th scope="col">Food item</th><th scope="col">Category</th><th scope="col">Serving size</th><th scope="col">Calories</th><th scope="col">Protein</th><th scope="col">Status</th><th scope="col">Actions</th></tr>'
+      : '<tr><th scope="col">Meal suggestion</th><th scope="col">Category</th><th scope="col">Calories</th><th scope="col">Protein</th><th scope="col">Diet tags</th><th scope="col">Status</th><th scope="col">Actions</th></tr>';
+
+    const rows = filteredRecords();
+    const pages = Math.max(1, Math.ceil(rows.length / state.pageSize));
+    state.page = Math.min(state.page, pages);
+    const start = (state.page - 1) * state.pageSize;
+    const visible = rows.slice(start, start + state.pageSize);
+    const body = $('tableBody');
+    body.replaceChildren();
+
+    visible.forEach(r => {
+      const tr = document.createElement('tr');
+      const name = type === 'food' ? r.name : r.title;
+      const subtitle = type === 'food' ? r.servingSize : (r.ingredients.length + ' ingredients');
+      const avatar = type === 'food' ? 'fa-carrot' : 'fa-bowl-food';
+      const category = escapeHTML(r.category);
+      const macros = '<span class="macro">' + numberText(r.calories) + '</span><small class="muted"> kcal*</small>';
+      const protein = '<span class="macro">' + numberText(r.protein) + ' g</span>';
+      const first = '<div class="record-title"><span class="food-avatar"><i class="fa-solid ' + avatar + '" aria-hidden="true"></i></span><span><strong title="' + escapeHTML(name) + '">' + escapeHTML(name) + '</strong><small>' + escapeHTML(subtitle) + '</small></span></div>';
+      tr.innerHTML = type === 'food'
+        ? '<td>' + first + '</td><td>' + category + '</td><td>' + escapeHTML(r.servingSize) + '</td><td>' + macros + '</td><td>' + protein + '</td><td>' + statusHTML(r.status) + '</td><td>' + actionsHTML(r.id) + '</td>'
+        : '<td>' + first + '</td><td>' + category + '</td><td>' + macros + '</td><td>' + protein + '</td><td>' + escapeHTML(r.dietTags.slice(0,2).join(', ') || '—') + '</td><td>' + statusHTML(r.status) + '</td><td>' + actionsHTML(r.id) + '</td>';
+      body.appendChild(tr);
+    });
+
+    const hasRows = visible.length > 0;
+    $('tableWrap').hidden = !hasRows;
+    $('emptyState').hidden = hasRows;
+    $('tableFooter').hidden = !hasRows;
+    $('emptyTitle').textContent = rows.length ? 'No records on this page' : 'No matching records';
+    $('emptyMessage').textContent = rows.length ? 'Try navigating to another page.' : (state.search || state.status !== 'all' || state.category !== 'all')
+      ? 'Try adjusting your search or filters, or create a new record.'
+      : 'Your library is empty. Create a record to get started.';
+    $('emptyCreateBtn').hidden = rows.length > 0;
+    $('tableInfo').textContent = 'Showing ' + (rows.length ? start + 1 : 0) + '–' + Math.min(start + state.pageSize, rows.length) + ' of ' + rows.length + ' records';
+    renderPagination(pages);
+  }
+
+  function renderPagination(pages) {
+    const root = $('pagination');
+    root.replaceChildren();
+    const add = (label, page, disabled, active = false, aria = label) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'page-btn' + (active ? ' active' : '');
+      b.textContent = label;
+      b.disabled = disabled;
+      b.setAttribute('aria-label', aria);
+      if (active) b.setAttribute('aria-current', 'page');
+      b.addEventListener('click', () => { state.page = page; renderTable(); });
+      root.appendChild(b);
+    };
+    add('‹', state.page - 1, state.page <= 1, false, 'Previous page');
+    const from = Math.max(1, Math.min(state.page - 2, pages - 4));
+    const to = Math.min(pages, Math.max(5, state.page + 2));
+    for (let p = from; p <= to; p++) add(String(p), p, false, p === state.page, 'Page ' + p);
+    add('›', state.page + 1, state.page >= pages, false, 'Next page');
+  }
+
+  function fieldText(name, label, value, options = {}) {
+    const id = 'field_' + name;
+    const required = options.required ? ' required' : '';
+    const hint = options.hint ? '<small class="form-hint">' + escapeHTML(options.hint) + '</small>' : '';
+    const full = options.full ? ' full' : '';
+    if (options.type === 'textarea') {
+      return '<div class="form-group' + full + '"><label for="' + id + '">' + escapeHTML(label) + (options.required ? ' <span class="required">*</span>' : '') + '</label><textarea class="textarea-field" id="' + id + '" name="' + name + '"' + required + ' placeholder="' + escapeHTML(options.placeholder || '') + '">' + escapeHTML(value || '') + '</textarea>' + hint + '</div>';
+    }
+    if (options.type === 'select') {
+      const choices = options.choices || [];
+      return '<div class="form-group' + full + '"><label for="' + id + '">' + escapeHTML(label) + (options.required ? ' <span class="required">*</span>' : '') + '</label><select class="select-field" id="' + id + '" name="' + name + '"' + required + '>' + choices.map(v => '<option value="' + escapeHTML(v) + '"' + (String(v) === String(value) ? ' selected' : '') + '>' + escapeHTML(v) + '</option>').join('') + '</select>' + hint + '</div>';
+    }
+    const numeric = options.type === 'number';
+    const attrs = numeric
+      ? ' type="number" min="0" max="1000000" step="any" inputmode="decimal"'
+      : ' type="text"';
+    return '<div class="form-group' + full + '"><label for="' + id + '">' + escapeHTML(label) + (options.required ? ' <span class="required">*</span>' : '') + '</label><input class="field" id="' + id + '" name="' + name + '"' + attrs + ' value="' + escapeHTML(value ?? '') + '"' + required + ' placeholder="' + escapeHTML(options.placeholder || '') + '">' + hint + '</div>';
+  }
+
+  function checkboxGroup(name, label, choices, selected, hint = '') {
+    const selectedSet = new Set(splitList(selected));
+    return '<div class="form-group full"><label>' + escapeHTML(label) + '</label><div class="check-grid">' + choices.map((item, i) => {
+      const id = name + '_' + i;
+      return '<label class="check-option" for="' + id + '"><input type="checkbox" id="' + id + '" name="' + name + '" value="' + escapeHTML(item) + '"' + (selectedSet.has(item) ? ' checked' : '') + '> ' + escapeHTML(item) + '</label>';
+    }).join('') + '</div>' + (hint ? '<small class="form-hint">' + escapeHTML(hint) + '</small>' : '') + '</div>';
+  }
+
+  function sectionTitle(text) {
+    return '<div class="form-section-title">' + escapeHTML(text) + '</div>';
+  }
+
+  function renderForm(type, record = {}) {
+    const isFood = type === 'food';
+    const categories = isFood ? FOOD_CATEGORIES : MEAL_CATEGORIES;
+    const fields = [];
+    if (isFood) {
+      fields.push(
+        fieldText('name', 'Food name', record.name, { required:true, placeholder:'e.g. Rolled oats' }),
+        fieldText('servingSize', 'Serving size', record.servingSize, { required:true, placeholder:'e.g. 100 g cooked' }),
+        fieldText('category', 'Category', record.category || 'Protein', { type:'select', choices:categories, required:true }),
+        fieldText('status', 'Publication status', record.status || 'draft', { type:'select', choices:['draft','published','archived'], required:true }),
+        sectionTitle('Nutrition values · illustrative unless verified'),
+        fieldText('calories', 'Calories (kcal)', record.calories ?? '', { type:'number', required:true }),
+        fieldText('protein', 'Protein (g)', record.protein ?? '', { type:'number', required:true }),
+        fieldText('carbs', 'Carbohydrates (g)', record.carbs ?? '', { type:'number', required:true }),
+        fieldText('fat', 'Fat (g)', record.fat ?? '', { type:'number', required:true }),
+        fieldText('ingredients', 'Ingredients', listText(record.ingredients), { type:'textarea', full:true, placeholder:'Separate ingredients with commas', hint:'Record ingredients clearly. Do not infer missing allergen information.' }),
+        fieldText('allergens', 'Allergens / cross-contact', listText(record.allergens), { type:'textarea', full:true, placeholder:'Known allergens, cross-contact warnings, or explicitly documented none', hint:'Leave blank if unknown. A blank field must not be interpreted as allergy-safe.' }),
+        checkboxGroup('dietTags', 'Dietary tags', DIET_TAGS, record.dietTags),
+        fieldText('sourceNotes', 'Source and verification notes', record.sourceNotes, { type:'textarea', full:true, placeholder:'Record source, label details, preparation, or verification status.' })
+      );
+    } else {
+      fields.push(
+        fieldText('title', 'Meal title', record.title, { required:true, placeholder:'e.g. Protein oatmeal bowl' }),
+        fieldText('category', 'Meal category', record.category || 'Breakfast', { type:'select', choices:categories, required:true }),
+        fieldText('status', 'Publication status', record.status || 'draft', { type:'select', choices:['draft','published','archived'], required:true }),
+        sectionTitle('Nutrition values · illustrative unless verified'),
+        fieldText('calories', 'Calories (kcal)', record.calories ?? '', { type:'number', required:true }),
+        fieldText('protein', 'Protein (g)', record.protein ?? '', { type:'number', required:true }),
+        fieldText('carbs', 'Carbohydrates (g)', record.carbs ?? '', { type:'number', required:true }),
+        fieldText('fat', 'Fat (g)', record.fat ?? '', { type:'number', required:true }),
+        fieldText('ingredients', 'Ingredients', listText(record.ingredients), { type:'textarea', full:true, required:true, placeholder:'List ingredients separated by commas' }),
+        fieldText('instructions', 'Preparation instructions', record.instructions, { type:'textarea', full:true, required:true, placeholder:'Describe the preparation steps.' }),
+        fieldText('allergens', 'Allergens / cross-contact', listText(record.allergens), { type:'textarea', full:true, placeholder:'Known allergens, cross-contact warnings, or documented none', hint:'Leave blank if unknown; never imply allergy safety when details are missing.' }),
+        checkboxGroup('dietTags', 'Dietary tags', DIET_TAGS, record.dietTags),
+        checkboxGroup('goalTags', 'Fitness goal tags', GOAL_TAGS, record.goalTags)
+      );
+    }
+    $('formFields').innerHTML = fields.join('');
+    $('editorTitle').textContent = (state.editingId ? 'Edit ' : 'Create ') + (isFood ? 'food item' : 'meal suggestion');
+    $('editorDescription').textContent = state.editingId ? 'Update the details and save your changes.' : 'Complete the required fields to add a new record.';
+    $('saveBtn').innerHTML = '<i class="fa-solid fa-check"></i> ' + (state.editingId ? 'Save changes' : 'Create record');
+  }
+
+  function openEditor(type, record = null, duplicate = false) {
+    state.type = type;
+    state.editingId = duplicate ? null : record?.id || null;
+    let data = record ? { ...record } : {};
+    if (duplicate) {
+      data = { ...data, id: undefined, status: 'draft' };
+      if (type === 'food') data.name = (data.name || '') + ' (Copy)';
+      else data.title = (data.title || '') + ' (Copy)';
+    }
+    renderForm(type, data);
+    openModal('editorBackdrop');
+  }
+
+  function collectForm(type) {
+    const form = $('recordForm');
+    const data = new FormData(form);
+    const numericFields = ['calories', 'protein', 'carbs', 'fat'];
+    const result = {};
+    if (type === 'food') {
+      result.name = String(data.get('name') || '').trim();
+      result.servingSize = String(data.get('servingSize') || '').trim();
+      result.category = String(data.get('category') || '').trim();
+      result.sourceNotes = String(data.get('sourceNotes') || '').trim();
+    } else {
+      result.title = String(data.get('title') || '').trim();
+      result.category = String(data.get('category') || '').trim();
+      result.instructions = String(data.get('instructions') || '').trim();
+    }
+    result.status = normalizeStatus(data.get('status'));
+    for (const field of numericFields) {
+      const raw = String(data.get(field) ?? '').trim();
+      if (raw === '') throw new Error('Please enter a value for ' + field + '.');
+      const value = Number(raw);
+      if (!Number.isFinite(value) || value < 0 || value > 1000000) {
+        throw new Error('Enter a valid non-negative value for ' + field + ' (maximum 1,000,000).');
+      }
+      result[field] = value;
+    }
+    if (type === 'food') {
+      if (!result.name || !result.servingSize || !result.category) throw new Error('Food name, serving size, and category are required.');
+      result.ingredients = splitList(data.get('ingredients'));
+      result.allergens = splitList(data.get('allergens'));
+      result.dietTags = data.getAll('dietTags').map(String);
+    } else {
+      if (!result.title || !result.category) throw new Error('Meal title and category are required.');
+      result.ingredients = splitList(data.get('ingredients'));
+      result.allergens = splitList(data.get('allergens'));
+      result.dietTags = data.getAll('dietTags').map(String);
+      result.goalTags = data.getAll('goalTags').map(String);
+      if (!result.ingredients.length) throw new Error('Please enter at least one meal ingredient.');
+      if (!result.instructions) throw new Error('Preparation instructions are required.');
+    }
+    return result;
+  }
+
+  $('recordForm').addEventListener('submit', event => {
+    event.preventDefault();
+    let result;
+    try {
+      result = collectForm(state.type);
+    } catch (err) {
+      toast(err.message || 'Please review the form fields.', 'error');
+      return;
+    }
+
+    const type = state.type;
+    const records = type === 'food' ? state.foods : state.meals;
+    const existingIndex = records.findIndex(r => r.id === state.editingId);
+    const existing = existingIndex >= 0 ? records[existingIndex] : null;
+    const now = nowISO();
+    const record = type === 'food'
+      ? normalizeFood({ ...result, id: existing?.id || makeId('food'), createdAt: existing?.createdAt || now, updatedAt: now })
+      : normalizeMeal({ ...result, id: existing?.id || makeId('meal'), createdAt: existing?.createdAt || now, updatedAt: now });
+
+    if (existingIndex >= 0) records[existingIndex] = record;
+    else records.unshift(record);
+
+    if (!persist(type)) {
+      if (existingIndex >= 0) records[existingIndex] = existing;
+      else records.shift();
+      return;
+    }
+    closeModal('editorBackdrop');
+    state.page = 1;
+    renderTable();
+    toast(existing ? 'Record updated successfully.' : 'Record created successfully.');
+  });
+
+  function detailSection(title, value) {
+    const text = Array.isArray(value) ? value.join(', ') : String(value || '');
+    return '<div class="detail-section"><h3>' + escapeHTML(title) + '</h3><p>' + escapeHTML(text || 'Not provided') + '</p></div>';
+  }
+
+  function tagHTML(items) {
+    if (!items || !items.length) return '<span class="muted">Not specified</span>';
+    return '<div class="detail-tags">' + items.map(v => '<span class="tag">' + escapeHTML(v) + '</span>').join('') + '</div>';
+  }
+
+  function openDetails(type, id) {
+    state.type = type;
+    const record = recordById(type, id);
+    if (!record) return toast('Record not found.', 'error');
+    state.detailId = id;
+    const isFood = type === 'food';
+    $('detailTitle').textContent = isFood ? record.name : record.title;
+    $('detailEditBtn').onclick = () => {
+      closeModal('detailBackdrop');
+      openEditor(type, record);
+    };
+    $('detailBody').innerHTML =
+      '<div class="detail-grid">' +
+      '<div class="detail-stat"><span>Calories · illustrative</span><strong>' + numberText(record.calories) + '</strong></div>' +
+      '<div class="detail-stat"><span>Protein (g)</span><strong>' + numberText(record.protein) + '</strong></div>' +
+      '<div class="detail-stat"><span>Carbs (g)</span><strong>' + numberText(record.carbs) + '</strong></div>' +
+      '<div class="detail-stat"><span>Fat (g)</span><strong>' + numberText(record.fat) + '</strong></div>' +
+      '<div class="detail-stat"><span>Status</span><strong style="font-size:13px">' + escapeHTML(record.status) + '</strong></div>' +
+      '<div class="detail-stat"><span>Category</span><strong style="font-size:13px">' + escapeHTML(record.category) + '</strong></div>' +
+      '</div>' +
+      (isFood ? detailSection('Serving size', record.servingSize) : '') +
+      detailSection('Ingredients', record.ingredients) +
+      (!isFood ? detailSection('Preparation instructions', record.instructions) : detailSection('Source and verification notes', record.sourceNotes)) +
+      '<div class="detail-section"><h3>Allergens and cross-contact</h3>' + tagHTML(record.allergens) + '<p>Missing allergen information does not establish allergy safety.</p></div>' +
+      '<div class="detail-section"><h3>Dietary tags</h3>' + tagHTML(record.dietTags) + '</div>' +
+      (!isFood ? '<div class="detail-section"><h3>Fitness goal tags</h3>' + tagHTML(record.goalTags) + '</div>' : '') +
+      '<div class="detail-section"><h3>Record history</h3><p>Created: ' + escapeHTML(formatDate(record.createdAt)) + '\nLast updated: ' + escapeHTML(formatDate(record.updatedAt)) + '</p></div>' +
+      '<div class="notice"><i class="fa-solid fa-circle-info"></i><div>Nutrition values are illustrative unless verified against a reliable source. Confirm values and allergens before publication.</div></div>';
+    openModal('detailBackdrop');
+  }
+
+  function deleteRecord(type, id) {
+    const records = type === 'food' ? state.foods : state.meals;
+    const index = records.findIndex(r => r.id === id);
+    if (index < 0) return toast('Record not found.', 'error');
+    const removed = records[index];
+    records.splice(index, 1);
+    if (!persist(type)) {
+      records.splice(index, 0, removed);
+      return;
+    }
+    state.page = 1;
+    renderTable();
+    toast('Record deleted.');
+  }
+
+  function togglePublish(type, id) {
+    const records = type === 'food' ? state.foods : state.meals;
+    const record = records.find(r => r.id === id);
+    if (!record) return toast('Record not found.', 'error');
+    const oldStatus = record.status;
+    record.status = oldStatus === 'published' ? 'draft' : 'published';
+    record.updatedAt = nowISO();
+    if (!persist(type)) {
+      record.status = oldStatus;
+      return;
+    }
+    renderTable();
+    toast(record.status === 'published' ? 'Record published.' : 'Record moved to draft.');
+  }
+
+  function duplicateRecord(type, id) {
+    const records = type === 'food' ? state.foods : state.meals;
+    const record = records.find(r => r.id === id);
+    if (!record) return toast('Record not found.', 'error');
+    openEditor(type, record, true);
+  }
+
+  $('tableBody').addEventListener('click', event => {
+    const button = event.target.closest('[data-action]');
+    if (!button) return;
+    const { action, id } = button.dataset;
+    const type = state.type;
+    const record = recordById(type, id);
+    if (!record) return toast('Record not found.', 'error');
+
+    if (action === 'view') openDetails(type, id);
+    if (action === 'edit') openEditor(type, record);
+    if (action === 'duplicate') duplicateRecord(type, id);
+    if (action === 'toggle') {
+      const publish = record.status !== 'published';
+      openConfirm({
+        title: publish ? 'Publish record?' : 'Unpublish record?',
+        message: publish
+          ? 'Publish "' + nameOf(record) + '" so the nutrition page can consider it for display? Verify the nutrition values and allergen metadata first.'
+          : 'Move "' + nameOf(record) + '" back to draft? Published-only consumers should no longer display it.',
+        label: publish ? 'Publish' : 'Unpublish',
+        callback: () => togglePublish(type, id)
+      });
+    }
+    if (action === 'delete') {
+      openConfirm({
+        title: 'Delete record?',
+        message: 'Delete "' + nameOf(record) + '" permanently from this browser library? This action cannot be undone.',
+        label: 'Delete record',
+        danger: true,
+        callback: () => deleteRecord(type, id)
+      });
+    }
+  });
+
+  function setType(type) {
+    state.type = type;
+    state.page = 1;
+    state.search = '';
+    state.status = 'all';
+    state.category = 'all';
+    state.sort = 'updatedAt';
+    $('searchInput').value = '';
+    $('statusFilter').value = 'all';
+    $('sortSelect').value = 'updatedAt';
+    $('foodsTab').classList.toggle('active', type === 'food');
+    $('mealsTab').classList.toggle('active', type === 'meal');
+    $('foodsTab').setAttribute('aria-selected', String(type === 'food'));
+    $('mealsTab').setAttribute('aria-selected', String(type === 'meal'));
+    $('createBtnText').textContent = type === 'food' ? 'Add Food Item' : 'Add Meal Suggestion';
+    $('recordsPanel').setAttribute('aria-labelledby', type === 'food' ? 'foodsTab' : 'mealsTab');
+    renderTable();
+  }
+
+  $('foodsTab').addEventListener('click', () => setType('food'));
+  $('mealsTab').addEventListener('click', () => setType('meal'));
+  $('createBtn').addEventListener('click', () => openEditor(state.type));
+  $('emptyCreateBtn').addEventListener('click', () => openEditor(state.type));
+  $('searchInput').addEventListener('input', event => {
+    state.search = event.target.value.trim();
+    state.page = 1;
+    renderTable();
+  });
+  $('statusFilter').addEventListener('change', event => {
+    state.status = event.target.value;
+    state.page = 1;
+    renderTable();
+  });
+  $('categoryFilter').addEventListener('change', event => {
+    state.category = event.target.value;
+    state.page = 1;
+    renderTable();
+  });
+  $('sortSelect').addEventListener('change', event => {
+    state.sort = event.target.value;
+    state.page = 1;
+    renderTable();
+  });
+
+  function exportRecords() {
+    const rows = filteredRecords();
+    if (!rows.length) return toast('There are no matching records to export.', 'info');
+    const payload = {
+      type: state.type === 'food' ? 'foodLibrary' : 'mealSuggestions',
+      exportedAt: nowISO(),
+      nutritionValuesNote: 'Illustrative values unless independently verified. Check allergen metadata.',
+      records: rows
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = (state.type === 'food' ? 'smartGym_foodLibrary' : 'smartGym_mealSuggestions') + '.json';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    toast('Filtered records exported.');
+  }
+  $('exportBtn').addEventListener('click', exportRecords);
+
+  // Load existing data without ever touching the smartGym_nutrition user-log key.
+  initTheme();
+  state.foods = readArray(KEYS.foods, normalizeFood, seedFoods);
+  state.meals = readArray(KEYS.meals, normalizeMeal, seedMeals);
+  // Persist sample datasets only when a key does not yet exist. Existing user data is preserved.
+  try {
+    if (localStorage.getItem(KEYS.foods) === null) localStorage.setItem(KEYS.foods, JSON.stringify(state.foods));
+    if (localStorage.getItem(KEYS.meals) === null) localStorage.setItem(KEYS.meals, JSON.stringify(state.meals));
+  } catch (_) {
+    toast('Demo records loaded in memory; browser storage is unavailable.', 'error');
+  }
+  renderTable();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Smart Gym Coach administrator dashboard for managing users, workout plans, nutrition data, and platform activity.">
+  <title>Admin Dashboard | Smart Gym Coach</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --primary: #7C3AED;
+      --primary-dark: #5B21B6;
+      --primary-soft: #F3E8FF;
+      --green: #22C55E;
+      --green-soft: #DCFCE7;
+      --navy: #0B1220;
+      --sidebar: #111827;
+      --background: #F8FAFC;
+      --surface: #FFFFFF;
+      --text: #1E293B;
+      --muted: #64748B;
+      --border: #E2E8F0;
+      --danger: #DC2626;
+      --danger-soft: #FEE2E2;
+      --warning: #D97706;
+      --warning-soft: #FEF3C7;
+      --shadow: 0 4px 18px rgba(15, 23, 42, .045);
+      --sidebar-width: 258px;
+      color-scheme: light;
+    }
+
+    body.dark {
+      --background: #0B1220;
+      --surface: #111827;
+      --text: #E5E7EB;
+      --muted: #9CA3AF;
+      --border: #263244;
+      --primary-soft: #2E1A4D;
+      --green-soft: #123524;
+      --danger-soft: #451A1A;
+      --warning-soft: #422D10;
+      --shadow: 0 4px 18px rgba(0, 0, 0, .15);
+      color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font-family: "Inter", sans-serif;
+      font-size: 14px;
+      line-height: 1.55;
+      transition: background .2s, color .2s;
+    }
+    button, input, select { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+    button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible {
+      outline: 3px solid rgba(124, 58, 237, .35);
+      outline-offset: 3px;
+    }
+
+    .app { min-height: 100vh; }
+    .sidebar {
+      width: var(--sidebar-width);
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      background: var(--sidebar);
+      color: #E5E7EB;
+      padding: 25px 16px 18px;
+      overflow-y: auto;
+      transition: transform .25s ease;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 10px 29px;
+    }
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      color: #fff;
+      font-size: 19px;
+      background: linear-gradient(135deg, #8B5CF6, #5B21B6);
+      box-shadow: 0 7px 18px rgba(124, 58, 237, .28);
+    }
+    .brand-name { font-weight: 800; font-size: 16px; letter-spacing: -.4px; }
+    .brand-caption { color: #9CA3AF; font-size: 11px; margin-top: 1px; }
+    .nav-label {
+      padding: 0 12px;
+      margin: 9px 0 10px;
+      color: #6B7280;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.3px;
+    }
+    .nav-list { display: grid; gap: 5px; }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 44px;
+      padding: 11px 12px;
+      border-radius: 9px;
+      color: #AEB8C8;
+      font-size: 13px;
+      font-weight: 500;
+      transition: .18s ease;
+    }
+    .nav-link i { width: 19px; text-align: center; font-size: 15px; }
+    .nav-link:hover { color: #fff; background: rgba(255,255,255,.06); }
+    .nav-link.active {
+      color: #fff;
+      background: var(--primary);
+      box-shadow: 0 5px 14px rgba(124,58,237,.23);
+    }
+    .sidebar-bottom { margin-top: auto; padding-top: 24px; }
+    .sidebar-tip {
+      margin: 0 3px 16px;
+      padding: 14px;
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 11px;
+    }
+    .sidebar-tip i { color: #A78BFA; margin-right: 6px; }
+    .sidebar-tip strong { font-size: 12px; }
+    .sidebar-tip p { color: #9CA3AF; font-size: 11px; margin: 7px 0 0; line-height: 1.6; }
+    .sidebar-footer {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px 7px 0;
+      border-top: 1px solid rgba(255,255,255,.09);
+    }
+    .avatar {
+      width: 37px;
+      height: 37px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: white;
+      background: linear-gradient(135deg, #8B5CF6, #4F46E5);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .sidebar-user { min-width: 0; flex: 1; }
+    .sidebar-user strong { display: block; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sidebar-user span { color: #9CA3AF; font-size: 11px; }
+    .sidebar-logout {
+      color: #9CA3AF;
+      border: 0;
+      background: transparent;
+      border-radius: 8px;
+      padding: 8px;
+    }
+    .sidebar-logout:hover { color: #FCA5A5; background: rgba(255,255,255,.06); }
+
+    .main { min-height: 100vh; margin-left: var(--sidebar-width); }
+    .topbar {
+      height: 76px;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 34px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-left, .topbar-right { display: flex; align-items: center; gap: 15px; min-width: 0; }
+    .breadcrumb { color: var(--muted); font-size: 12px; }
+    .breadcrumb strong { color: var(--text); font-weight: 600; }
+    .topbar-title { font-weight: 700; font-size: 15px; }
+    .icon-btn {
+      width: 39px;
+      height: 39px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      background: var(--surface);
+      transition: .18s ease;
+    }
+    .icon-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .menu-btn { display: none; }
+    .top-admin {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-left: 15px;
+      border-left: 1px solid var(--border);
+    }
+    .top-admin .avatar { width: 36px; height: 36px; }
+    .top-admin-info strong { display: block; font-size: 12px; }
+    .top-admin-info span { color: var(--muted); font-size: 11px; }
+
+    .content { max-width: 1650px; margin: 0 auto; padding: 31px 34px 42px; }
+    .page-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 25px;
+    }
+    .page-heading h1 { font-size: clamp(23px, 2.3vw, 29px); line-height: 1.3; letter-spacing: -.9px; margin: 0; font-weight: 800; }
+    .page-heading p { color: var(--muted); margin: 8px 0 0; font-size: 13px; }
+    .heading-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      min-height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 9px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 600;
+      transition: .18s ease;
+    }
+    .btn:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-primary { background: var(--primary); border-color: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); color: white; }
+    .btn-danger { color: var(--danger); }
+    .btn-danger:hover { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    .data-notice {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      margin-bottom: 24px;
+      border: 1px solid #DDD6FE;
+      background: var(--primary-soft);
+      border-radius: 11px;
+      color: var(--text);
+    }
+    .data-notice > i { color: var(--primary); margin-top: 2px; font-size: 16px; }
+    .data-notice strong { font-size: 12px; }
+    .data-notice p { margin: 3px 0 0; font-size: 11px; color: var(--muted); line-height: 1.65; }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 27px 0 15px;
+    }
+    .section-title h2 { font-size: 15px; letter-spacing: -.3px; margin: 0; font-weight: 750; }
+    .section-title p { color: var(--muted); font-size: 11px; margin: 4px 0 0; }
+    .section-title .section-link { font-size: 12px; color: var(--primary); font-weight: 600; }
+    .section-link:hover { text-decoration: underline; }
+
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 17px; }
+    .kpi-card {
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+    .kpi-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .kpi-label { font-size: 12px; color: var(--muted); font-weight: 500; }
+    .kpi-icon {
+      width: 40px; height: 40px;
+      display: grid; place-items: center;
+      border-radius: 11px;
+      font-size: 16px;
+    }
+    .icon-purple { background: var(--primary-soft); color: var(--primary); }
+    .icon-green { background: var(--green-soft); color: var(--green); }
+    .icon-blue { background: #DBEAFE; color: #2563EB; }
+    .icon-orange { background: var(--warning-soft); color: var(--warning); }
+    .kpi-value { font-size: 29px; font-weight: 800; letter-spacing: -1px; margin: 14px 0 5px; line-height: 1.2; overflow-wrap: anywhere; }
+    .kpi-foot { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 11px; }
+    .kpi-foot i { color: var(--green); font-size: 10px; }
+    .kpi-foot .neutral-icon { color: var(--muted); }
+
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 12px 15px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      margin-bottom: 17px;
+    }
+    .filter-bar label { color: var(--muted); font-size: 12px; font-weight: 600; }
+    .select-wrap { position: relative; }
+    .filter-select {
+      min-height: 36px;
+      min-width: 150px;
+      padding: 8px 32px 8px 11px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .filter-help { color: var(--muted); font-size: 11px; margin-left: auto; }
+
+    .charts-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 17px; }
+    .chart-card {
+      min-width: 0;
+      padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      box-shadow: var(--shadow);
+    }
+    .chart-card.wide { grid-column: span 2; }
+    .chart-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 17px; }
+    .chart-head h3 { margin: 0; font-size: 13px; font-weight: 700; }
+    .chart-head p { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
+    .chart-badge { padding: 5px 8px; border-radius: 6px; background: var(--background); color: var(--muted); font-size: 10px; white-space: nowrap; }
+    .chart-wrap { height: 245px; position: relative; }
+    .chart-card.wide .chart-wrap { height: 230px; }
+    .chart-empty {
+      height: 100%;
+      min-height: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 18px;
+    }
+    .chart-empty i { font-size: 24px; opacity: .55; }
+    .chart-empty strong { color: var(--text); font-size: 12px; }
+
+    .quick-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 13px; }
+    .quick-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: var(--surface);
+      transition: transform .18s, border-color .18s, box-shadow .18s;
+    }
+    .quick-card:hover { transform: translateY(-2px); border-color: #C4B5FD; box-shadow: var(--shadow); }
+    .quick-icon { flex-shrink: 0; width: 39px; height: 39px; display: grid; place-items: center; border-radius: 10px; color: var(--primary); background: var(--primary-soft); }
+    .quick-card strong { display: block; font-size: 12px; }
+    .quick-card span { display: block; color: var(--muted); font-size: 10px; margin-top: 3px; }
+    .quick-arrow { margin-left: auto; color: var(--muted); font-size: 11px; }
+
+    .table-card {
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      box-shadow: var(--shadow);
+    }
+    .table-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 13px;
+      flex-wrap: wrap;
+      padding: 17px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .table-toolbar h3 { margin: 0; font-size: 13px; }
+    .table-toolbar p { color: var(--muted); font-size: 11px; margin: 4px 0 0; }
+    .table-search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+      padding: 0 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--muted);
+    }
+    .table-search input { width: 180px; border: 0; outline: 0; background: transparent; color: var(--text); font-size: 12px; }
+    .table-search input:focus-visible { outline: none; }
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+    th {
+      text-align: left;
+      padding: 13px 18px;
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      font-weight: 700;
+      background: var(--background);
+      border-bottom: 1px solid var(--border);
+    }
+    td { padding: 14px 18px; font-size: 12px; border-bottom: 1px solid var(--border); }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: var(--background); }
+    .user-cell { display: flex; align-items: center; gap: 10px; }
+    .user-cell .avatar { width: 34px; height: 34px; font-size: 11px; }
+    .user-cell strong { display: block; font-size: 12px; }
+    .user-cell small { display: block; color: var(--muted); font-size: 10px; margin-top: 2px; }
+    .role-pill { display: inline-flex; padding: 4px 8px; border-radius: 6px; background: var(--primary-soft); color: var(--primary); font-size: 10px; font-weight: 700; text-transform: capitalize; }
+    .role-pill.admin { background: var(--warning-soft); color: var(--warning); }
+    .role-pill.trainer { background: var(--green-soft); color: #15803D; }
+    body.dark .role-pill.trainer { color: #86EFAC; }
+    .completion { display: flex; align-items: center; gap: 8px; min-width: 110px; }
+    .progress-track { width: 65px; height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--green); border-radius: 99px; }
+    .completion span { color: var(--muted); font-size: 10px; }
+    .empty-row { padding: 34px 18px; text-align: center; color: var(--muted); white-space: normal; }
+    .empty-row i { display: block; font-size: 23px; margin-bottom: 9px; opacity: .55; }
+    .empty-row strong { display: block; color: var(--text); margin-bottom: 4px; }
+
+    .table-footer { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; padding: 13px 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: 11px; }
+    .table-footer .btn { min-height: 31px; padding: 6px 10px; font-size: 11px; }
+    .security-note {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 13px 15px;
+      margin-top: 22px;
+      color: var(--muted);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 11px;
+      line-height: 1.65;
+    }
+    .security-note i { color: var(--warning); margin-top: 2px; }
+    .security-note strong { color: var(--text); }
+    .footer { text-align: center; color: var(--muted); font-size: 10px; padding: 25px 0 0; }
+
+    .toast-region { position: fixed; top: 88px; right: 22px; z-index: 150; display: grid; gap: 10px; width: min(360px, calc(100vw - 32px)); }
+    .toast {
+      display: flex; align-items: flex-start; gap: 10px; padding: 14px 16px;
+      border: 1px solid var(--border); border-radius: 11px; background: var(--surface);
+      box-shadow: 0 10px 35px rgba(0,0,0,.12); animation: toast-in .2s ease;
+    }
+    .toast i { margin-top: 2px; color: var(--green); }
+    .toast.error i { color: var(--danger); }
+    .toast strong { display: block; font-size: 12px; }
+    .toast span { display: block; color: var(--muted); font-size: 11px; margin-top: 3px; }
+    @keyframes toast-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 120; display: none; align-items: center; justify-content: center;
+      padding: 20px; background: rgba(2,6,23,.62); backdrop-filter: blur(3px);
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      width: min(430px, 100%); padding: 24px; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 15px; box-shadow: 0 24px 70px rgba(0,0,0,.25);
+      animation: modal-in .18s ease;
+    }
+    @keyframes modal-in { from { opacity: 0; transform: translateY(7px) scale(.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .modal-icon { width: 45px; height: 45px; display: grid; place-items: center; color: var(--primary); background: var(--primary-soft); border-radius: 12px; font-size: 18px; margin-bottom: 16px; }
+    .modal-icon.danger { color: var(--danger); background: var(--danger-soft); }
+    .modal h2 { margin: 0; font-size: 18px; }
+    .modal p { color: var(--muted); font-size: 12px; line-height: 1.7; margin: 10px 0 21px; }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 9px; flex-wrap: wrap; }
+    .access-denied {
+      max-width: 500px; margin: 14vh auto; padding: 34px; text-align: center;
+      border: 1px solid var(--border); border-radius: 16px; background: var(--surface); box-shadow: var(--shadow);
+    }
+    .access-denied i { font-size: 36px; color: var(--danger); }
+    .access-denied h1 { font-size: 23px; margin: 17px 0 8px; }
+    .access-denied p { color: var(--muted); font-size: 13px; }
+    .hidden { display: none !important; }
+    .overlay { display: none; }
+
+    @media (max-width: 1200px) {
+      :root { --sidebar-width: 235px; }
+      .content { padding: 27px 24px 36px; }
+      .topbar { padding: 0 24px; }
+      .kpi-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .quick-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (max-width: 850px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; }
+      .menu-btn { display: grid; }
+      .overlay { position: fixed; inset: 0; z-index: 40; background: rgba(2,6,23,.5); }
+      .overlay.show { display: block; }
+      .topbar { height: 68px; padding: 0 20px; }
+      .content { padding: 24px 20px 32px; }
+      .charts-grid { grid-template-columns: 1fr; }
+      .chart-card.wide { grid-column: auto; }
+    }
+    @media (max-width: 560px) {
+      .topbar { padding: 0 13px; }
+      .topbar-left, .topbar-right { gap: 9px; }
+      .top-admin-info { display: none; }
+      .top-admin { padding-left: 10px; }
+      .content { padding: 20px 13px 27px; }
+      .page-heading { flex-direction: column; align-items: stretch; }
+      .heading-actions .btn { flex: 1; }
+      .kpi-grid { gap: 10px; }
+      .kpi-card { padding: 14px; }
+      .kpi-icon { width: 34px; height: 34px; font-size: 14px; }
+      .kpi-label { font-size: 11px; }
+      .kpi-value { font-size: 24px; }
+      .kpi-foot { font-size: 10px; }
+      .quick-grid { gap: 9px; }
+      .quick-card { padding: 12px 10px; gap: 9px; }
+      .quick-icon { width: 33px; height: 33px; }
+      .quick-card strong { font-size: 11px; }
+      .quick-card span { font-size: 9px; }
+      .filter-help { width: 100%; margin-left: 0; }
+      .filter-select { min-width: 125px; }
+      .chart-card { padding: 15px; }
+      .chart-wrap { height: 220px; }
+      .table-toolbar { padding: 15px; }
+      .table-search { width: 100%; }
+      .table-search input { width: 100%; }
+      .table-footer { padding: 12px 15px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div id="toastRegion" class="toast-region" aria-live="polite" aria-atomic="false"></div>
+
+  <div id="accessDenied" class="access-denied hidden" role="alert">
+    <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+    <h1>Access denied</h1>
+    <p>This dashboard is intended for administrator accounts only. Redirecting you to the user dashboard.</p>
+  </div>
+
+  <div id="app" class="app hidden">
+    <aside class="sidebar" id="sidebar" aria-label="Administrator navigation">
+      <a href="admin.html" class="brand" aria-label="Smart Gym Coach admin home">
+        <span class="brand-icon"><i class="fa-solid fa-dumbbell" aria-hidden="true"></i></span>
+        <span>
+          <span class="brand-name">Smart Gym Coach</span>
+          <span class="brand-caption">ADMINISTRATION</span>
+        </span>
+      </a>
+
+      <div class="nav-label">Main menu</div>
+      <nav class="nav-list">
+        <a class="nav-link active" href="admin.html" aria-current="page"><i class="fa-solid fa-chart-pie" aria-hidden="true"></i> Overview</a>
+        <a class="nav-link" href="admin-users.html"><i class="fa-solid fa-users" aria-hidden="true"></i> User Management</a>
+        <a class="nav-link" href="admin-workouts.html"><i class="fa-solid fa-dumbbell" aria-hidden="true"></i> Workout Library</a>
+        <a class="nav-link" href="admin-nutrition.html"><i class="fa-solid fa-apple-whole" aria-hidden="true"></i> Nutrition Management</a>
+        <a class="nav-link" href="admin-settings.html"><i class="fa-solid fa-sliders" aria-hidden="true"></i> System Settings</a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="sidebar-tip">
+          <strong><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Admin note</strong>
+          <p>This dashboard summarizes data stored in this browser. It is a demo, not a secure server-side administration system.</p>
+        </div>
+        <div class="sidebar-footer">
+          <div class="avatar" id="sidebarAvatar">AD</div>
+          <div class="sidebar-user">
+            <strong id="sidebarName">Administrator</strong>
+            <span>Administrator</span>
+          </div>
+          <button class="sidebar-logout" id="sidebarLogout" type="button" aria-label="Log out" title="Log out">
+            <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="overlay" id="sidebarOverlay" aria-hidden="true"></div>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn menu-btn" id="menuToggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="sidebar">
+            <i class="fa-solid fa-bars" aria-hidden="true"></i>
+          </button>
+          <div>
+            <div class="breadcrumb">Admin <span aria-hidden="true">/</span> <strong>Overview</strong></div>
+            <div class="topbar-title">Dashboard overview</div>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <button class="icon-btn" id="themeToggle" type="button" aria-label="Switch to dark theme" title="Toggle theme">
+            <i class="fa-regular fa-moon" aria-hidden="true"></i>
+          </button>
+          <div class="top-admin">
+            <div class="avatar" id="topAvatar">AD</div>
+            <div class="top-admin-info">
+              <strong id="topAdminName">Administrator</strong>
+              <span>Admin account</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <section class="page-heading" aria-labelledby="pageTitle">
+          <div>
+            <h1 id="pageTitle">Admin Dashboard</h1>
+            <p>Monitor platform records and manage your fitness coaching experience.</p>
+          </div>
+          <div class="heading-actions">
+            <button class="btn" type="button" id="refreshButton"><i class="fa-solid fa-rotate" aria-hidden="true"></i> Refresh data</button>
+            <button class="btn btn-primary" type="button" id="exportButton"><i class="fa-solid fa-download" aria-hidden="true"></i> Export summary</button>
+          </div>
+        </section>
+
+        <section class="data-notice" aria-label="Data source information">
+          <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+          <div>
+            <strong>Local browser data — not live server analytics</strong>
+            <p>Counts and charts below are calculated from available Smart Gym Coach localStorage records in this browser. Missing or invalid records are safely ignored. Other browsers and devices are not included, and no activity is fabricated.</p>
+          </div>
+        </section>
+
+        <section aria-labelledby="kpiTitle">
+          <div class="section-title">
+            <div>
+              <h2 id="kpiTitle">Platform snapshot</h2>
+              <p>Totals based on available stored records</p>
+            </div>
+          </div>
+          <div class="kpi-grid">
+            <article class="kpi-card">
+              <div class="kpi-top">
+                <span class="kpi-label">Registered users</span>
+                <span class="kpi-icon icon-purple"><i class="fa-solid fa-users" aria-hidden="true"></i></span>
+              </div>
+              <div class="kpi-value" id="usersCount">—</div>
+              <div class="kpi-foot"><i class="fa-solid fa-database" aria-hidden="true"></i><span>Accounts in local storage</span></div>
+            </article>
+            <article class="kpi-card">
+              <div class="kpi-top">
+                <span class="kpi-label">Workout plans</span>
+                <span class="kpi-icon icon-green"><i class="fa-solid fa-dumbbell" aria-hidden="true"></i></span>
+              </div>
+              <div class="kpi-value" id="workoutsCount">—</div>
+              <div class="kpi-foot"><i class="fa-solid fa-database" aria-hidden="true"></i><span>Stored workout records</span></div>
+            </article>
+            <article class="kpi-card">
+              <div class="kpi-top">
+                <span class="kpi-label">Nutrition logs</span>
+                <span class="kpi-icon icon-orange"><i class="fa-solid fa-apple-whole" aria-hidden="true"></i></span>
+              </div>
+              <div class="kpi-value" id="nutritionCount">—</div>
+              <div class="kpi-foot"><i class="fa-solid fa-database" aria-hidden="true"></i><span>Stored nutrition records</span></div>
+            </article>
+            <article class="kpi-card">
+              <div class="kpi-top">
+                <span class="kpi-label">Workout activity</span>
+                <span class="kpi-icon icon-blue"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span>
+              </div>
+              <div class="kpi-value" id="activityCount">—</div>
+              <div class="kpi-foot"><i class="fa-solid fa-database" aria-hidden="true"></i><span>Recorded progress entries</span></div>
+            </article>
+          </div>
+        </section>
+
+        <section aria-labelledby="chartSectionTitle">
+          <div class="section-title">
+            <div>
+              <h2 id="chartSectionTitle">Analytics</h2>
+              <p>Charts reflect stored data, not estimated activity</p>
+            </div>
+          </div>
+
+          <div class="filter-bar">
+            <label for="dateRange">Chart date range</label>
+            <select class="filter-select" id="dateRange">
+              <option value="7">Last 7 days</option>
+              <option value="30" selected>Last 30 days</option>
+              <option value="90">Last 90 days</option>
+              <option value="365">Last 12 months</option>
+              <option value="all">All available dates</option>
+            </select>
+            <button class="btn" type="button" id="applyFilter"><i class="fa-solid fa-filter" aria-hidden="true"></i> Apply filter</button>
+            <span class="filter-help" id="filterDescription">Showing the last 30 days</span>
+          </div>
+
+          <div class="charts-grid">
+            <article class="chart-card">
+              <div class="chart-head">
+                <div>
+                  <h3>User registration trend</h3>
+                  <p>Accounts grouped by their creation date</p>
+                </div>
+                <span class="chart-badge">Users</span>
+              </div>
+              <div class="chart-wrap" id="registrationWrap">
+                <canvas id="registrationChart" role="img" aria-label="User registrations over the selected date range"></canvas>
+              </div>
+            </article>
+
+            <article class="chart-card">
+              <div class="chart-head">
+                <div>
+                  <h3>Recorded workout activity</h3>
+                  <p>Progress records grouped by date</p>
+                </div>
+                <span class="chart-badge">Records</span>
+              </div>
+              <div class="chart-wrap" id="activityWrap">
+                <canvas id="activityChart" role="img" aria-label="Recorded workout activity over the selected date range"></canvas>
+              </div>
+            </article>
+
+            <article class="chart-card wide">
+              <div class="chart-head">
+                <div>
+                  <h3>User goal distribution</h3>
+                  <p>Goals found in stored user fitness profiles</p>
+                </div>
+                <span class="chart-badge">Profiles</span>
+              </div>
+              <div class="chart-wrap" id="goalsWrap">
+                <canvas id="goalsChart" role="img" aria-label="Distribution of fitness goals in user profiles"></canvas>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section aria-labelledby="quickTitle">
+          <div class="section-title">
+            <div>
+              <h2 id="quickTitle">Quick actions</h2>
+              <p>Navigate to an administration section</p>
+            </div>
+          </div>
+          <div class="quick-grid">
+            <a class="quick-card" href="admin-users.html">
+              <span class="quick-icon"><i class="fa-solid fa-users" aria-hidden="true"></i></span>
+              <span><strong>User management</strong><span>Review account records</span></span>
+              <i class="fa-solid fa-chevron-right quick-arrow" aria-hidden="true"></i>
+            </a>
+            <a class="quick-card" href="admin-workouts.html">
+              <span class="quick-icon"><i class="fa-solid fa-dumbbell" aria-hidden="true"></i></span>
+              <span><strong>Workout library</strong><span>Manage workout content</span></span>
+              <i class="fa-solid fa-chevron-right quick-arrow" aria-hidden="true"></i>
+            </a>
+            <a class="quick-card" href="admin-nutrition.html">
+              <span class="quick-icon"><i class="fa-solid fa-apple-whole" aria-hidden="true"></i></span>
+              <span><strong>Nutrition management</strong><span>Review nutrition records</span></span>
+              <i class="fa-solid fa-chevron-right quick-arrow" aria-hidden="true"></i>
+            </a>
+            <a class="quick-card" href="admin-settings.html">
+              <span class="quick-icon"><i class="fa-solid fa-sliders" aria-hidden="true"></i></span>
+              <span><strong>System settings</strong><span>Configure demo settings</span></span>
+              <i class="fa-solid fa-chevron-right quick-arrow" aria-hidden="true"></i>
+            </a>
+          </div>
+        </section>
+
+        <section aria-labelledby="recentUsersTitle">
+          <div class="section-title">
+            <div>
+              <h2 id="recentUsersTitle">Recent users</h2>
+              <p>Latest accounts found in local browser storage</p>
+            </div>
+            <a class="section-link" href="admin-users.html">Manage all users <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+          </div>
+
+          <div class="table-card">
+            <div class="table-toolbar">
+              <div>
+                <h3>Account directory</h3>
+                <p id="tableSubtitle">Showing the most recently created accounts</p>
+              </div>
+              <label class="table-search" for="userSearch">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                <input id="userSearch" type="search" placeholder="Search name or email..." autocomplete="off">
+              </label>
+            </div>
+            <div class="table-scroll">
+              <table aria-describedby="tableSubtitle">
+                <thead>
+                  <tr>
+                    <th scope="col">User</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Created</th>
+                    <th scope="col">Profile completion</th>
+                  </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                  <tr><td colspan="4" class="empty-row">Loading account records…</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="table-footer">
+              <span id="tableCount" aria-live="polite">0 accounts</span>
+              <a href="admin-users.html" class="btn">View all users <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+            </div>
+          </div>
+        </section>
+
+        <section class="security-note" aria-label="Security limitation">
+          <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+          <div><strong>Demo security limitation.</strong> This page checks the role saved in the browser only. Browser storage can be edited by the user and is not secure authorization. A production application must verify administrator permissions on a backend for every protected operation.</div>
+        </section>
+
+        <footer class="footer">© <span id="currentYear"></span> Smart Gym Coach. Admin dashboard demo.</footer>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="confirmModal" role="presentation">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDescription">
+      <div class="modal-icon" id="modalIcon"><i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i></div>
+      <h2 id="modalTitle">Log out?</h2>
+      <p id="modalDescription">Your current browser session will be cleared.</p>
+      <div class="modal-actions">
+        <button class="btn" type="button" id="cancelModal">Cancel</button>
+        <button class="btn btn-primary" type="button" id="confirmModalButton">Log out</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const KEYS = {
+        users: "smartGym_users",
+        currentUser: "smartGym_currentUser",
+        profile: "smartGym_profile",
+        workouts: "smartGym_workouts",
+        nutrition: "smartGym_nutrition",
+        progress: "smartGym_progress",
+        settings: "smartGym_settings",
+        theme: "smartGym_theme"
+      };
+
+      const $ = (selector, root = document) => root.querySelector(selector);
+      const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+
+      let activeUser = null;
+      let charts = { registration: null, activity: null, goals: null };
+      let snapshot = null;
+      let modalPreviousFocus = null;
+      let logoutCallback = null;
+
+      function readJSON(key, fallback = null) {
+        try {
+          const raw = localStorage.getItem(key);
+          if (raw === null || raw === "") return fallback;
+          return JSON.parse(raw);
+        } catch (error) {
+          console.warn("Could not parse localStorage key:", key, error);
+          return fallback;
+        }
+      }
+
+      function writeJSON(key, value) {
+        try {
+          localStorage.setItem(key, JSON.stringify(value));
+          return true;
+        } catch (error) {
+          console.error("Could not save localStorage key:", key, error);
+          showToast("Storage error", "Your browser could not save this change.", true);
+          return false;
+        }
+      }
+
+      function readCollection(key) {
+        const value = readJSON(key, []);
+        return Array.isArray(value) ? value : [];
+      }
+
+      function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, character => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        })[character]);
+      }
+
+      function normalizedRole(user) {
+        const role = user && (user.role ?? user.userRole ?? user.accountType);
+        return typeof role === "string" ? role.trim().toLowerCase() : "";
+      }
+
+      function getUserId(user) {
+        return user ? (user.userId ?? user.id ?? user._id ?? user.uid ?? null) : null;
+      }
+
+      function sameId(a, b) {
+        return a != null && b != null && String(a) === String(b);
+      }
+
+      function isObject(value) {
+        return value !== null && typeof value === "object" && !Array.isArray(value);
+      }
+
+      function recordUserId(record) {
+        if (!isObject(record)) return null;
+        if (record.userId != null) return record.userId;
+        if (isObject(record.user)) return getUserId(record.user);
+        return null;
+      }
+
+      function belongsToUser(record, user) {
+        const recordId = recordUserId(record);
+        return recordId != null && sameId(recordId, getUserId(user));
+      }
+
+      function getUserRecords(key, user) {
+        return readCollection(key).filter(record => belongsToUser(record, user));
+      }
+
+      function getCurrentProfile() {
+        const stored = readJSON(KEYS.profile, null);
+        if (Array.isArray(stored)) {
+          return stored.find(item => belongsToUser(item, activeUser)) || {};
+        }
+        if (isObject(stored)) {
+          if (stored.userId != null) return sameId(stored.userId, getUserId(activeUser)) ? stored : {};
+          return stored;
+        }
+        return {};
+      }
+
+      function initials(name) {
+        const parts = String(name || "Admin").trim().split(/\s+/).filter(Boolean);
+        return parts.slice(0, 2).map(part => part.charAt(0).toUpperCase()).join("") || "AD";
+      }
+
+      function showToast(title, message, isError = false) {
+        const region = $("#toastRegion");
+        const toast = document.createElement("div");
+        toast.className = "toast" + (isError ? " error" : "");
+        toast.setAttribute("role", isError ? "alert" : "status");
+        toast.innerHTML = `
+          <i class="fa-solid ${isError ? "fa-circle-exclamation" : "fa-circle-check"}" aria-hidden="true"></i>
+          <div><strong>${escapeHTML(title)}</strong><span>${escapeHTML(message)}</span></div>`;
+        region.appendChild(toast);
+        window.setTimeout(() => toast.remove(), 4200);
+      }
+
+      function redirect(path) {
+        window.location.replace(path);
+      }
+
+      function applyTheme(theme, persist = true) {
+        const normalized = theme === "dark" ? "dark" : "light";
+        document.body.classList.toggle("dark", normalized === "dark");
+        const button = $("#themeToggle");
+        if (button) {
+          button.innerHTML = normalized === "dark"
+            ? '<i class="fa-regular fa-sun" aria-hidden="true"></i>'
+            : '<i class="fa-regular fa-moon" aria-hidden="true"></i>';
+          button.setAttribute("aria-label", normalized === "dark" ? "Switch to light theme" : "Switch to dark theme");
+          button.title = normalized === "dark" ? "Switch to light theme" : "Switch to dark theme";
+        }
+        if (persist) {
+          try { localStorage.setItem(KEYS.theme, normalized); }
+          catch (error) { showToast("Theme not saved", "Your browser prevented saving the theme preference.", true); }
+        }
+        if (snapshot && $("#app") && !$("#app").classList.contains("hidden")) {
+          renderCharts(snapshot);
+        }
+      }
+
+      function initializeTheme() {
+        let storedTheme = null;
+        try { storedTheme = localStorage.getItem(KEYS.theme); } catch (_) {}
+        if (storedTheme !== "dark" && storedTheme !== "light") {
+          const settings = readJSON(KEYS.settings, {});
+          const scoped = isObject(settings) && activeUser
+            ? (settings[String(getUserId(activeUser))] || settings)
+            : {};
+          storedTheme = scoped && scoped.theme === "dark" ? "dark" : "light";
+        }
+        applyTheme(storedTheme, false);
+      }
+
+      function parseDate(value) {
+        if (value == null || value === "") return null;
+        let date;
+        if (typeof value === "number") {
+          date = new Date(value < 1e12 ? value * 1000 : value);
+        } else if (typeof value === "string") {
+          const normalized = value.trim();
+          if (!normalized) return null;
+          date = new Date(normalized);
+          if (Number.isNaN(date.getTime()) && /^\d{4}-\d{2}-\d{2}$/.test(normalized)) {
+            date = new Date(normalized + "T12:00:00");
+          }
+        } else {
+          return null;
+        }
+        return Number.isNaN(date.getTime()) ? null : date;
+      }
+
+      function getCreatedDate(record) {
+        if (!isObject(record)) return null;
+        return parseDate(
+          record.createdAt ??
+          record.created_at ??
+          record.registeredAt ??
+          record.registrationDate ??
+          record.joinedAt ??
+          record.created ??
+          record.dateCreated ??
+          record.timestamp
+        );
+      }
+
+      function getActivityDate(record) {
+        if (!isObject(record)) return null;
+        return parseDate(
+          record.completedAt ??
+          record.workoutDate ??
+          record.activityDate ??
+          record.loggedAt ??
+          record.createdAt ??
+          record.date ??
+          record.timestamp ??
+          record.updatedAt
+        );
+      }
+
+      function formatDate(date) {
+        if (!date) return "Not available";
+        return new Intl.DateTimeFormat(undefined, { year: "numeric", month: "short", day: "numeric" }).format(date);
+      }
+
+      function formatDateKey(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
+
+      function startOfDay(date) {
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      }
+
+      function dateRangeStart() {
+        const range = $("#dateRange").value;
+        if (range === "all") return null;
+        const days = Number(range);
+        const today = startOfDay(new Date());
+        today.setDate(today.getDate() - Math.max(0, days - 1));
+        return today;
+      }
+
+      function isWithinRange(date, start) {
+        if (!date) return false;
+        if (!start) return true;
+        return startOfDay(date).getTime() >= start.getTime() &&
+          startOfDay(date).getTime() <= startOfDay(new Date()).getTime();
+      }
+
+      function countObjectValues(value) {
+        if (Array.isArray(value)) return value.length;
+        if (isObject(value)) return Object.keys(value).length;
+        return 0;
+      }
+
+      function getScopedStoredValue(key, user) {
+        const value = readJSON(key, null);
+        if (Array.isArray(value)) return value.filter(record => belongsToUser(record, user));
+        if (!isObject(value)) return null;
+
+        if (value.userId != null) {
+          return sameId(value.userId, getUserId(user)) ? value : null;
+        }
+
+        const id = getUserId(user);
+        if (id != null && Object.prototype.hasOwnProperty.call(value, String(id))) {
+          return value[String(id)];
+        }
+
+        // A plain profile/settings object without a userId cannot be safely
+        // attributed to an account for cross-user reporting.
+        return null;
+      }
+
+      function profileForUser(user) {
+        const profileStore = readJSON(KEYS.profile, null);
+        const userId = getUserId(user);
+
+        if (Array.isArray(profileStore)) {
+          return profileStore.find(record => belongsToUser(record, user)) || {};
+        }
+
+        if (isObject(profileStore)) {
+          if (profileStore.userId != null) {
+            return sameId(profileStore.userId, userId) ? profileStore : {};
+          }
+          if (userId != null && isObject(profileStore[String(userId)])) {
+            return profileStore[String(userId)];
+          }
+        }
+
+        const embedded = user && (user.profile || user.fitnessProfile);
+        return isObject(embedded) ? embedded : {};
+      }
+
+      function getGoal(user) {
+        const profile = profileForUser(user);
+        const value = profile.goal ?? profile.primaryGoal ?? profile.fitnessGoal ?? user.goal ?? user.primaryGoal;
+        if (typeof value !== "string" || !value.trim()) return "Not specified";
+        const goal = value.trim().replace(/[_-]+/g, " ");
+        return goal.charAt(0).toUpperCase() + goal.slice(1);
+      }
+
+      function getProfileCompletion(user) {
+        const profile = profileForUser(user);
+        const combined = { ...user, ...profile };
+        const fieldGroups = [
+          ["name", "fullName", "firstName"],
+          ["email"],
+          ["age"],
+          ["height", "heightCm"],
+          ["weight", "weightKg"],
+          ["goal", "primaryGoal", "fitnessGoal"],
+          ["activityLevel", "activity"],
+          ["experience", "experienceLevel"],
+          ["workoutDays", "trainingDays"],
+          ["sessionDuration", "duration"],
+          ["equipment", "availableEquipment"]
+        ];
+        const completed = fieldGroups.filter(keys =>
+          keys.some(key => combined[key] != null && combined[key] !== "" &&
+            !(Array.isArray(combined[key]) && combined[key].length === 0))
+        ).length;
+        return Math.round((completed / fieldGroups.length) * 100);
+      }
+
+      function getUserName(user) {
+        if (!user) return "Unknown user";
+        return user.fullName || user.name ||
+          [user.firstName, user.lastName].filter(Boolean).join(" ") ||
+          "Unnamed user";
+      }
+
+      function getUserEmail(user) {
+        return user && typeof user.email === "string" && user.email.trim()
+          ? user.email.trim()
+          : "No email provided";
+      }
+
+      function getUserCreated(user) {
+        return getCreatedDate(user);
+      }
+
+      function collectSnapshot() {
+        const users = readCollection(KEYS.users).filter(isObject);
+        const userIds = new Set();
+        const uniqueUsers = users.filter(user => {
+          const id = getUserId(user);
+          if (id == null) return true;
+          const key = String(id);
+          if (userIds.has(key)) return false;
+          userIds.add(key);
+          return true;
+        });
+
+        const workouts = getUserRecords(KEYS.workouts, activeUser);
+        const nutrition = getUserRecords(KEYS.nutrition, activeUser);
+        const progress = getUserRecords(KEYS.progress, activeUser);
+
+        const goals = {};
+        uniqueUsers.forEach(user => {
+          const goal = getGoal(user);
+          if (goal !== "Not specified") goals[goal] = (goals[goal] || 0) + 1;
+        });
+
+        return {
+          users: uniqueUsers,
+          workouts,
+          nutrition,
+          progress,
+          goals,
+          currentUserProfile: getCurrentProfile()
+        };
+      }
+
+      function setText(selector, value) {
+        const element = $(selector);
+        if (element) element.textContent = String(value);
+      }
+
+      function renderKPIs(data) {
+        setText("#usersCount", data.users.length.toLocaleString());
+        setText("#workoutsCount", data.workouts.length.toLocaleString());
+        setText("#nutritionCount", data.nutrition.length.toLocaleString());
+        setText("#activityCount", data.progress.length.toLocaleString());
+      }
+
+      function getChartColors() {
+        const dark = document.body.classList.contains("dark");
+        return {
+          text: dark ? "#9CA3AF" : "#64748B",
+          grid: dark ? "#263244" : "#E2E8F0",
+          purple: "#7C3AED",
+          green: "#22C55E",
+          blue: "#3B82F6",
+          orange: "#F59E0B",
+          red: "#F87171"
+        };
+      }
+
+      function makeDateSeries(records, getDate, rangeStart) {
+        const today = startOfDay(new Date());
+        const counts = new Map();
+        const validDates = records.map(getDate).filter(Boolean);
+
+        if (!validDates.length) return { labels: [], values: [], hasData: false };
+
+        let start;
+        if (rangeStart) {
+          start = rangeStart;
+        } else {
+          start = startOfDay(new Date(Math.min(...validDates.map(date => date.getTime()))));
+        }
+
+        if (start > today) start = today;
+        const labels = [];
+        const values = [];
+        const maxDays = Math.min(3700, Math.max(1, Math.round((today - start) / 86400000) + 1));
+
+        for (let i = 0; i < maxDays; i++) {
+          const day = new Date(start);
+          day.setDate(start.getDate() + i);
+          const key = formatDateKey(day);
+          labels.push(day);
+          counts.set(key, 0);
+        }
+
+        records.forEach(record => {
+          const date = getDate(record);
+          if (!date || !isWithinRange(date, rangeStart)) return;
+          const key = formatDateKey(date);
+          if (counts.has(key)) counts.set(key, counts.get(key) + 1);
+        });
+
+        labels.forEach(date => values.push(counts.get(formatDateKey(date)) || 0));
+
+        const compact = labels.length > 45
+          ? labels.map((date, index) => index % Math.ceil(labels.length / 12) === 0 || index === labels.length - 1
+            ? new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" }).format(date)
+            : "")
+          : labels.map(date => new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" }).format(date));
+
+        return { labels: compact, values, hasData: true };
+      }
+
+      function showChartEmpty(wrapSelector, icon, title, description) {
+        const wrap = $(wrapSelector);
+        if (!wrap) return;
+        wrap.innerHTML = `<div class="chart-empty"><i class="fa-solid ${icon}" aria-hidden="true"></i><strong>${escapeHTML(title)}</strong><span>${escapeHTML(description)}</span></div>`;
+      }
+
+      function destroyCharts() {
+        Object.values(charts).forEach(chart => {
+          if (chart && typeof chart.destroy === "function") chart.destroy();
+        });
+        charts = { registration: null, activity: null, goals: null };
+      }
+
+      function createLineChart(canvasId, series, label, color, fillColor) {
+        const canvas = $("#" + canvasId);
+        if (!canvas || !window.Chart) return null;
+        const ctx = canvas.getContext("2d");
+        const colors = getChartColors();
+
+        return new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: series.labels,
+            datasets: [{
+              label,
+              data: series.values,
+              borderColor: color,
+              backgroundColor: fillColor,
+              borderWidth: 2.5,
+              fill: true,
+              tension: .35,
+              pointRadius: series.labels.length > 60 ? 0 : 3,
+              pointHoverRadius: 5,
+              pointBackgroundColor: color
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { intersect: false, mode: "index" },
+            plugins: {
+              legend: { display: false },
+              tooltip: { backgroundColor: "#111827", padding: 11, displayColors: false }
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { color: colors.text, maxRotation: 0, autoSkip: true, maxTicksLimit: 8, font: { family: "Inter", size: 10 } },
+                border: { display: false }
+              },
+              y: {
+                beginAtZero: true,
+                ticks: { color: colors.text, precision: 0, font: { family: "Inter", size: 10 } },
+                grid: { color: colors.grid },
+                border: { display: false }
+              }
+            }
+          }
+        });
+      }
+
+      function renderCharts(data) {
+        destroyCharts();
+
+        if (!window.Chart) {
+          ["#registrationWrap", "#activityWrap", "#goalsWrap"].forEach(selector =>
+            showChartEmpty(selector, "fa-chart-simple", "Charts unavailable", "Chart.js could not be loaded. Check your internet connection.")
+          );
+          return;
+        }
+
+        const rangeStart = dateRangeStart();
+        const registration = makeDateSeries(
+          data.users.filter(user => isWithinRange(getUserCreated(user), rangeStart)),
+          getUserCreated,
+          rangeStart
+        );
+        const activity = makeDateSeries(data.progress, getActivityDate, rangeStart);
+
+        if (registration.hasData && registration.values.some(value => value > 0)) {
+          $("#registrationWrap").innerHTML = '<canvas id="registrationChart" role="img" aria-label="User registrations over the selected date range"></canvas>';
+          charts.registration = createLineChart("registrationChart", registration, "Registrations", "#7C3AED", "rgba(124,58,237,.12)");
+        } else {
+          showChartEmpty("#registrationWrap", "fa-user-plus", "No registration dates available", "Add account creation dates to stored user records to display this chart.");
+        }
+
+        if (activity.hasData && activity.values.some(value => value > 0)) {
+          $("#activityWrap").innerHTML = '<canvas id="activityChart" role="img" aria-label="Recorded workout activity over the selected date range"></canvas>';
+          charts.activity = createLineChart("activityChart", activity, "Progress entries", "#22C55E", "rgba(34,197,94,.12)");
+        } else {
+          showChartEmpty("#activityWrap", "fa-dumbbell", "No dated activity found", "Workout activity appears here when progress records include a recognizable date.");
+        }
+
+        const goalEntries = Object.entries(data.goals).sort((a, b) => b[1] - a[1]);
+        if (goalEntries.length) {
+          $("#goalsWrap").innerHTML = '<canvas id="goalsChart" role="img" aria-label="Distribution of fitness goals in user profiles"></canvas>';
+          const canvas = $("#goalsChart");
+          const colors = getChartColors();
+          charts.goals = new Chart(canvas.getContext("2d"), {
+            type: "doughnut",
+            data: {
+              labels: goalEntries.map(entry => entry[0]),
+              datasets: [{
+                data: goalEntries.map(entry => entry[1]),
+                backgroundColor: [colors.purple, colors.green, colors.blue, colors.orange, "#EC4899", "#06B6D4", "#8B5CF6", "#64748B"],
+                borderColor: document.body.classList.contains("dark") ? "#111827" : "#FFFFFF",
+                borderWidth: 3,
+                hoverOffset: 5
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              cutout: "65%",
+              plugins: {
+                legend: { position: "right", labels: { color: colors.text, usePointStyle: true, pointStyle: "circle", padding: 17, font: { family: "Inter", size: 11 } } },
+                tooltip: { backgroundColor: "#111827", padding: 11 }
+              }
+            }
+          });
+        } else {
+          showChartEmpty("#goalsWrap", "fa-bullseye", "No fitness goals found", "Goal distribution appears when stored user profiles contain a fitness goal.");
+        }
+
+        const range = $("#dateRange").value;
+        setText("#filterDescription", range === "all" ? "Showing all available dated records" : `Showing the last ${range} days`);
+      }
+
+      function roleClass(role) {
+        if (role === "admin" || role === "administrator") return "admin";
+        if (role === "trainer" || role === "coach") return "trainer";
+        return "";
+      }
+
+      function renderUsersTable(data, query = "") {
+        const body = $("#usersTableBody");
+        const normalizedQuery = query.trim().toLowerCase();
+        const sorted = [...data.users].sort((a, b) => {
+          const dateA = getUserCreated(a);
+          const dateB = getUserCreated(b);
+          return (dateB ? dateB.getTime() : 0) - (dateA ? dateA.getTime() : 0);
+        });
+
+        const filtered = sorted.filter(user =>
+          getUserName(user).toLowerCase().includes(normalizedQuery) ||
+          getUserEmail(user).toLowerCase().includes(normalizedQuery)
+        );
+        const visible = filtered.slice(0, 8);
+
+        if (!visible.length) {
+          body.innerHTML = `<tr><td colspan="4" class="empty-row">
+            <i class="fa-solid ${normalizedQuery ? "fa-magnifying-glass" : "fa-users"}" aria-hidden="true"></i>
+            <strong>${normalizedQuery ? "No matching users" : "No user records available"}</strong>
+            <span>${normalizedQuery ? "Try a different name or email." : "Accounts will appear here when stored in smartGym_users."}</span>
+          </td></tr>`;
+        } else {
+          body.innerHTML = visible.map(user => {
+            const name = getUserName(user);
+            const email = getUserEmail(user);
+            const role = normalizedRole(user) || "user";
+            const completion = getProfileCompletion(user);
+            const created = getUserCreated(user);
+            return `<tr>
+              <td>
+                <div class="user-cell">
+                  <div class="avatar" aria-hidden="true">${escapeHTML(initials(name))}</div>
+                  <div><strong>${escapeHTML(name)}</strong><small>${escapeHTML(email)}</small></div>
+                </div>
+              </td>
+              <td><span class="role-pill ${roleClass(role)}">${escapeHTML(role)}</span></td>
+              <td>${escapeHTML(formatDate(created))}</td>
+              <td>
+                <div class="completion" aria-label="Profile completion ${completion}%">
+                  <div class="progress-track" aria-hidden="true"><div class="progress-fill" style="width:${completion}%"></div></div>
+                  <span>${completion}%</span>
+                </div>
+              </td>
+            </tr>`;
+          }).join("");
+        }
+
+        setText("#tableCount", `${filtered.length} account${filtered.length === 1 ? "" : "s"}${filtered.length > 8 ? " · showing 8" : ""}`);
+        setText("#tableSubtitle", normalizedQuery ? `Search results for “${query.trim()}”` : "Showing the most recently created accounts");
+      }
+
+      function renderDashboard() {
+        snapshot = collectSnapshot();
+        renderKPIs(snapshot);
+        renderCharts(snapshot);
+        renderUsersTable(snapshot, $("#userSearch").value);
+      }
+
+      function exportJSON() {
+        if (!snapshot) return;
+
+        const ownWorkouts = getUserRecords(KEYS.workouts, activeUser);
+        const ownNutrition = getUserRecords(KEYS.nutrition, activeUser);
+        const ownProgress = getUserRecords(KEYS.progress, activeUser);
+        const ownProfile = getCurrentProfile();
+        const ownSettings = getScopedStoredValue(KEYS.settings, activeUser);
+
+        const exportData = {
+          exportedAt: new Date().toISOString(),
+          exportScope: "Current browser's locally stored records. This is not a server export.",
+          account: {
+            userId: getUserId(activeUser),
+            name: getUserName(activeUser),
+            email: getUserEmail(activeUser),
+            role: normalizedRole(activeUser),
+            createdAt: getCreatedDate(activeUser)?.toISOString() || null
+          },
+          profile: ownProfile,
+          workouts: ownWorkouts,
+          nutrition: ownNutrition,
+          progress: ownProgress,
+          settings: ownSettings,
+          summary: {
+            usersVisibleToAdminInThisBrowser: snapshot.users.length,
+            currentUserWorkoutRecords: ownWorkouts.length,
+            currentUserNutritionRecords: ownNutrition.length,
+            currentUserProgressRecords: ownProgress.length
+          }
+        };
+
+        downloadBlob(
+          JSON.stringify(exportData, null, 2),
+          `smart-gym-admin-summary-${formatDateKey(new Date())}.json`,
+          "application/json;charset=utf-8"
+        );
+        showToast("Export ready", "Downloaded the dashboard summary and current account's associated records.");
+      }
+
+      function downloadBlob(content, filename, type) {
+        const blob = new Blob([content], { type });
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = filename;
+        anchor.style.display = "none";
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+
+      function showModal(options) {
+        modalPreviousFocus = document.activeElement;
+        $("#modalTitle").textContent = options.title;
+        $("#modalDescription").textContent = options.description;
+        $("#confirmModalButton").textContent = options.confirmText || "Confirm";
+        $("#confirmModalButton").className = "btn " + (options.danger ? "btn-danger" : "btn-primary");
+        $("#modalIcon").className = "modal-icon" + (options.danger ? " danger" : "");
+        $("#modalIcon").innerHTML = `<i class="fa-solid ${options.icon || "fa-circle-question"}" aria-hidden="true"></i>`;
+        logoutCallback = options.onConfirm;
+        $("#confirmModal").classList.add("open");
+        $("#confirmModalButton").focus();
+      }
+
+      function closeModal() {
+        $("#confirmModal").classList.remove("open");
+        logoutCallback = null;
+        if (modalPreviousFocus && typeof modalPreviousFocus.focus === "function") modalPreviousFocus.focus();
+      }
+
+      function performLogout() {
+        try {
+          // Deliberately remove only the active session, not the user's saved records.
+          localStorage.removeItem(KEYS.currentUser);
+        } catch (error) {
+          showToast("Could not clear session", "Your browser blocked access to localStorage.", true);
+          return;
+        }
+        closeModal();
+        redirect("login.html");
+      }
+
+      function bindEvents() {
+        $("#themeToggle").addEventListener("click", () => {
+          const next = document.body.classList.contains("dark") ? "light" : "dark";
+          applyTheme(next, true);
+          showToast("Theme updated", `Switched to ${next} mode.`);
+        });
+
+        $("#refreshButton").addEventListener("click", () => {
+          renderDashboard();
+          showToast("Dashboard refreshed", "Re-read the available local browser records.");
+        });
+
+        $("#applyFilter").addEventListener("click", () => {
+          if (snapshot) renderCharts(snapshot);
+          showToast("Date filter applied", "Charts have been updated using the selected date range.");
+        });
+
+        $("#dateRange").addEventListener("change", () => {
+          if (snapshot) renderCharts(snapshot);
+        });
+
+        $("#userSearch").addEventListener("input", event => {
+          if (snapshot) renderUsersTable(snapshot, event.target.value);
+        });
+
+        $("#exportButton").addEventListener("click", exportJSON);
+
+        const requestLogout = () => showModal({
+          title: "Log out of Smart Gym Coach?",
+          description: "Your active browser session will be cleared. Saved account and fitness records will not be deleted.",
+          confirmText: "Log out",
+          icon: "fa-arrow-right-from-bracket",
+          onConfirm: performLogout
+        });
+
+        $("#sidebarLogout").addEventListener("click", requestLogout);
+        $("#cancelModal").addEventListener("click", closeModal);
+        $("#confirmModalButton").addEventListener("click", () => {
+          if (typeof logoutCallback === "function") logoutCallback();
+        });
+
+        $("#confirmModal").addEventListener("click", event => {
+          if (event.target === $("#confirmModal")) closeModal();
+        });
+
+        document.addEventListener("keydown", event => {
+          if (event.key === "Escape") {
+            if ($("#confirmModal").classList.contains("open")) {
+              closeModal();
+              return;
+            }
+            closeSidebar();
+          }
+
+          if (event.key === "Tab" && $("#confirmModal").classList.contains("open")) {
+            const focusable = $$("#confirmModal button").filter(element => !element.disabled);
+            if (!focusable.length) return;
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (event.shiftKey && document.activeElement === first) {
+              event.preventDefault();
+              last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+              event.preventDefault();
+              first.focus();
+            }
+          }
+        });
+
+        $("#menuToggle").addEventListener("click", () => {
+          const isOpen = $("#sidebar").classList.toggle("open");
+          $("#sidebarOverlay").classList.toggle("show", isOpen);
+          $("#menuToggle").setAttribute("aria-expanded", String(isOpen));
+          $("#menuToggle").setAttribute("aria-label", isOpen ? "Close navigation menu" : "Open navigation menu");
+        });
+
+        $("#sidebarOverlay").addEventListener("click", closeSidebar);
+
+        $$(".sidebar .nav-link").forEach(link => {
+          link.addEventListener("click", closeSidebar);
+        });
+
+        window.addEventListener("storage", event => {
+          if (Object.values(KEYS).includes(event.key) || event.key === null) {
+            const current = readJSON(KEYS.currentUser, null);
+            if (!current) {
+              redirect("login.html");
+              return;
+            }
+            renderDashboard();
+          }
+        });
+
+        window.addEventListener("resize", () => {
+          if (window.innerWidth > 850) closeSidebar();
+        });
+      }
+
+      function closeSidebar() {
+        $("#sidebar").classList.remove("open");
+        $("#sidebarOverlay").classList.remove("show");
+        $("#menuToggle").setAttribute("aria-expanded", "false");
+        $("#menuToggle").setAttribute("aria-label", "Open navigation menu");
+      }
+
+      function initializeAdmin() {
+        const session = readJSON(KEYS.currentUser, null);
+
+        if (!isObject(session)) {
+          redirect("login.html");
+          return;
+        }
+
+        if (normalizedRole(session) !== "admin" && normalizedRole(session) !== "administrator") {
+          $("#accessDenied").classList.remove("hidden");
+          window.setTimeout(() => redirect("dashboard.html"), 1800);
+          return;
+        }
+
+        activeUser = session;
+
+        const adminName = getUserName(activeUser);
+        setText("#sidebarName", adminName);
+        setText("#topAdminName", adminName);
+        setText("#sidebarAvatar", initials(adminName));
+        setText("#topAvatar", initials(adminName));
+        setText("#currentYear", new Date().getFullYear());
+
+        $("#app").classList.remove("hidden");
+        initializeTheme();
+        bindEvents();
+        renderDashboard();
+      }
+
+      document.addEventListener("DOMContentLoaded", initializeAdmin);
+    })();
+  </script>
+</body>
+</html>

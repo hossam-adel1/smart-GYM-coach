@@ -1,0 +1,1703 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0B1220">
+  <meta name="description" content="Smart Gym Coach — personalized workout planning, exercise library, and training schedule.">
+  <title>Workout Planner | Smart Gym Coach</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <style>
+    :root {
+      --primary: #7C3AED;
+      --primary-dark: #5B21B6;
+      --primary-soft: #F3E8FF;
+      --green: #22C55E;
+      --green-soft: #DCFCE7;
+      --navy: #0B1220;
+      --sidebar: #111827;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --text: #1E293B;
+      --muted: #64748B;
+      --border: #E2E8F0;
+      --danger: #DC2626;
+      --warning: #D97706;
+      --shadow: 0 8px 28px rgba(15, 23, 42, .055);
+      --radius: 16px;
+      color-scheme: light;
+    }
+    body.dark-theme {
+      --bg: #0B1220;
+      --surface: #111827;
+      --text: #F1F5F9;
+      --muted: #94A3B8;
+      --border: #273449;
+      --primary-soft: #2E1850;
+      --green-soft: #123D29;
+      --shadow: 0 8px 28px rgba(0, 0, 0, .18);
+      color-scheme: dark;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: Inter, sans-serif; font-size: 14px; line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, select, textarea { font: inherit; }
+    button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+    button { cursor: pointer; }
+    button:disabled { opacity: .55; cursor: not-allowed; }
+    a { color: inherit; text-decoration: none; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible,
+    textarea:focus-visible { outline: 3px solid rgba(124, 58, 237, .45); outline-offset: 2px; }
+    .app { min-height: 100vh; }
+    .sidebar {
+      position: fixed; inset: 0 auto 0 0; width: 252px; z-index: 50;
+      display: flex; flex-direction: column; padding: 25px 16px 18px;
+      color: #CBD5E1; background: var(--sidebar); transition: width .25s, transform .25s;
+      overflow-y: auto;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; padding: 0 10px 30px; color: #fff; }
+    .brand-icon {
+      display: grid; place-items: center; width: 40px; height: 40px; flex-shrink: 0;
+      border-radius: 13px; color: #fff; background: linear-gradient(145deg, #8B5CF6, #6D28D9);
+      font-size: 19px; box-shadow: 0 5px 15px #7c3aed42;
+    }
+    .brand-name { font-weight: 800; font-size: 16px; letter-spacing: -.55px; }
+    .brand-name span { color: #A78BFA; }
+    .nav-label { margin: 0 11px 10px; color: #718096; font-size: 10px; font-weight: 800; letter-spacing: 1.5px; }
+    .nav-links { display: grid; gap: 5px; }
+    .nav-link {
+      display: flex; align-items: center; gap: 13px; padding: 11px 13px;
+      border-radius: 10px; color: #9CA3AF; font-weight: 600; transition: .2s;
+      white-space: nowrap; position: relative;
+    }
+    .nav-link i { width: 19px; text-align: center; font-size: 16px; }
+    .nav-link:hover { background: #1F2937; color: #fff; }
+    .nav-link.active { color: #fff; background: linear-gradient(100deg, #7C3AED, #6D28D9); box-shadow: 0 6px 18px #7c3aed30; }
+    .nav-link.active::before { content: ""; position: absolute; left: -16px; height: 27px; width: 3px; border-radius: 0 4px 4px 0; background: #C4B5FD; }
+    .sidebar-bottom { margin-top: auto; }
+    .sidebar-tip { padding: 15px; border-radius: 13px; background: #1F2937; margin: 24px 0 18px; }
+    .tip-icon { color: #A78BFA; font-size: 20px; margin-bottom: 8px; }
+    .sidebar-tip strong { display: block; color: #F8FAFC; font-size: 12px; margin-bottom: 5px; }
+    .sidebar-tip p { color: #9CA3AF; font-size: 11px; margin: 0 0 11px; }
+    .tip-link { color: #C4B5FD; font-size: 11px; font-weight: 700; }
+    .user-mini { display: flex; align-items: center; gap: 10px; padding: 14px 8px 0; border-top: 1px solid #293343; }
+    .avatar { width: 37px; height: 37px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; color: #fff; background: linear-gradient(135deg, #A78BFA, #6D28D9); font-weight: 800; font-size: 12px; }
+    .user-mini-info { min-width: 0; flex: 1; }
+    .user-mini-info strong { display: block; color: #F8FAFC; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .user-mini-info span { color: #9CA3AF; font-size: 10px; }
+    .sidebar-logout { border: 0; background: transparent; color: #9CA3AF; padding: 8px; border-radius: 8px; }
+    .sidebar-logout:hover { color: #FCA5A5; background: #293343; }
+    .main { margin-left: 252px; min-width: 0; transition: margin-left .25s; }
+    .topbar {
+      height: 76px; display: flex; align-items: center; justify-content: space-between;
+      gap: 18px; padding: 0 32px; background: var(--surface); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 30;
+    }
+    .topbar-left, .topbar-right { display: flex; align-items: center; gap: 14px; min-width: 0; }
+    .breadcrumb { font-size: 12px; color: var(--muted); }
+    .breadcrumb span { color: var(--text); font-weight: 700; }
+    .icon-btn {
+      width: 39px; height: 39px; display: grid; place-items: center; flex-shrink: 0;
+      border: 1px solid var(--border); border-radius: 11px; color: var(--muted); background: var(--surface);
+      position: relative; transition: .2s;
+    }
+    .icon-btn:hover { color: var(--primary); border-color: var(--primary); }
+    .notification-dot { position: absolute; right: 8px; top: 7px; width: 7px; height: 7px; background: #EF4444; border-radius: 50%; border: 1px solid var(--surface); }
+    .top-avatar { width: 37px; height: 37px; border-radius: 50%; display: grid; place-items: center; color: white; font-size: 12px; font-weight: 800; background: linear-gradient(135deg, #A78BFA, #6D28D9); }
+    .mobile-menu { display: none; }
+    .page { max-width: 1600px; padding: 29px 32px 45px; margin: auto; }
+    .page-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; margin-bottom: 25px; }
+    .eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 1.3px; color: var(--primary); font-weight: 800; margin-bottom: 6px; }
+    h1 { font-size: clamp(24px, 2.2vw, 31px); line-height: 1.2; letter-spacing: -1.1px; margin: 0 0 8px; font-weight: 800; }
+    .page-heading p { margin: 0; color: var(--muted); font-size: 13px; }
+    .btn { display: inline-flex; justify-content: center; align-items: center; gap: 8px; padding: 10px 15px; border-radius: 10px; border: 1px solid transparent; font-size: 12px; font-weight: 700; transition: .2s; white-space: nowrap; }
+    .btn-primary { background: var(--primary); color: #fff; box-shadow: 0 4px 12px #7c3aed22; }
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    .btn-outline { color: var(--text); border-color: var(--border); background: var(--surface); }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-soft { background: var(--primary-soft); color: var(--primary); }
+    .btn-soft:hover { filter: brightness(.97); }
+    .btn-danger { color: #fff; background: var(--danger); }
+    .btn-sm { padding: 7px 10px; font-size: 11px; }
+    .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 19px 20px 0; }
+    .panel-title { font-size: 14px; font-weight: 800; letter-spacing: -.25px; margin: 0; }
+    .panel-subtitle { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .section { margin-top: 24px; }
+    .filters { padding: 18px 20px; margin-bottom: 22px; }
+    .filters-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 15px; }
+    .filter-grid { display: grid; grid-template-columns: 1.4fr repeat(5, minmax(110px, 1fr)); gap: 12px; align-items: end; }
+    .field { display: grid; gap: 6px; min-width: 0; }
+    .field label { color: var(--muted); font-size: 11px; font-weight: 700; }
+    .control {
+      width: 100%; min-width: 0; border: 1px solid var(--border); border-radius: 9px; padding: 10px 11px;
+      background: var(--surface); color: var(--text); outline: none; font-size: 12px;
+    }
+    .control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px #7c3aed16; }
+    .search-wrap { position: relative; }
+    .search-wrap i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 12px; }
+    .search-wrap .control { padding-left: 33px; }
+    .checkbox-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .check-chip { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; font-size: 11px; color: var(--muted); cursor: pointer; }
+    .check-chip input { accent-color: var(--primary); }
+    .check-chip:has(input:checked) { color: var(--primary); border-color: var(--primary); background: var(--primary-soft); }
+    .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 14px; }
+    .section-heading h2 { margin: 0; font-size: 17px; letter-spacing: -.5px; }
+    .section-heading p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+    .plan-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .plan-card { border: 1px solid var(--border); border-radius: 15px; background: var(--surface); padding: 18px; box-shadow: var(--shadow); min-width: 0; transition: border-color .2s, transform .2s; }
+    .plan-card:hover { border-color: #C4B5FD; transform: translateY(-2px); }
+    .plan-card.selected { border-color: var(--primary); box-shadow: 0 0 0 2px #7c3aed16, var(--shadow); }
+    .plan-top { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+    .plan-icon { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; color: var(--primary); background: var(--primary-soft); font-size: 18px; }
+    .plan-actions { display: flex; gap: 4px; }
+    .mini-action { border: 0; width: 29px; height: 29px; border-radius: 8px; color: var(--muted); background: transparent; }
+    .mini-action:hover { background: var(--bg); color: var(--primary); }
+    .plan-card h3 { font-size: 15px; margin: 13px 0 5px; letter-spacing: -.3px; overflow-wrap: anywhere; }
+    .plan-description { font-size: 11px; color: var(--muted); margin: 0 0 13px; min-height: 33px; }
+    .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .tag { padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; background: var(--bg); color: var(--muted); }
+    .tag.purple { background: var(--primary-soft); color: var(--primary); }
+    .tag.green { background: var(--green-soft); color: #15803D; }
+    body.dark-theme .tag.green { color: #86EFAC; }
+    .plan-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; border-top: 1px solid var(--border); padding-top: 13px; margin-top: 3px; }
+    .meta-item { min-width: 0; }
+    .meta-item i { color: var(--muted); font-size: 11px; margin-right: 4px; }
+    .meta-item strong { display: block; font-size: 12px; margin-top: 4px; }
+    .meta-item span { display: block; color: var(--muted); font-size: 10px; }
+    .plan-footer { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 15px; }
+    .plan-footer .btn { flex: 1; }
+    .empty-state { padding: 35px 20px; text-align: center; border: 1px dashed var(--border); border-radius: 13px; background: var(--surface); }
+    .empty-icon { width: 53px; height: 53px; margin: 0 auto 12px; border-radius: 16px; display: grid; place-items: center; color: var(--primary); background: var(--primary-soft); font-size: 21px; }
+    .empty-state h3 { font-size: 14px; margin: 0 0 6px; }
+    .empty-state p { font-size: 12px; color: var(--muted); margin: 0 auto 14px; max-width: 380px; }
+    .detail-layout { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(270px, .85fr); gap: 18px; align-items: start; }
+    .detail-panel { overflow: hidden; }
+    .detail-banner { padding: 21px; background: linear-gradient(115deg, #5B21B6, #7C3AED 65%, #A78BFA); color: #fff; }
+    .detail-banner-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+    .detail-banner .eyebrow { color: #DDD6FE; }
+    .detail-banner h2 { margin: 0 0 6px; font-size: 20px; letter-spacing: -.6px; overflow-wrap: anywhere; }
+    .detail-banner p { margin: 0; color: #EDE9FE; font-size: 12px; }
+    .detail-banner .btn { background: #FFFFFF20; color: #fff; border-color: #FFFFFF40; }
+    .detail-banner .btn:hover { background: #FFFFFF30; }
+    .detail-stats { display: flex; flex-wrap: wrap; gap: 17px; margin-top: 18px; }
+    .detail-stat { display: flex; align-items: center; gap: 7px; font-size: 11px; color: #F5F3FF; }
+    .detail-stat i { color: #DDD6FE; }
+    .exercise-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 17px 20px; border-bottom: 1px solid var(--border); }
+    .exercise-toolbar strong { font-size: 13px; }
+    .exercise-list { padding: 0 20px; }
+    .exercise-item { display: grid; grid-template-columns: 39px minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 17px 0; border-bottom: 1px solid var(--border); }
+    .exercise-item:last-child { border-bottom: 0; }
+    .exercise-number { display: grid; place-items: center; width: 37px; height: 37px; border-radius: 11px; color: var(--primary); background: var(--primary-soft); font-size: 12px; font-weight: 800; }
+    .exercise-info { min-width: 0; }
+    .exercise-info h3 { font-size: 13px; margin: 1px 0 5px; overflow-wrap: anywhere; }
+    .exercise-info p { font-size: 11px; color: var(--muted); margin: 0 0 8px; }
+    .exercise-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+    .exercise-chip { padding: 4px 7px; background: var(--bg); border-radius: 6px; font-size: 10px; color: var(--muted); }
+    .exercise-chip strong { color: var(--text); font-weight: 700; }
+    .exercise-actions { display: flex; gap: 3px; }
+    .exercise-actions button { width: 28px; height: 28px; border: 0; background: transparent; border-radius: 7px; color: var(--muted); }
+    .exercise-actions button:hover { color: var(--primary); background: var(--bg); }
+    .detail-bottom { display: flex; flex-wrap: wrap; gap: 8px; padding: 16px 20px; border-top: 1px solid var(--border); }
+    .side-stack { display: grid; gap: 17px; }
+    .schedule-body { padding: 15px 18px 18px; }
+    .week-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
+    .day-cell { text-align: center; padding: 9px 2px; border-radius: 9px; background: var(--bg); border: 1px solid transparent; min-width: 0; }
+    .day-cell.today { border-color: var(--primary); background: var(--primary-soft); }
+    .day-cell.has-workout .day-dot { background: var(--primary); }
+    .day-cell.completed .day-dot { background: var(--green); }
+    .day-name { font-size: 9px; color: var(--muted); display: block; }
+    .day-number { font-size: 12px; font-weight: 800; display: block; margin: 5px 0; }
+    .day-dot { width: 5px; height: 5px; display: block; margin: auto; border-radius: 50%; background: var(--border); }
+    .schedule-list { display: grid; gap: 9px; margin-top: 15px; }
+    .schedule-row { display: flex; align-items: center; gap: 10px; }
+    .schedule-marker { width: 32px; height: 32px; border-radius: 9px; background: var(--primary-soft); color: var(--primary); display: grid; place-items: center; flex-shrink: 0; font-size: 12px; }
+    .schedule-row-info { min-width: 0; flex: 1; }
+    .schedule-row-info strong { display: block; font-size: 11px; overflow-wrap: anywhere; }
+    .schedule-row-info span { color: var(--muted); font-size: 10px; }
+    .status-dot { width: 8px; height: 8px; flex-shrink: 0; border-radius: 50%; background: var(--border); }
+    .status-dot.done { background: var(--green); }
+    .history-body { padding: 12px 18px 18px; }
+    .history-row { display: flex; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .history-row:last-child { border-bottom: 0; }
+    .history-check { width: 31px; height: 31px; display: grid; place-items: center; color: #16A34A; background: var(--green-soft); border-radius: 9px; flex-shrink: 0; }
+    .history-info { flex: 1; min-width: 0; }
+    .history-info strong { display: block; font-size: 11px; overflow-wrap: anywhere; }
+    .history-info span { font-size: 10px; color: var(--muted); }
+    .history-duration { color: var(--muted); font-size: 10px; white-space: nowrap; }
+    .safety-note { display: flex; align-items: flex-start; gap: 12px; padding: 15px; border: 1px solid #FDE68A; border-radius: 12px; background: #FFFBEB; color: #92400E; font-size: 11px; }
+    .safety-note i { margin-top: 2px; font-size: 15px; }
+    body.dark-theme .safety-note { background: #30280F; color: #FDE68A; border-color: #6B5218; }
+    .safety-note strong { display: block; margin-bottom: 3px; }
+    .safety-note p { margin: 0; }
+    .warning-box { display: flex; gap: 10px; padding: 12px 14px; margin-bottom: 16px; border-radius: 10px; color: #92400E; background: #FFFBEB; border: 1px solid #FDE68A; font-size: 11px; }
+    body.dark-theme .warning-box { background: #30280F; color: #FDE68A; border-color: #6B5218; }
+    .toast-region { position: fixed; top: 90px; right: 22px; z-index: 200; display: grid; gap: 10px; width: min(360px, calc(100vw - 30px)); pointer-events: none; }
+    .toast { display: flex; align-items: flex-start; gap: 11px; padding: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 15px 40px #0002; pointer-events: auto; animation: toast-in .2s ease-out; }
+    .toast i { margin-top: 2px; color: var(--green); }
+    .toast.error i { color: var(--danger); }
+    .toast strong { display: block; font-size: 12px; margin-bottom: 2px; }
+    .toast span { display: block; font-size: 11px; color: var(--muted); }
+    @keyframes toast-in { from { transform: translateY(-7px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-backdrop { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; padding: 18px; background: rgba(2, 6, 23, .65); backdrop-filter: blur(4px); }
+    .modal-backdrop.open { display: flex; }
+    .modal { width: min(590px, 100%); max-height: min(88vh, 850px); overflow-y: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 17px; box-shadow: 0 25px 80px #0004; animation: modal-in .18s ease-out; }
+    .modal.modal-wide { width: min(760px, 100%); }
+    @keyframes modal-in { from { transform: translateY(7px) scale(.99); opacity: 0; } to { transform: none; opacity: 1; } }
+    .modal-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; padding: 20px 22px; border-bottom: 1px solid var(--border); }
+    .modal-head h2 { margin: 0; font-size: 17px; letter-spacing: -.4px; }
+    .modal-head p { margin: 4px 0 0; font-size: 11px; color: var(--muted); }
+    .modal-close { width: 32px; height: 32px; border: 0; border-radius: 9px; background: var(--bg); color: var(--muted); }
+    .modal-body { padding: 21px 22px; }
+    .modal-footer { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 9px; padding: 15px 22px; border-top: 1px solid var(--border); }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .form-grid .full { grid-column: 1 / -1; }
+    .form-hint { color: var(--muted); font-size: 10px; margin-top: 4px; }
+    .days-picker { display: flex; flex-wrap: wrap; gap: 7px; }
+    .day-option { display: flex; align-items: center; gap: 6px; border: 1px solid var(--border); padding: 8px 10px; border-radius: 8px; font-size: 11px; color: var(--muted); }
+    .day-option input { accent-color: var(--primary); }
+    .library-tools { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .library-tools > * { flex: 1; min-width: 130px; }
+    .library-list { display: grid; gap: 8px; max-height: 390px; overflow: auto; }
+    .library-row { display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid var(--border); border-radius: 10px; }
+    .library-row:hover { border-color: #C4B5FD; }
+    .library-row-main { min-width: 0; flex: 1; }
+    .library-row-main strong { display: block; font-size: 12px; }
+    .library-row-main span { display: block; color: var(--muted); font-size: 10px; margin-top: 3px; }
+    .library-row .btn { flex-shrink: 0; }
+    .exercise-detail { background: var(--bg); padding: 13px; border-radius: 10px; margin-bottom: 15px; }
+    .exercise-detail p { margin: 0 0 8px; font-size: 11px; }
+    .exercise-detail p:last-child { margin-bottom: 0; }
+    .exercise-detail strong { color: var(--text); }
+    .notification-popover { position: fixed; z-index: 70; right: 92px; top: 65px; width: min(300px, calc(100vw - 30px)); padding: 16px; border: 1px solid var(--border); border-radius: 13px; background: var(--surface); box-shadow: var(--shadow); display: none; }
+    .notification-popover.open { display: block; }
+    .notification-popover strong { font-size: 12px; }
+    .notification-popover p { color: var(--muted); font-size: 11px; margin: 6px 0 0; }
+    .profile-warning { display: none; margin-bottom: 18px; padding: 14px 16px; border-radius: 12px; border: 1px solid #DDD6FE; background: var(--primary-soft); color: var(--text); }
+    .profile-warning.show { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+    .profile-warning strong { display: block; font-size: 12px; }
+    .profile-warning p { margin: 3px 0 0; font-size: 11px; color: var(--muted); }
+    .profile-warning i { color: var(--primary); margin-right: 7px; }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; z-index: 40; background: #02061799; }
+    body.sidebar-collapsed .sidebar { width: 78px; padding-left: 12px; padding-right: 12px; }
+    body.sidebar-collapsed .main { margin-left: 78px; }
+    body.sidebar-collapsed .brand { padding-left: 7px; }
+    body.sidebar-collapsed .brand-name, body.sidebar-collapsed .nav-label,
+    body.sidebar-collapsed .nav-link span, body.sidebar-collapsed .sidebar-tip,
+    body.sidebar-collapsed .user-mini-info, body.sidebar-collapsed .sidebar-logout { display: none; }
+    body.sidebar-collapsed .nav-link { justify-content: center; padding: 12px 0; }
+    body.sidebar-collapsed .nav-link.active::before { left: -12px; }
+    body.sidebar-collapsed .user-mini { justify-content: center; padding-left: 0; padding-right: 0; }
+    body.sidebar-collapsed .nav-link i { font-size: 17px; }
+    .footer { display: flex; justify-content: space-between; gap: 10px; margin-top: 25px; color: var(--muted); font-size: 10px; }
+    .footer a { color: var(--primary); }
+    @media (max-width: 1250px) {
+      .filter-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .plan-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .detail-layout { grid-template-columns: minmax(0, 1.35fr) minmax(250px, .85fr); }
+    }
+    @media (max-width: 980px) {
+      .sidebar { transform: translateX(-100%); width: 252px !important; padding: 25px 16px 18px; }
+      .sidebar.mobile-open { transform: translateX(0); }
+      .sidebar-overlay.open { display: block; }
+      .main, body.sidebar-collapsed .main { margin-left: 0; }
+      body.sidebar-collapsed .sidebar { transform: translateX(-100%); }
+      .mobile-menu { display: grid; }
+      .sidebar .brand-name, .sidebar .nav-label, .sidebar .nav-link span, .sidebar .sidebar-tip, .sidebar .user-mini-info, .sidebar .sidebar-logout { display: initial; }
+      .sidebar .brand { padding-left: 10px; }
+      .sidebar .nav-link { justify-content: flex-start; padding: 11px 13px; }
+      .sidebar .user-mini { justify-content: flex-start; padding: 14px 8px 0; }
+      .detail-layout { grid-template-columns: 1fr; }
+      .side-stack { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .topbar { padding: 0 22px; }
+      .page { padding: 25px 22px 38px; }
+    }
+    @media (max-width: 640px) {
+      .topbar { height: 64px; padding: 0 14px; }
+      .topbar-right { gap: 7px; }
+      .topbar-left { gap: 9px; }
+      .breadcrumb { font-size: 11px; }
+      .topbar .icon-btn { width: 35px; height: 35px; }
+      .top-avatar { width: 33px; height: 33px; }
+      .page { padding: 22px 14px 32px; }
+      .page-heading { flex-direction: column; align-items: stretch; margin-bottom: 20px; }
+      .page-heading > .btn { width: 100%; }
+      .filter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .filter-grid .search-field { grid-column: 1 / -1; }
+      .filters { padding: 15px; }
+      .plan-grid { grid-template-columns: 1fr; }
+      .plan-description { min-height: 0; }
+      .side-stack { grid-template-columns: 1fr; }
+      .panel-head { padding-left: 15px; padding-right: 15px; }
+      .exercise-list { padding: 0 13px; }
+      .exercise-item { grid-template-columns: 32px minmax(0, 1fr); gap: 9px; }
+      .exercise-number { width: 31px; height: 31px; }
+      .exercise-actions { grid-column: 2; justify-content: flex-end; }
+      .detail-banner { padding: 17px; }
+      .detail-banner h2 { font-size: 18px; }
+      .detail-banner-top { flex-direction: column; }
+      .detail-banner-top .btn { align-self: flex-start; }
+      .detail-stats { gap: 10px 14px; }
+      .exercise-toolbar { padding: 14px; }
+      .detail-bottom { padding: 13px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-grid .full { grid-column: auto; }
+      .modal-head, .modal-body { padding-left: 16px; padding-right: 16px; }
+      .modal-footer { padding: 13px 16px; }
+      .footer { flex-direction: column; }
+      .profile-warning.show { align-items: flex-start; flex-direction: column; }
+      .notification-popover { right: 12px; top: 58px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+    <a class="brand" href="dashboard.html" aria-label="Smart Gym Coach home">
+      <span class="brand-icon"><i class="fa-solid fa-dumbbell"></i></span>
+      <span class="brand-name">Smart Gym <span>Coach</span></span>
+    </a>
+    <div class="nav-label">WORKSPACE</div>
+    <nav class="nav-links">
+      <a class="nav-link" href="dashboard.html"><i class="fa-solid fa-house"></i><span>Overview</span></a>
+      <a class="nav-link" href="fitness-metrics.html"><i class="fa-solid fa-chart-line"></i><span>Fitness Metrics</span></a>
+      <a class="nav-link active" href="workouts.html" aria-current="page"><i class="fa-solid fa-dumbbell"></i><span>Workouts</span></a>
+      <a class="nav-link" href="nutrition.html"><i class="fa-solid fa-utensils"></i><span>Nutrition</span></a>
+      <a class="nav-link" href="progress.html"><i class="fa-solid fa-arrow-trend-up"></i><span>Progress</span></a>
+      <a class="nav-link" href="profile.html"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-tip">
+        <div class="tip-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+        <strong>Make every rep count</strong>
+        <p>Build a routine that fits your goals, experience, and available equipment.</p>
+        <a href="onboarding.html" class="tip-link">Review preferences <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+      <div class="user-mini">
+        <div class="avatar" id="sidebarAvatar">U</div>
+        <div class="user-mini-info"><strong id="sidebarName">Your account</strong><span>Fitness member</span></div>
+        <button class="sidebar-logout" id="logoutBtn" aria-label="Log out" title="Log out"><i class="fa-solid fa-arrow-right-from-bracket"></i></button>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="icon-btn mobile-menu" id="mobileMenuBtn" aria-label="Open navigation" aria-expanded="false"><i class="fa-solid fa-bars"></i></button>
+        <button class="icon-btn desktop-collapse" id="collapseBtn" aria-label="Collapse sidebar" aria-expanded="true" title="Collapse sidebar"><i class="fa-solid fa-bars-staggered"></i></button>
+        <div class="breadcrumb">Workspace <i class="fa-solid fa-chevron-right" style="font-size:9px;margin:0 7px"></i> <span>Workout Planner</span></div>
+      </div>
+      <div class="topbar-right">
+        <button class="icon-btn" id="themeBtn" aria-label="Switch theme" title="Switch theme"><i class="fa-solid fa-moon"></i></button>
+        <button class="icon-btn" id="notificationBtn" aria-label="Notifications" aria-expanded="false" title="Notifications"><i class="fa-regular fa-bell"></i></button>
+        <div class="top-avatar" id="topAvatar">U</div>
+      </div>
+    </header>
+
+    <div class="page">
+      <div class="page-heading">
+        <div>
+          <div class="eyebrow"><i class="fa-solid fa-bolt"></i> Your training space</div>
+          <h1>Workout Planner</h1>
+          <p>Build a training plan that works for your goals, schedule, and equipment.</p>
+        </div>
+        <button class="btn btn-primary" id="createPlanBtn"><i class="fa-solid fa-plus"></i> Create Workout Plan</button>
+      </div>
+
+      <div class="profile-warning" id="profileWarning">
+        <div><strong><i class="fa-solid fa-sliders"></i> Personalize your training</strong><p>Complete your fitness preferences to help make your workout plan more relevant.</p></div>
+        <a href="onboarding.html" class="btn btn-soft btn-sm">Complete setup <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+
+      <section class="panel filters" aria-labelledby="filterTitle">
+        <div class="filters-head">
+          <div><h2 class="panel-title" id="filterTitle"><i class="fa-solid fa-sliders" style="color:var(--primary);margin-right:7px"></i>Find your workout</h2><div class="panel-subtitle">Filter plans or generate a plan from your preferences.</div></div>
+          <button class="btn btn-outline btn-sm" id="resetFiltersBtn"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+        </div>
+        <div class="filter-grid">
+          <div class="field search-field">
+            <label for="searchPlans">Search plans</label>
+            <div class="search-wrap"><i class="fa-solid fa-magnifying-glass"></i><input class="control" id="searchPlans" type="search" placeholder="Search workout plans..." autocomplete="off"></div>
+          </div>
+          <div class="field"><label for="filterGoal">Fitness goal</label><select class="control" id="filterGoal"><option value="">Any goal</option><option value="muscle">Build muscle</option><option value="weight">Weight management</option><option value="strength">Build strength</option><option value="endurance">Improve endurance</option><option value="general">General fitness</option><option value="mobility">Mobility</option></select></div>
+          <div class="field"><label for="filterLevel">Experience</label><select class="control" id="filterLevel"><option value="">Any level</option><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select></div>
+          <div class="field"><label for="filterEquipment">Equipment</label><select class="control" id="filterEquipment"><option value="">Any equipment</option><option value="bodyweight">Bodyweight only</option><option value="dumbbell">Dumbbells</option><option value="resistance-band">Resistance bands</option><option value="gym">Gym equipment</option></select></div>
+          <div class="field"><label for="filterDuration">Session length</label><select class="control" id="filterDuration"><option value="">Any duration</option><option value="15">15–20 min</option><option value="30">21–35 min</option><option value="45">36–50 min</option><option value="60">50+ min</option></select></div>
+          <div class="field"><label for="filterMuscle">Muscle group</label><select class="control" id="filterMuscle"><option value="">All muscle groups</option><option value="upper-body">Upper body</option><option value="lower-body">Lower body</option><option value="core">Core</option><option value="cardio">Cardio</option><option value="full-body">Full body</option></select></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:15px">
+          <div class="checkbox-row" aria-label="Training days filter">
+            <span style="font-size:11px;color:var(--muted);align-self:center;font-weight:700">Training days:</span>
+            <label class="check-chip"><input type="checkbox" name="filterDays" value="2"> 2 days</label>
+            <label class="check-chip"><input type="checkbox" name="filterDays" value="3"> 3 days</label>
+            <label class="check-chip"><input type="checkbox" name="filterDays" value="4"> 4 days</label>
+            <label class="check-chip"><input type="checkbox" name="filterDays" value="5"> 5 days</label>
+            <label class="check-chip"><input type="checkbox" name="filterDays" value="6"> 6 days</label>
+          </div>
+          <button class="btn btn-soft btn-sm" id="generateBtn"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate a plan</button>
+        </div>
+      </section>
+
+      <div id="generationWarning" class="warning-box" role="status" hidden><i class="fa-solid fa-circle-exclamation"></i><div id="generationWarningText"></div></div>
+
+      <section aria-labelledby="plansTitle">
+        <div class="section-heading">
+          <div><h2 id="plansTitle">Your workout plans</h2><p id="plansSubtitle">Your saved training plans, all in one place.</p></div>
+          <span class="tag purple" id="planCount">0 plans</span>
+        </div>
+        <div id="plansGrid" class="plan-grid"></div>
+        <div id="plansEmpty" class="empty-state" hidden>
+          <div class="empty-icon"><i class="fa-solid fa-dumbbell"></i></div>
+          <h3 id="plansEmptyTitle">No workout plans yet</h3>
+          <p id="plansEmptyText">Create your first plan or generate one from your fitness preferences.</p>
+          <button class="btn btn-primary" id="emptyCreateBtn"><i class="fa-solid fa-plus"></i> Create your first plan</button>
+        </div>
+      </section>
+
+      <section class="section detail-layout" aria-label="Selected workout plan details">
+        <div class="panel detail-panel" id="detailPanel">
+          <div id="detailContent">
+            <div class="empty-state" style="border:0">
+              <div class="empty-icon"><i class="fa-solid fa-list-check"></i></div>
+              <h3>Select a workout plan</h3>
+              <p>Choose one of your plans above to view exercises, instructions, and workout actions.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="side-stack">
+          <section class="panel" aria-labelledby="scheduleTitle">
+            <div class="panel-head"><div><h2 class="panel-title" id="scheduleTitle">Weekly schedule</h2><div class="panel-subtitle" id="scheduleSubtitle">Your planned training this week</div></div><i class="fa-regular fa-calendar" style="color:var(--primary)"></i></div>
+            <div class="schedule-body">
+              <div class="week-grid" id="weekGrid"></div>
+              <div class="schedule-list" id="scheduleList"></div>
+            </div>
+          </section>
+
+          <section class="panel" aria-labelledby="historyTitle">
+            <div class="panel-head"><div><h2 class="panel-title" id="historyTitle">Completed workouts</h2><div class="panel-subtitle">Your training history</div></div><i class="fa-solid fa-medal" style="color:var(--green)"></i></div>
+            <div class="history-body" id="historyList"></div>
+          </section>
+        </div>
+      </section>
+
+      <div class="section safety-note" role="note">
+        <i class="fa-solid fa-shield-heart"></i>
+        <div><strong>Train safely</strong><p>Warm up before exercise, use controlled movements, and select loads appropriate for your ability. Stop if you feel pain, dizziness, or unusual shortness of breath. This planner provides general fitness information, not medical advice. Consult a qualified professional if you have a medical condition or are unsure whether an exercise is suitable.</p></div>
+      </div>
+
+      <footer class="footer"><span>© <span id="year"></span> Smart Gym Coach. Keep showing up.</span><span><a href="profile.html">Your profile</a> · <a href="onboarding.html">Fitness preferences</a></span></footer>
+    </div>
+  </main>
+</div>
+
+<div class="notification-popover" id="notificationPopover" role="status">
+  <strong><i class="fa-regular fa-bell" style="color:var(--primary);margin-right:6px"></i>Notifications</strong>
+  <p id="notificationMessage">You're all caught up. Workout reminders will appear here when available.</p>
+</div>
+<div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="false"></div>
+
+<!-- Plan editor -->
+<div class="modal-backdrop" id="planModal" role="presentation">
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="planModalTitle">
+    <div class="modal-head"><div><h2 id="planModalTitle">Create workout plan</h2><p>Choose your training goals and weekly schedule.</p></div><button class="modal-close" data-close="planModal" aria-label="Close dialog"><i class="fa-solid fa-xmark"></i></button></div>
+    <form id="planForm">
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field full"><label for="planName">Plan name *</label><input class="control" id="planName" name="name" required maxlength="70" placeholder="e.g. My full-body routine"></div>
+          <div class="field"><label for="planGoal">Fitness goal *</label><select class="control" id="planGoal" name="goal" required><option value="general">General fitness</option><option value="muscle">Build muscle</option><option value="weight">Weight management</option><option value="strength">Build strength</option><option value="endurance">Improve endurance</option><option value="mobility">Mobility</option></select></div>
+          <div class="field"><label for="planLevel">Experience level *</label><select class="control" id="planLevel" name="level" required><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select></div>
+          <div class="field"><label for="planDuration">Session duration (minutes) *</label><select class="control" id="planDuration" name="duration" required><option value="15">15 minutes</option><option value="20">20 minutes</option><option value="30" selected>30 minutes</option><option value="40">40 minutes</option><option value="45">45 minutes</option><option value="60">60 minutes</option><option value="75">75 minutes</option><option value="90">90 minutes</option></select></div>
+          <div class="field"><label for="planEquipment">Available equipment *</label><select class="control" id="planEquipment" name="equipment" required><option value="bodyweight">Bodyweight only</option><option value="dumbbell">Dumbbells</option><option value="resistance-band">Resistance bands</option><option value="gym">Full gym</option></select><div class="form-hint">Select the equipment you actually have access to.</div></div>
+          <div class="field full"><label>Training days *</label><div class="days-picker" id="planDaysPicker">
+            <label class="day-option"><input type="checkbox" name="planDay" value="1"> Mon</label>
+            <label class="day-option"><input type="checkbox" name="planDay" value="2"> Tue</label>
+            <label class="day-option"><input type="checkbox" name="planDay" value="3"> Wed</label>
+            <label class="day-option"><input type="checkbox" name="planDay" value="4"> Thu</label>
+            <label class="day-option"><input type="checkbox" name="planDay" value="5"> Fri</label>
+            <label class="day-option"><input type="checkbox" name="planDay" value="6"> Sat</label>
+            <label class="day-option"><input type="checkbox" name="planDay" value="0"> Sun</label>
+          </div><div class="form-hint">Choose at least one day. Rest days are important, too.</div></div>
+          <div class="field full"><label for="excludedExercises">Exclude exercises (optional)</label><input class="control" id="excludedExercises" placeholder="e.g. burpees, push-ups, running"><div class="form-hint">Separate exercise names with commas. Excluded movements will not be used in generated plans.</div></div>
+          <div class="field full"><label for="planNotes">Notes (optional)</label><textarea class="control" id="planNotes" rows="2" maxlength="350" placeholder="Anything you'd like to remember about this plan"></textarea></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-outline" data-close="planModal">Cancel</button><button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save plan</button></div>
+    </form>
+  </section>
+</div>
+
+<!-- Exercise library -->
+<div class="modal-backdrop" id="exerciseModal" role="presentation">
+  <section class="modal modal-wide" role="dialog" aria-modal="true" aria-labelledby="exerciseModalTitle">
+    <div class="modal-head"><div><h2 id="exerciseModalTitle">Add an exercise</h2><p>Select an exercise from the local library or customize its training details.</p></div><button class="modal-close" data-close="exerciseModal" aria-label="Close dialog"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="modal-body">
+      <div class="library-tools">
+        <input class="control" type="search" id="librarySearch" placeholder="Search exercises..." aria-label="Search exercise library">
+        <select class="control" id="libraryMuscle" aria-label="Filter by muscle group"><option value="">All muscle groups</option><option value="upper-body">Upper body</option><option value="lower-body">Lower body</option><option value="core">Core</option><option value="cardio">Cardio</option><option value="full-body">Full body</option></select>
+        <select class="control" id="libraryEquipment" aria-label="Filter by equipment"><option value="">All equipment</option><option value="bodyweight">Bodyweight</option><option value="dumbbell">Dumbbells</option><option value="resistance-band">Resistance band</option><option value="gym">Gym equipment</option></select>
+      </div>
+      <div class="library-list" id="libraryList"></div>
+    </div>
+    <div class="modal-footer"><button type="button" class="btn btn-outline" data-close="exerciseModal">Close</button></div>
+  </section>
+</div>
+
+<!-- Exercise edit / details -->
+<div class="modal-backdrop" id="exerciseEditModal" role="presentation">
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="exerciseEditTitle">
+    <div class="modal-head"><div><h2 id="exerciseEditTitle">Exercise details</h2><p>Review the instructions and adjust your training prescription.</p></div><button class="modal-close" data-close="exerciseEditModal" aria-label="Close dialog"><i class="fa-solid fa-xmark"></i></button></div>
+    <form id="exerciseEditForm">
+      <div class="modal-body">
+        <div class="exercise-detail" id="exerciseInstructions"></div>
+        <div class="form-grid">
+          <div class="field full"><label for="editExerciseName">Exercise name *</label><input class="control" id="editExerciseName" required maxlength="80"></div>
+          <div class="field"><label for="editSets">Sets *</label><input class="control" type="number" id="editSets" required min="1" max="20"></div>
+          <div class="field"><label for="editReps">Reps / duration *</label><input class="control" id="editReps" required maxlength="40" placeholder="e.g. 10–12 or 30 sec"></div>
+          <div class="field"><label for="editRest">Rest (seconds) *</label><input class="control" type="number" id="editRest" required min="0" max="900"></div>
+          <div class="field"><label for="editDifficulty">Difficulty *</label><select class="control" id="editDifficulty" required><option value="beginner">Beginner</option><option value="intermediate">Intermediate</option><option value="advanced">Advanced</option></select></div>
+          <div class="field full"><label for="editExerciseNotes">Personal notes (optional)</label><textarea class="control" id="editExerciseNotes" rows="2" maxlength="250"></textarea></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button type="button" class="btn btn-outline" data-close="exerciseEditModal">Cancel</button><button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save exercise</button></div>
+    </form>
+  </section>
+</div>
+
+<!-- Confirmation dialog -->
+<div class="modal-backdrop" id="confirmModal" role="presentation">
+  <section class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="modal-head"><div><h2 id="confirmTitle">Are you sure?</h2><p id="confirmMessage">Please confirm this action.</p></div><button class="modal-close" data-close="confirmModal" aria-label="Close dialog"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="modal-footer"><button type="button" class="btn btn-outline" data-close="confirmModal">Cancel</button><button type="button" class="btn btn-danger" id="confirmActionBtn">Confirm</button></div>
+  </section>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  const STORAGE = {
+    user: 'smartGym_currentUser',
+    users: 'smartGym_users',
+    profile: 'smartGym_profile',
+    workouts: 'smartGym_workouts',
+    settings: 'smartGym_settings',
+    theme: 'smartGym_theme'
+  };
+
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+  const todayISO = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  };
+  const makeId = (prefix = 'id') => `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 9)}`;
+  const safeParse = value => {
+    if (value == null || value === '') return null;
+    try { return JSON.parse(value); } catch { return null; }
+  };
+  const readStorage = key => {
+    try { return safeParse(localStorage.getItem(key)); } catch { return null; }
+  };
+  const writeStorage = (key, value) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    } catch (error) {
+      toast('Unable to save changes', 'Your browser storage may be full or unavailable. No saved data was intentionally removed.', 'error');
+      return false;
+    }
+  };
+  const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[char]);
+  const normalized = value => String(value ?? '').toLowerCase().trim().replace(/[_\s]+/g, '-');
+  const asArray = value => Array.isArray(value) ? value : [];
+  const getName = user => {
+    if (!user || typeof user !== 'object') return typeof user === 'string' ? user : 'Fitness member';
+    return user.name || user.fullName || user.full_name ||
+      [user.firstName || user.first_name, user.lastName || user.last_name].filter(Boolean).join(' ') ||
+      user.username || user.email?.split('@')[0] || 'Fitness member';
+  };
+  const getUserId = user => {
+    if (typeof user === 'string') return user;
+    return user?.userId ?? user?.id ?? user?._id ?? user?.email ?? user?.username ?? null;
+  };
+  const activeUser = readStorage(STORAGE.user);
+  if (!activeUser || !(typeof activeUser === 'string' || typeof activeUser === 'object')) {
+    window.location.replace('login.html');
+    return;
+  }
+  const userId = getUserId(activeUser);
+  if (userId == null || String(userId).trim() === '') {
+    window.location.replace('login.html');
+    return;
+  }
+  const userKey = String(userId);
+  const currentName = getName(activeUser);
+  const settingsRoot = readStorage(STORAGE.settings);
+  const profileRoot = readStorage(STORAGE.profile);
+
+  function recordMatchesUser(record) {
+    if (!record || typeof record !== 'object') return false;
+    const id = record.userId ?? record.user_id ?? record.ownerId ?? record.owner_id;
+    return id != null && String(id) === userKey;
+  }
+  function userScopedObject(root) {
+    if (!root || typeof root !== 'object') return null;
+    if (Array.isArray(root)) return root.find(recordMatchesUser) || null;
+    if (root[userKey] && typeof root[userKey] === 'object') return root[userKey];
+    if (root.profiles && Array.isArray(root.profiles)) return root.profiles.find(recordMatchesUser) || null;
+    if (root.users && Array.isArray(root.users)) return root.users.find(recordMatchesUser) || null;
+    if (recordMatchesUser(root)) return root;
+    return null;
+  }
+  function getProfile() {
+    let profile = userScopedObject(profileRoot);
+    if (!profile && activeUser && typeof activeUser === 'object' &&
+        (activeUser.profile || activeUser.fitnessProfile)) {
+      profile = activeUser.profile || activeUser.fitnessProfile;
+    }
+    return profile && typeof profile === 'object' ? profile : {};
+  }
+  const profile = getProfile();
+
+  function getUserSettings() {
+    if (!settingsRoot || typeof settingsRoot !== 'object') return {};
+    const scoped = userScopedObject(settingsRoot);
+    if (scoped) return scoped.settings && typeof scoped.settings === 'object' ? scoped.settings : scoped;
+    return {};
+  }
+  const userSettings = getUserSettings();
+
+  const exerciseLibrary = [
+    {id:'ex_squat',name:'Bodyweight Squat',muscleGroup:'lower-body',equipment:'bodyweight',difficulty:'beginner',sets:3,reps:'10–15',restSeconds:60,instructions:'Stand with feet about shoulder-width apart. Push your hips back, bend your knees, and lower only as far as you can maintain control. Keep your chest lifted and knees tracking in line with your toes. Press through your feet to stand.',safetyNotes:'Keep your heels grounded and stop if you feel sharp knee or back pain.',alternatives:['ex_chair_squat','ex_goblet_squat']},
+    {id:'ex_pushup',name:'Push-Up',muscleGroup:'upper-body',equipment:'bodyweight',difficulty:'intermediate',sets:3,reps:'8–12',restSeconds:60,instructions:'Start in a high plank with hands slightly wider than shoulders. Keep your body in a straight line, lower your chest with control, then push the floor away. Use an elevated surface or knees for an easier variation.',safetyNotes:'Avoid letting your lower back sag. Use a range of motion you can control.',alternatives:['ex_knee_pushup','ex_band_press']},
+    {id:'ex_knee_pushup',name:'Knee Push-Up',muscleGroup:'upper-body',equipment:'bodyweight',difficulty:'beginner',sets:3,reps:'8–12',restSeconds:60,instructions:'Place your hands just wider than shoulder-width and keep a straight line from your head to your knees. Lower your chest slowly and press back up without locking your elbows.',safetyNotes:'Keep your neck neutral and move without bouncing.',alternatives:['ex_pushup','ex_band_press']},
+    {id:'ex_lunge',name:'Reverse Lunge',muscleGroup:'lower-body',equipment:'bodyweight',difficulty:'beginner',sets:3,reps:'8 each side',restSeconds:60,instructions:'Stand tall, step one foot backward, and bend both knees as comfortable. Keep your front foot flat and torso steady, then push through the front foot to return. Alternate sides.',safetyNotes:'Use a wall or stable support for balance if needed.',alternatives:['ex_chair_squat','ex_split_squat']},
+    {id:'ex_plank',name:'Forearm Plank',muscleGroup:'core',equipment:'bodyweight',difficulty:'beginner',sets:3,reps:'20–40 sec',restSeconds:45,instructions:'Place elbows under shoulders and extend your legs. Brace your abdomen and keep your body in a straight line, breathing normally throughout the hold.',safetyNotes:'Stop the set when you can no longer maintain a neutral spine.',alternatives:['ex_dead_bug','ex_side_plank']},
+    {id:'ex_glute_bridge',name:'Glute Bridge',muscleGroup:'lower-body',equipment:'bodyweight',difficulty:'beginner',sets:3,reps:'12–15',restSeconds:45,instructions:'Lie on your back with knees bent and feet flat. Brace your core, squeeze your glutes, and lift your hips until your body forms a comfortable straight line from shoulders to knees. Lower slowly.',safetyNotes:'Avoid over-arching your lower back at the top.',alternatives:['ex_band_bridge','ex_rdl']},
+    {id:'ex_jumping_jacks',name:'Jumping Jacks',muscleGroup:'cardio',equipment:'bodyweight',difficulty:'beginner',sets:3,reps:'30 sec',restSeconds:45,instructions:'Stand tall with arms by your sides. Jump or step your feet out while raising your arms, then return to the starting position. Use a step-out version for lower impact.',safetyNotes:'Choose low-impact steps if jumping bothers your joints or balance.',alternatives:['ex_march','ex_stepup']},
+    {id:'ex_dead_bug',name:'Dead Bug',muscleGroup:'core',equipment:'bodyweight',difficulty:'beginner',sets:3,reps:'8 each side',restSeconds:45,instructions:'Lie on your back with arms up and knees bent at 90 degrees. Gently brace your abdomen and slowly extend the opposite arm and leg, keeping your lower back comfortably stable. Return and alternate.',safetyNotes:'Shorten the movement if your back begins to arch.',alternatives:['ex_plank','ex_bird_dog']},
+    {id:'ex_bird_dog',name:'Bird Dog',muscleGroup:'core',equipment:'bodyweight',difficulty:'beginner',sets:3,reps:'8 each side',restSeconds:45,instructions:'Start on hands and knees. Extend one arm and the opposite leg without rotating your hips. Pause briefly, return with control, and alternate sides.',safetyNotes:'Keep your neck neutral and avoid twisting your torso.',alternatives:['ex_dead_bug','ex_plank']},
+    {id:'ex_side_plank',name:'Side Plank',muscleGroup:'core',equipment:'bodyweight',difficulty:'intermediate',sets:3,reps:'15–30 sec each side',restSeconds:45,instructions:'Lie on your side with your elbow under your shoulder. Lift your hips and keep your body aligned. Hold while breathing steadily, then switch sides. Bend your knees to make it easier.',safetyNotes:'Do not sink into the supporting shoulder.',alternatives:['ex_plank','ex_dead_bug']},
+    {id:'ex_chair_squat',name:'Chair Squat',muscleGroup:'lower-body',equipment:'bodyweight',difficulty:'beginner',sets:3,reps:'10–12',restSeconds:60,instructions:'Stand in front of a stable chair. Sit back slowly until you lightly touch the seat, then stand using your legs. Use the chair for guidance, not as an unstable support.',safetyNotes:'Make sure the chair is stable and does not slide.',alternatives:['ex_squat','ex_glute_bridge']},
+    {id:'ex_march',name:'March in Place',muscleGroup:'cardio',equipment:'bodyweight',difficulty:'beginner',sets:3,reps:'45 sec',restSeconds:30,instructions:'Stand tall and march in place at a comfortable pace, lifting each knee and swinging your arms naturally. Gradually increase pace only if comfortable.',safetyNotes:'Use a stable support if balance is a concern.',alternatives:['ex_jumping_jacks','ex_stepup']},
+    {id:'ex_stepup',name:'Low Step-Up',muscleGroup:'lower-body',equipment:'bodyweight',difficulty:'beginner',sets:3,reps:'8 each side',restSeconds:60,instructions:'Use a low, stable step. Place your whole foot on the step, rise under control, and step down slowly. Complete all reps on one side or alternate.',safetyNotes:'Use a non-slip step and a handrail if needed.',alternatives:['ex_chair_squat','ex_march']},
+    {id:'ex_split_squat',name:'Split Squat',muscleGroup:'lower-body',equipment:'bodyweight',difficulty:'intermediate',sets:3,reps:'8 each side',restSeconds:60,instructions:'Stand in a staggered stance. Bend both knees to lower your body within a comfortable range, then push through your front foot to rise. Keep your torso steady.',safetyNotes:'Hold a stable support if needed and avoid forcing depth.',alternatives:['ex_lunge','ex_squat']},
+    {id:'ex_dumbbell_row',name:'Dumbbell Row',muscleGroup:'upper-body',equipment:'dumbbell',difficulty:'beginner',sets:3,reps:'10–12 each side',restSeconds:60,instructions:'Support one hand on a stable bench or chair. Hinge at the hips with a neutral back, row the dumbbell toward your hip, then lower slowly. Complete both sides.',safetyNotes:'Choose a weight that allows a steady torso and controlled lowering.',alternatives:['ex_band_row','ex_gym_row']},
+    {id:'ex_dumbbell_press',name:'Dumbbell Floor Press',muscleGroup:'upper-body',equipment:'dumbbell',difficulty:'beginner',sets:3,reps:'8–12',restSeconds:75,instructions:'Lie on the floor holding dumbbells above your chest with wrists stacked over elbows. Lower until your upper arms gently touch the floor, then press up smoothly.',safetyNotes:'Use a manageable load and avoid bouncing your elbows off the floor.',alternatives:['ex_band_press','ex_knee_pushup']},
+    {id:'ex_shoulder_press',name:'Dumbbell Shoulder Press',muscleGroup:'upper-body',equipment:'dumbbell',difficulty:'intermediate',sets:3,reps:'8–10',restSeconds:75,instructions:'Hold dumbbells at shoulder height, brace your abdomen, and press overhead without leaning back. Lower to shoulder height under control.',safetyNotes:'Use a comfortable range and do not arch your lower back to lift.',alternatives:['ex_band_press','ex_lateral_raise']},
+    {id:'ex_lateral_raise',name:'Dumbbell Lateral Raise',muscleGroup:'upper-body',equipment:'dumbbell',difficulty:'beginner',sets:3,reps:'10–15',restSeconds:45,instructions:'Stand with light dumbbells by your sides. With a slight elbow bend, raise your arms out to shoulder height or a comfortable level, then lower slowly.',safetyNotes:'Avoid swinging or using momentum; start with light weights.',alternatives:['ex_band_pullapart','ex_shoulder_press']},
+    {id:'ex_goblet_squat',name:'Goblet Squat',muscleGroup:'lower-body',equipment:'dumbbell',difficulty:'intermediate',sets:3,reps:'8–12',restSeconds:75,instructions:'Hold one dumbbell close to your chest. Sit your hips down and back while keeping your torso steady and knees tracking with your toes. Stand by pushing through your feet.',safetyNotes:'Use a load that does not compromise your balance or depth control.',alternatives:['ex_squat','ex_chair_squat']},
+    {id:'ex_rdl',name:'Dumbbell Romanian Deadlift',muscleGroup:'lower-body',equipment:'dumbbell',difficulty:'intermediate',sets:3,reps:'8–12',restSeconds:90,instructions:'Hold dumbbells in front of your thighs. Soften your knees and push your hips back, lowering the weights close to your legs while keeping a neutral back. Stand by bringing your hips forward.',safetyNotes:'This is a hip hinge, not a deep squat. Stop if you feel back pain.',alternatives:['ex_glute_bridge','ex_band_hinge']},
+    {id:'ex_band_row',name:'Resistance Band Row',muscleGroup:'upper-body',equipment:'resistance-band',difficulty:'beginner',sets:3,reps:'10–15',restSeconds:60,instructions:'Secure the band to a suitable anchor or loop it around your feet if designed for that use. Sit or stand tall, pull elbows back, squeeze shoulder blades gently, and return slowly.',safetyNotes:'Inspect the band and anchor before use; never pull toward your face.',alternatives:['ex_dumbbell_row','ex_band_pullapart']},
+    {id:'ex_band_press',name:'Resistance Band Chest Press',muscleGroup:'upper-body',equipment:'resistance-band',difficulty:'beginner',sets:3,reps:'10–12',restSeconds:60,instructions:'Secure the band behind you using an appropriate anchor. Hold the handles near chest level and press forward without locking your elbows. Return slowly under control.',safetyNotes:'Check the anchor and band for damage before every set.',alternatives:['ex_knee_pushup','ex_dumbbell_press']},
+    {id:'ex_band_pullapart',name:'Band Pull-Apart',muscleGroup:'upper-body',equipment:'resistance-band',difficulty:'beginner',sets:3,reps:'12–15',restSeconds:45,instructions:'Hold a light resistance band in front of your chest with arms extended. Pull your hands apart by moving your shoulder blades, then return slowly.',safetyNotes:'Keep shoulders relaxed and avoid excessive arching.',alternatives:['ex_lateral_raise','ex_band_row']},
+    {id:'ex_band_bridge',name:'Banded Glute Bridge',muscleGroup:'lower-body',equipment:'resistance-band',difficulty:'intermediate',sets:3,reps:'12–15',restSeconds:45,instructions:'Place a suitable loop band above your knees. Lie on your back with feet flat, press knees gently outward, and lift your hips by squeezing your glutes. Lower with control.',safetyNotes:'Use a band with manageable resistance and avoid overextending your back.',alternatives:['ex_glute_bridge','ex_band_hinge']},
+    {id:'ex_band_hinge',name:'Resistance Band Hip Hinge',muscleGroup:'lower-body',equipment:'resistance-band',difficulty:'beginner',sets:3,reps:'10–12',restSeconds:60,instructions:'Stand on a resistance band intended for this exercise and hold the ends securely. Soften your knees, push hips back with a neutral back, then stand tall by extending your hips.',safetyNotes:'Make sure the band is secure under your feet and not damaged.',alternatives:['ex_rdl','ex_glute_bridge']},
+    {id:'ex_bicycle',name:'Bicycle Crunch',muscleGroup:'core',equipment:'bodyweight',difficulty:'intermediate',sets:3,reps:'10 each side',restSeconds:45,instructions:'Lie on your back with hands lightly supporting your head. Bring one knee toward your torso as you rotate your rib cage toward it, then alternate slowly. Avoid pulling on your neck.',safetyNotes:'Keep movements controlled and stop if your neck or back becomes uncomfortable.',alternatives:['ex_dead_bug','ex_plank']},
+    {id:'ex_mountain_climber',name:'Mountain Climber',muscleGroup:'cardio',equipment:'bodyweight',difficulty:'intermediate',sets:3,reps:'20–30 sec',restSeconds:60,instructions:'Start in a strong high plank. Bring one knee forward toward your chest, return it, and alternate. Begin slowly and keep your hips steady.',safetyNotes:'Use an elevated surface or slower pace if your wrists or back are uncomfortable.',alternatives:['ex_march','ex_jumping_jacks']},
+    {id:'ex_gym_row',name:'Seated Cable Row',muscleGroup:'upper-body',equipment:'gym',difficulty:'beginner',sets:3,reps:'10–12',restSeconds:75,instructions:'Sit upright at the cable row station, grasp the handle, and pull toward your torso while keeping shoulders down. Return the weight slowly without rounding your back.',safetyNotes:'Set the machine appropriately and avoid jerking the weight.',alternatives:['ex_dumbbell_row','ex_band_row']},
+    {id:'ex_lat_pulldown',name:'Lat Pulldown',muscleGroup:'upper-body',equipment:'gym',difficulty:'beginner',sets:3,reps:'10–12',restSeconds:75,instructions:'Sit securely at the pulldown station and grip the bar slightly wider than shoulder width. Pull toward your upper chest while keeping your torso steady, then return slowly.',safetyNotes:'Do not pull the bar behind your neck or swing to move the load.',alternatives:['ex_band_row','ex_dumbbell_row']},
+    {id:'ex_leg_press',name:'Leg Press',muscleGroup:'lower-body',equipment:'gym',difficulty:'beginner',sets:3,reps:'10–12',restSeconds:90,instructions:'Position yourself in the machine according to its instructions. Lower the platform only as far as your hips and back remain supported, then press smoothly without locking your knees.',safetyNotes:'Learn the machine setup and safety stops before adding load.',alternatives:['ex_squat','ex_stepup']},
+    {id:'ex_leg_curl',name:'Seated Leg Curl',muscleGroup:'lower-body',equipment:'gym',difficulty:'beginner',sets:3,reps:'10–15',restSeconds:60,instructions:'Adjust the machine pads to fit your body. Curl your heels down and back under control, pause briefly, then return slowly.',safetyNotes:'Use a comfortable range and avoid jerking the stack.',alternatives:['ex_rdl','ex_glute_bridge']},
+    {id:'ex_calf_raise',name:'Standing Calf Raise',muscleGroup:'lower-body',equipment:'bodyweight',difficulty:'beginner',sets:3,reps:'12–20',restSeconds:45,instructions:'Stand with feet hip-width apart and use a stable support if needed. Rise onto the balls of your feet, pause, and lower slowly.',safetyNotes:'Avoid bouncing; use a stable floor and support for balance.',alternatives:['ex_stepup','ex_squat']},
+    {id:'ex_burpee',name:'Modified Burpee',muscleGroup:'cardio',equipment:'bodyweight',difficulty:'advanced',sets:3,reps:'6–10',restSeconds:90,instructions:'From standing, squat and place hands on a stable surface or floor. Step feet back to a plank, step forward, and stand. Add a jump only if appropriate for your ability.',safetyNotes:'Use the step-back version; avoid jumping if impact is unsuitable.',alternatives:['ex_mountain_climber','ex_jumping_jacks']},
+    {id:'ex_bike',name:'Stationary Bike',muscleGroup:'cardio',equipment:'gym',difficulty:'beginner',sets:1,reps:'10–20 min',restSeconds:0,instructions:'Adjust the seat so your knee stays slightly bent at the bottom of the pedal stroke. Start with an easy pace, then choose a sustainable effort and cool down gradually.',safetyNotes:'Secure your feet and stop if you experience chest pain, dizziness, or unusual breathlessness.',alternatives:['ex_march','ex_jumping_jacks']},
+    {id:'ex_treadmill',name:'Treadmill Walk',muscleGroup:'cardio',equipment:'gym',difficulty:'beginner',sets:1,reps:'10–20 min',restSeconds:0,instructions:'Start the treadmill at a slow walking speed and step on using the side rails. Increase speed or incline gradually only if comfortable, then slow down before stopping.',safetyNotes:'Know where the emergency stop is and do not step onto a moving belt from the side.',alternatives:['ex_march','ex_bike']},
+    {id:'ex_chest_press',name:'Machine Chest Press',muscleGroup:'upper-body',equipment:'gym',difficulty:'beginner',sets:3,reps:'10–12',restSeconds:75,instructions:'Adjust the seat so the handles align with your mid-chest. Press forward smoothly and return under control without forcing your shoulders backward.',safetyNotes:'Use a comfortable range and set the machine to fit your body.',alternatives:['ex_dumbbell_press','ex_band_press']}
+  ];
+
+  const goalLabels = {muscle:'Build muscle',weight:'Weight management',strength:'Build strength',endurance:'Improve endurance',general:'General fitness',mobility:'Mobility'};
+  const levelLabels = {beginner:'Beginner',intermediate:'Intermediate',advanced:'Advanced'};
+  const equipmentLabels = {bodyweight:'Bodyweight',dumbbell:'Dumbbells', 'resistance-band':'Resistance bands',gym:'Gym equipment'};
+  const muscleLabels = {'upper-body':'Upper body','lower-body':'Lower body',core:'Core',cardio:'Cardio','full-body':'Full body'};
+  const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const dayLong = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  function normalizeEquipment(value) {
+    const v = normalized(value);
+    if (['none','no-equipment','body-weight','bodyweight-only','bodyweight'].includes(v)) return 'bodyweight';
+    if (['bands','band','resistance-bands','resistance-band'].includes(v)) return 'resistance-band';
+    if (['weights','free-weights','dumbbells','dumbbell'].includes(v)) return 'dumbbell';
+    if (['full-gym','gym-equipment','machine','machines','gym'].includes(v)) return 'gym';
+    return v;
+  }
+  function normalizeGoal(value) {
+    const v = normalized(value);
+    if (/muscle|hypertroph/.test(v)) return 'muscle';
+    if (/weight|fat-loss|lose-weight/.test(v)) return 'weight';
+    if (/strength|powerlift/.test(v)) return 'strength';
+    if (/endurance|cardio/.test(v)) return 'endurance';
+    if (/mobil|flexib/.test(v)) return 'mobility';
+    if (/general|fitness|health/.test(v)) return 'general';
+    return goalLabels[v] ? v : 'general';
+  }
+  function normalizeLevel(value) {
+    const v = normalized(value);
+    if (v.includes('advanced') || v.includes('expert')) return 'advanced';
+    if (v.includes('intermediate') || v.includes('medium')) return 'intermediate';
+    return 'beginner';
+  }
+  function normalizeDays(value) {
+    if (!Array.isArray(value)) return [];
+    return [...new Set(value.map(day => {
+      const n = Number(day);
+      return Number.isInteger(n) && n >= 0 && n <= 6 ? n : null;
+    }).filter(day => day !== null))];
+  }
+  function isPlan(value) {
+    return value && typeof value === 'object' && !Array.isArray(value) &&
+      (value.type === 'plan' || Array.isArray(value.exercises) || value.goal || value.duration || value.planId);
+  }
+  function getWorkoutRoot() {
+    const root = readStorage(STORAGE.workouts);
+    if (!root) return [];
+    if (Array.isArray(root)) return root.filter(recordMatchesUser);
+    if (root[userKey] && typeof root[userKey] === 'object') {
+      const scoped = root[userKey];
+      if (Array.isArray(scoped)) return scoped;
+      if (Array.isArray(scoped.plans)) return scoped.plans;
+      if (Array.isArray(scoped.records)) return scoped.records;
+      if (Array.isArray(scoped.workouts)) return scoped.workouts;
+    }
+    if (recordMatchesUser(root)) {
+      if (Array.isArray(root.plans)) return root.plans;
+      if (Array.isArray(root.records)) return root.records;
+      if (Array.isArray(root.workouts)) return root.workouts;
+      if (Array.isArray(root.data)) return root.data;
+    }
+    if (Array.isArray(root.plans)) return root.plans.filter(recordMatchesUser);
+    if (Array.isArray(root.records)) return root.records.filter(recordMatchesUser);
+    if (Array.isArray(root.workouts)) return root.workouts.filter(recordMatchesUser);
+    if (Array.isArray(root.data)) return root.data.filter(recordMatchesUser);
+    return [];
+  }
+  let workoutRecords = getWorkoutRoot();
+  function isCompletion(record) {
+    const status = normalized(record?.status || record?.state || '');
+    return record?.completed === true || record?.isCompleted === true ||
+      ['completed','complete','done','finished'].includes(status) ||
+      Boolean(record?.completedAt || record?.completed_at);
+  }
+  function isPlanRecord(record) {
+    if (!record || typeof record !== 'object') return false;
+    if (record.type === 'completion' || record.type === 'history' || record.completedAt || record.completed_at) return false;
+    return isPlan(record);
+  }
+  function normalizePlan(plan) {
+    const days = normalizeDays(plan.days || plan.trainingDays || plan.training_days || []);
+    const exercises = asArray(plan.exercises).map(ex => {
+      if (typeof ex === 'string') {
+        const found = exerciseLibrary.find(item => item.id === ex || normalized(item.name) === normalized(ex));
+        return found ? {...found} : null;
+      }
+      if (!ex || typeof ex !== 'object') return null;
+      const base = exerciseLibrary.find(item => item.id === ex.exerciseId || item.id === ex.libraryId || item.id === ex.id) ||
+        exerciseLibrary.find(item => normalized(item.name) === normalized(ex.name));
+      return {
+        ...(base || {}),
+        ...ex,
+        id: ex.id || base?.id || makeId('customex'),
+        name: ex.name || base?.name || 'Custom exercise',
+        muscleGroup: ex.muscleGroup || ex.muscle_group || base?.muscleGroup || 'full-body',
+        equipment: normalizeEquipment(ex.equipment || base?.equipment || 'bodyweight'),
+        difficulty: normalizeLevel(ex.difficulty || base?.difficulty || plan.level || 'beginner'),
+        sets: Number(ex.sets || base?.sets || 3),
+        reps: String(ex.reps || base?.reps || '8–12'),
+        restSeconds: Number(ex.restSeconds ?? ex.rest_seconds ?? base?.restSeconds ?? 60),
+        instructions: ex.instructions || base?.instructions || 'Use controlled movements and a comfortable range of motion.',
+        safetyNotes: ex.safetyNotes || ex.safety_notes || base?.safetyNotes || 'Stop if you experience pain or unusual discomfort.',
+        alternatives: ex.alternatives || base?.alternatives || [],
+        personalNotes: ex.personalNotes || ex.notes || ''
+      };
+    }).filter(Boolean);
+    return {
+      ...plan,
+      id: String(plan.id || plan.planId || makeId('plan')),
+      userId: userKey,
+      type: 'plan',
+      name: String(plan.name || plan.title || 'Workout plan'),
+      goal: normalizeGoal(plan.goal || plan.fitnessGoal || plan.fitness_goal || 'general'),
+      level: normalizeLevel(plan.level || plan.experienceLevel || plan.experience_level || 'beginner'),
+      equipment: normalizeEquipment(plan.equipment || plan.availableEquipment || plan.available_equipment || 'bodyweight'),
+      duration: Math.max(10, Number(plan.duration || plan.durationMinutes || plan.duration_minutes || 30)),
+      days: days.length ? days : [1, 3, 5],
+      exercises,
+      excludedExercises: Array.isArray(plan.excludedExercises) ? plan.excludedExercises : [],
+      notes: String(plan.notes || ''),
+      createdAt: plan.createdAt || plan.created_at || new Date().toISOString(),
+      updatedAt: plan.updatedAt || plan.updated_at || null
+    };
+  }
+  let plans = workoutRecords.filter(isPlanRecord).map(normalizePlan);
+  let selectedPlanId = plans[0]?.id || null;
+  let editPlanId = null;
+  let editingExerciseIndex = null;
+  let editingExerciseData = null;
+  let libraryTargetPlanId = null;
+  let confirmCallback = null;
+  let lastFocusedElement = null;
+  let visibleExercises = [...exerciseLibrary];
+
+  function savePlans() {
+    const original = readStorage(STORAGE.workouts);
+    let otherRecords = [];
+    if (Array.isArray(original)) otherRecords = original.filter(record => !recordMatchesUser(record));
+    else if (original && typeof original === 'object') {
+      const arrays = [original.plans, original.records, original.workouts, original.data].filter(Array.isArray);
+      otherRecords = arrays.flat().filter(record => !recordMatchesUser(record));
+    }
+    const savedPlans = plans.map(plan => ({...plan, userId: userKey, type:'plan'}));
+    const saved = [...otherRecords, ...savedPlans];
+    if (!writeStorage(STORAGE.workouts, saved)) return false;
+    workoutRecords = saved.filter(recordMatchesUser);
+    return true;
+  }
+
+  function toast(title, message, type = 'success') {
+    const region = $('#toastRegion');
+    if (!region) return;
+    const node = document.createElement('div');
+    node.className = `toast ${type === 'error' ? 'error' : ''}`;
+    node.innerHTML = `<i class="fa-solid ${type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-check'}"></i><div><strong>${escapeHTML(title)}</strong><span>${escapeHTML(message)}</span></div>`;
+    region.appendChild(node);
+    window.setTimeout(() => node.remove(), 4500);
+  }
+
+  function applyTheme(theme) {
+    const dark = theme === 'dark';
+    document.body.classList.toggle('dark-theme', dark);
+    $('#themeBtn').innerHTML = dark ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+    $('#themeBtn').setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+    $('#themeBtn').title = dark ? 'Switch to light theme' : 'Switch to dark theme';
+    $('#themeBtn').dataset.theme = dark ? 'dark' : 'light';
+  }
+  let currentTheme = readStorage(STORAGE.theme);
+  if (currentTheme && typeof currentTheme === 'object') currentTheme = currentTheme.theme;
+  if (currentTheme !== 'dark' && currentTheme !== 'light') currentTheme = 'light';
+  applyTheme(currentTheme);
+  $('#themeBtn').addEventListener('click', () => {
+    currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    try { localStorage.setItem(STORAGE.theme, currentTheme); } catch {}
+    applyTheme(currentTheme);
+  });
+
+  function setUserDisplay() {
+    const first = currentName.trim().split(/\s+/).filter(Boolean);
+    const initials = first.length > 1 ? (first[0][0] + first[first.length - 1][0]) : (first[0]?.slice(0, 2) || 'U');
+    $('#sidebarName').textContent = currentName;
+    $('#sidebarAvatar').textContent = initials.toUpperCase();
+    $('#topAvatar').textContent = initials.toUpperCase();
+    $('#year').textContent = new Date().getFullYear();
+  }
+  setUserDisplay();
+
+  function profileIsIncomplete() {
+    const keys = ['goal','fitnessGoal','fitness_goal','experienceLevel','experience_level','level','equipment','availableEquipment','available_equipment'];
+    const hasGoal = keys.slice(0, 3).some(key => profile[key] != null && String(profile[key]).trim() !== '');
+    const hasLevel = keys.slice(3, 6).some(key => profile[key] != null && String(profile[key]).trim() !== '');
+    const hasEquipment = keys.slice(6).some(key => profile[key] != null && String(profile[key]).trim() !== '');
+    return !(hasGoal && hasLevel && hasEquipment);
+  }
+  if (profileIsIncomplete()) $('#profileWarning').classList.add('show');
+
+  const profileGoal = normalizeGoal(profile.goal || profile.fitnessGoal || profile.fitness_goal || 'general');
+  const profileLevel = normalizeLevel(profile.level || profile.experienceLevel || profile.experience_level || 'beginner');
+  function profileEquipment() {
+    const raw = profile.equipment || profile.availableEquipment || profile.available_equipment || profile.equipmentAvailable || 'bodyweight';
+    const list = Array.isArray(raw) ? raw.map(normalizeEquipment) : [normalizeEquipment(raw)];
+    if (list.some(item => ['gym','full-gym','full'].includes(item))) return 'gym';
+    if (list.includes('dumbbell')) return 'dumbbell';
+    if (list.includes('resistance-band')) return 'resistance-band';
+    return 'bodyweight';
+  }
+  const defaultEquipment = profileEquipment();
+  const profileDays = normalizeDays(profile.trainingDays || profile.training_days || profile.daysPerWeek || profile.trainingDaysPerWeek || []);
+  const defaultDays = profileDays.length ? profileDays : [1,3,5];
+  const profileDuration = Number(profile.sessionDuration || profile.session_duration || profile.workoutDuration || 30);
+
+  function goalLabel(value) { return goalLabels[normalizeGoal(value)] || 'General fitness'; }
+  function levelLabel(value) { return levelLabels[normalizeLevel(value)] || 'Beginner'; }
+  function equipmentLabel(value) { return equipmentLabels[normalizeEquipment(value)] || 'Bodyweight'; }
+  function muscleLabel(value) { return muscleLabels[normalized(value)] || 'Full body'; }
+  function durationLabel(value) { return `${Number(value) || 30} min`; }
+  function planDayNames(plan) { return plan.days.map(day => dayNames[day]).join(', '); }
+  function equipmentAllowed(exercise, equipment) {
+    const eq = normalizeEquipment(equipment);
+    const item = normalizeEquipment(exercise.equipment);
+    if (eq === 'gym') return ['bodyweight','dumbbell','resistance-band','gym'].includes(item);
+    return item === eq || item === 'bodyweight';
+  }
+  function excludedByName(exercise, excluded) {
+    const name = normalized(exercise.name);
+    return excluded.some(item => {
+      const e = normalized(item);
+      return e && (name.includes(e) || e.includes(name));
+    });
+  }
+  function difficultyAllowed(exercise, level) {
+    const ranks = {beginner:1,intermediate:2,advanced:3};
+    return (ranks[normalizeLevel(exercise.difficulty)] || 1) <= (ranks[normalizeLevel(level)] || 1);
+  }
+  function getPlanFilters() {
+    return {
+      search: $('#searchPlans').value.trim().toLowerCase(),
+      goal: $('#filterGoal').value,
+      level: $('#filterLevel').value,
+      equipment: $('#filterEquipment').value,
+      duration: $('#filterDuration').value,
+      muscle: $('#filterMuscle').value,
+      days: $$('input[name="filterDays"]:checked').map(el => Number(el.value))
+    };
+  }
+  function matchesPlan(plan, filters) {
+    if (filters.search && !`${plan.name} ${plan.notes} ${goalLabel(plan.goal)} ${plan.exercises.map(e=>e.name).join(' ')}`.toLowerCase().includes(filters.search)) return false;
+    if (filters.goal && plan.goal !== filters.goal) return false;
+    if (filters.level && plan.level !== filters.level) return false;
+    if (filters.equipment && normalizeEquipment(plan.equipment) !== filters.equipment) return false;
+    if (filters.duration) {
+      const duration = Number(filters.duration);
+      if (duration === 15 && !(plan.duration <= 20)) return false;
+      if (duration === 30 && !(plan.duration > 20 && plan.duration <= 35)) return false;
+      if (duration === 45 && !(plan.duration > 35 && plan.duration <= 50)) return false;
+      if (duration === 60 && !(plan.duration > 50)) return false;
+    }
+    if (filters.muscle && !plan.exercises.some(ex => ex.muscleGroup === filters.muscle)) return false;
+    if (filters.days.length && !filters.days.includes(plan.days.length)) return false;
+    return true;
+  }
+  function iconForGoal(goal) {
+    return ({muscle:'fa-dumbbell',weight:'fa-fire',strength:'fa-bolt',endurance:'fa-heart-pulse',mobility:'fa-person-walking',general:'fa-person-running'})[goal] || 'fa-dumbbell';
+  }
+  function renderPlans() {
+    const filters = getPlanFilters();
+    const filtered = plans.filter(plan => matchesPlan(plan, filters));
+    $('#planCount').textContent = `${filtered.length} ${filtered.length === 1 ? 'plan' : 'plans'}`;
+    $('#plansSubtitle').textContent = filters.search || filters.goal || filters.level || filters.equipment || filters.duration || filters.muscle || filters.days.length
+      ? 'Plans matching your selected filters.'
+      : 'Your saved training plans, all in one place.';
+    const grid = $('#plansGrid');
+    grid.innerHTML = '';
+    filtered.forEach(plan => {
+      const card = document.createElement('article');
+      card.className = `plan-card ${selectedPlanId === plan.id ? 'selected' : ''}`;
+      card.innerHTML = `
+        <div class="plan-top">
+          <div class="plan-icon"><i class="fa-solid ${iconForGoal(plan.goal)}"></i></div>
+          <div class="plan-actions">
+            <button class="mini-action" data-action="duplicate" data-id="${escapeHTML(plan.id)}" aria-label="Duplicate ${escapeHTML(plan.name)}" title="Duplicate plan"><i class="fa-regular fa-copy"></i></button>
+            <button class="mini-action" data-action="edit-plan" data-id="${escapeHTML(plan.id)}" aria-label="Edit ${escapeHTML(plan.name)}" title="Edit plan"><i class="fa-solid fa-pen"></i></button>
+            <button class="mini-action" data-action="delete-plan" data-id="${escapeHTML(plan.id)}" aria-label="Remove ${escapeHTML(plan.name)}" title="Remove plan"><i class="fa-regular fa-trash-can"></i></button>
+          </div>
+        </div>
+        <h3>${escapeHTML(plan.name)}</h3>
+        <p class="plan-description">${escapeHTML(plan.notes || `${goalLabel(plan.goal)} · ${planDayNames(plan) || 'Schedule not set'}`)}</p>
+        <div class="tag-row"><span class="tag purple">${escapeHTML(goalLabel(plan.goal))}</span><span class="tag">${escapeHTML(levelLabel(plan.level))}</span>${plan.completedAt ? '<span class="tag green">Completed</span>' : ''}</div>
+        <div class="plan-meta">
+          <div class="meta-item"><i class="fa-regular fa-clock"></i><strong>${escapeHTML(durationLabel(plan.duration))}</strong><span>Duration</span></div>
+          <div class="meta-item"><i class="fa-solid fa-list-check"></i><strong>${plan.exercises.length}</strong><span>Exercises</span></div>
+          <div class="meta-item"><i class="fa-regular fa-calendar"></i><strong>${plan.days.length}</strong><span>Days/week</span></div>
+        </div>
+        <div class="plan-footer"><button class="btn ${selectedPlanId === plan.id ? 'btn-soft' : 'btn-outline'}" data-action="select-plan" data-id="${escapeHTML(plan.id)}">${selectedPlanId === plan.id ? '<i class="fa-solid fa-check"></i> Selected' : 'View plan'} <i class="fa-solid fa-arrow-right"></i></button></div>`;
+      grid.appendChild(card);
+    });
+    const empty = $('#plansEmpty');
+    empty.hidden = filtered.length !== 0;
+    if (!filtered.length) {
+      const hasFilters = Boolean(filters.search || filters.goal || filters.level || filters.equipment || filters.duration || filters.muscle || filters.days.length);
+      $('#plansEmptyTitle').textContent = hasFilters ? 'No matching workout plans' : 'No workout plans yet';
+      $('#plansEmptyText').textContent = hasFilters
+        ? 'Try changing your filters or reset them to see your saved plans.'
+        : 'Create a plan from scratch or generate one using your preferences and available equipment.';
+      $('#emptyCreateBtn').innerHTML = hasFilters ? '<i class="fa-solid fa-rotate-left"></i> Reset filters' : '<i class="fa-solid fa-plus"></i> Create your first plan';
+    }
+    renderDetail();
+  }
+
+  function renderDetail() {
+    const plan = plans.find(item => item.id === selectedPlanId);
+    const root = $('#detailContent');
+    if (!plan) {
+      root.innerHTML = `<div class="empty-state" style="border:0"><div class="empty-icon"><i class="fa-solid fa-list-check"></i></div><h3>Select a workout plan</h3><p>Choose a plan above to view exercises and workout actions.</p></div>`;
+      return;
+    }
+    root.innerHTML = `
+      <div class="detail-banner">
+        <div class="detail-banner-top">
+          <div><div class="eyebrow">Selected workout plan</div><h2>${escapeHTML(plan.name)}</h2><p>${escapeHTML(plan.notes || goalLabel(plan.goal))}</p></div>
+          <button class="btn" data-action="mark-complete" data-id="${escapeHTML(plan.id)}"><i class="fa-solid fa-check"></i> Mark Complete</button>
+        </div>
+        <div class="detail-stats">
+          <span class="detail-stat"><i class="fa-regular fa-clock"></i>${escapeHTML(durationLabel(plan.duration))}</span>
+          <span class="detail-stat"><i class="fa-solid fa-signal"></i>${escapeHTML(levelLabel(plan.level))}</span>
+          <span class="detail-stat"><i class="fa-solid fa-dumbbell"></i>${escapeHTML(equipmentLabel(plan.equipment))}</span>
+          <span class="detail-stat"><i class="fa-regular fa-calendar"></i>${plan.days.length} days/week</span>
+        </div>
+      </div>
+      <div class="exercise-toolbar"><div><strong>Exercise list</strong><div class="panel-subtitle">${plan.exercises.length} exercises in this plan</div></div><button class="btn btn-primary btn-sm" data-action="add-exercise" data-id="${escapeHTML(plan.id)}"><i class="fa-solid fa-plus"></i> Add Exercise</button></div>
+      <div class="exercise-list">${plan.exercises.length ? plan.exercises.map((ex, index) => `
+        <article class="exercise-item">
+          <div class="exercise-number">${String(index + 1).padStart(2,'0')}</div>
+          <div class="exercise-info">
+            <h3>${escapeHTML(ex.name)}</h3>
+            <p>${escapeHTML(ex.instructions || 'Perform each repetition with control and a comfortable range of motion.')}</p>
+            <div class="exercise-chips">
+              <span class="exercise-chip"><strong>${Number(ex.sets) || 3}</strong> sets</span>
+              <span class="exercise-chip"><strong>${escapeHTML(ex.reps || '8–12')}</strong> reps</span>
+              <span class="exercise-chip"><strong>${Number(ex.restSeconds) || 0}s</strong> rest</span>
+              <span class="exercise-chip">${escapeHTML(muscleLabel(ex.muscleGroup))}</span>
+              <span class="exercise-chip">${escapeHTML(equipmentLabel(ex.equipment))}</span>
+            </div>
+          </div>
+          <div class="exercise-actions">
+            <button data-action="exercise-info" data-id="${escapeHTML(plan.id)}" data-index="${index}" title="Instructions and safety" aria-label="View instructions for ${escapeHTML(ex.name)}"><i class="fa-regular fa-circle-question"></i></button>
+            <button data-action="edit-exercise" data-id="${escapeHTML(plan.id)}" data-index="${index}" title="Edit exercise" aria-label="Edit ${escapeHTML(ex.name)}"><i class="fa-solid fa-pen"></i></button>
+            <button data-action="replace-exercise" data-id="${escapeHTML(plan.id)}" data-index="${index}" title="Replace exercise" aria-label="Replace ${escapeHTML(ex.name)}"><i class="fa-solid fa-repeat"></i></button>
+            <button data-action="remove-exercise" data-id="${escapeHTML(plan.id)}" data-index="${index}" title="Remove exercise" aria-label="Remove ${escapeHTML(ex.name)}"><i class="fa-regular fa-trash-can"></i></button>
+          </div>
+        </article>`).join('') : `<div class="empty-state" style="margin:16px 0"><div class="empty-icon"><i class="fa-solid fa-plus"></i></div><h3>No exercises in this plan</h3><p>Add movements from the exercise library to complete your plan.</p><button class="btn btn-primary btn-sm" data-action="add-exercise" data-id="${escapeHTML(plan.id)}"><i class="fa-solid fa-plus"></i> Add Exercise</button></div>`}</div>
+      <div class="detail-bottom">
+        <button class="btn btn-outline btn-sm" data-action="edit-plan" data-id="${escapeHTML(plan.id)}"><i class="fa-solid fa-pen"></i> Edit Plan</button>
+        <button class="btn btn-outline btn-sm" data-action="duplicate" data-id="${escapeHTML(plan.id)}"><i class="fa-regular fa-copy"></i> Duplicate Plan</button>
+        <button class="btn btn-soft btn-sm" data-action="add-exercise" data-id="${escapeHTML(plan.id)}"><i class="fa-solid fa-plus"></i> Add Exercise</button>
+      </div>`;
+  }
+
+  function getCompletionRecords() {
+    return workoutRecords.filter(record => recordMatchesUser(record) && isCompletion(record));
+  }
+  function getDateFromRecord(record) {
+    const raw = record.completedAt || record.completed_at || record.date || record.scheduledDate || record.scheduled_date || record.createdAt || record.created_at;
+    if (!raw) return null;
+    const date = new Date(raw);
+    if (Number.isNaN(date.getTime())) return String(raw).slice(0, 10);
+    return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+  }
+  function getScheduledDate(record) {
+    const raw = record.scheduledDate || record.scheduled_date || record.date || record.scheduledAt;
+    if (!raw) return null;
+    const date = new Date(raw);
+    if (Number.isNaN(date.getTime())) return String(raw).slice(0,10);
+    return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+  }
+  function dateForDay(dayOffset) {
+    const d = new Date();
+    d.setHours(12,0,0,0);
+    d.setDate(d.getDate() + dayOffset);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+  function renderSchedule() {
+    const today = new Date();
+    const start = new Date(today);
+    start.setHours(12,0,0,0);
+    start.setDate(start.getDate() - start.getDay());
+    const week = Array.from({length:7}, (_,i) => {
+      const d = new Date(start);
+      d.setDate(start.getDate()+i);
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    });
+    const completionRecords = getCompletionRecords();
+    const completionsByDate = new Set(completionRecords.map(getDateFromRecord).filter(Boolean));
+    const allScheduled = workoutRecords.filter(record => recordMatchesUser(record) && !isPlanRecord(record) && !isCompletion(record) && getScheduledDate(record));
+    const savedSchedule = allScheduled.filter(record => week.includes(getScheduledDate(record)));
+    const scheduleByDate = new Map(savedSchedule.map(record => [getScheduledDate(record), record]));
+    const planDays = plans.flatMap(plan => plan.days.map(day => ({plan, day})));
+    $('#weekGrid').innerHTML = week.map((date, index) => {
+      const d = new Date(`${date}T12:00:00`);
+      const todayFlag = date === todayISO();
+      const hasWorkout = scheduleByDate.has(date) || planDays.some(item => item.day === d.getDay());
+      const completed = completionsByDate.has(date);
+      return `<div class="day-cell ${todayFlag?'today':''} ${hasWorkout?'has-workout':''} ${completed?'completed':''}" title="${escapeHTML(date)}${completed?' · Completed':hasWorkout?' · Planned':''}"><span class="day-name">${dayNames[d.getDay()]}</span><span class="day-number">${d.getDate()}</span><span class="day-dot"></span></div>`;
+    }).join('');
+    const scheduleRows = [];
+    savedSchedule.sort((a,b) => getScheduledDate(a).localeCompare(getScheduledDate(b))).forEach(record => {
+      scheduleRows.push({name:record.name || record.title || record.workoutName || 'Scheduled workout', date:getScheduledDate(record), done:isCompletion(record), duration:record.duration || record.durationMinutes || null});
+    });
+    if (!scheduleRows.length) {
+      planDays.sort((a,b) => a.day - b.day).forEach(({plan,day}) => {
+        if (!scheduleRows.some(row => row.name === plan.name && row.day === day)) scheduleRows.push({name:plan.name,date:null,day,done:false,duration:plan.duration});
+      });
+    }
+    $('#scheduleSubtitle').textContent = scheduleRows.length ? `${scheduleRows.length} planned session${scheduleRows.length === 1 ? '' : 's'} from your saved plans` : 'No sessions scheduled yet';
+    $('#scheduleList').innerHTML = scheduleRows.length ? scheduleRows.slice(0,5).map(row => `
+      <div class="schedule-row"><div class="schedule-marker"><i class="fa-solid fa-dumbbell"></i></div><div class="schedule-row-info"><strong>${escapeHTML(row.name)}</strong><span>${escapeHTML(row.date || dayLong[row.day] || 'Scheduled')} ${row.duration ? ' · '+escapeHTML(row.duration)+' min' : ''}</span></div><span class="status-dot ${row.done?'done':''}" title="${row.done?'Completed':'Planned'}"></span></div>`).join('') : `<div style="text-align:center;color:var(--muted);font-size:11px;padding:15px 5px">No scheduled sessions. Create a plan and choose your training days.</div>`;
+    const history = completionRecords.sort((a,b) => (getDateFromRecord(b)||'').localeCompare(getDateFromRecord(a)||''));
+    $('#historyList').innerHTML = history.length ? history.slice(0,5).map(record => {
+      const name = record.name || record.title || record.workoutName || record.planName || 'Completed workout';
+      const date = getDateFromRecord(record);
+      const duration = record.duration || record.durationMinutes || record.duration_minutes;
+      return `<div class="history-row"><div class="history-check"><i class="fa-solid fa-check"></i></div><div class="history-info"><strong>${escapeHTML(name)}</strong><span>${escapeHTML(date ? new Date(`${date}T12:00:00`).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}) : 'Completion date not recorded')}</span></div>${duration?`<span class="history-duration">${escapeHTML(duration)} min</span>`:''}</div>`;
+    }).join('') : `<div style="text-align:center;padding:17px 5px;color:var(--muted)"><div style="font-size:22px;color:var(--green);margin-bottom:7px"><i class="fa-solid fa-medal"></i></div><strong style="display:block;color:var(--text);font-size:12px;margin-bottom:4px">Your history starts here</strong><span style="font-size:11px">Completed sessions will appear here after you mark a workout complete.</span></div>`;
+  }
+
+  function openModal(id) {
+    lastFocusedElement = document.activeElement;
+    const modal = document.getElementById(id);
+    if (!modal) return;
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    const focusable = $('input:not([type=hidden]),select,textarea,button:not([disabled]),a[href]', modal);
+    if (focusable) window.setTimeout(() => focusable.focus(), 20);
+  }
+  function closeModal(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.classList.remove('open');
+    if (!$('.modal-backdrop.open')) document.body.style.overflow = '';
+    if (lastFocusedElement && document.contains(lastFocusedElement)) lastFocusedElement.focus();
+  }
+  $$('[data-close]').forEach(button => button.addEventListener('click', () => closeModal(button.dataset.close)));
+  $$('.modal-backdrop').forEach(backdrop => backdrop.addEventListener('click', event => {
+    if (event.target === backdrop) closeModal(backdrop.id);
+  }));
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      const open = $('.modal-backdrop.open');
+      if (open) closeModal(open.id);
+      $('#notificationPopover').classList.remove('open');
+    }
+    const modal = $('.modal-backdrop.open .modal');
+    if (event.key === 'Tab' && modal) {
+      const focusable = $$('button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),a[href]', modal).filter(el => el.offsetParent !== null);
+      if (!focusable.length) return;
+      const first = focusable[0], last = focusable[focusable.length-1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    }
+  });
+
+  function openPlanForm(plan = null) {
+    editPlanId = plan?.id || null;
+    $('#planForm').reset();
+    $('#planModalTitle').textContent = plan ? 'Edit workout plan' : 'Create workout plan';
+    $('#planName').value = plan?.name || '';
+    $('#planGoal').value = plan?.goal || profileGoal;
+    $('#planLevel').value = plan?.level || profileLevel;
+    $('#planDuration').value = String(plan?.duration || (Number.isFinite(profileDuration) && profileDuration >= 10 ? profileDuration : 30));
+    if (!$('#planDuration').value) $('#planDuration').value = '30';
+    $('#planEquipment').value = plan?.equipment || defaultEquipment;
+    const days = plan?.days || defaultDays;
+    $$('input[name="planDay"]').forEach(input => input.checked = days.includes(Number(input.value)));
+    $('#excludedExercises').value = (plan?.excludedExercises || []).join(', ');
+    $('#planNotes').value = plan?.notes || '';
+    openModal('planModal');
+  }
+
+  function collectPlanForm() {
+    const days = $$('input[name="planDay"]:checked').map(input => Number(input.value));
+    if (!days.length) {
+      toast('Choose training days', 'Select at least one day for this workout plan.', 'error');
+      return null;
+    }
+    const name = $('#planName').value.trim();
+    if (!name) {
+      toast('Plan name required', 'Enter a name for your workout plan.', 'error');
+      $('#planName').focus();
+      return null;
+    }
+    return {
+      name,
+      goal: normalizeGoal($('#planGoal').value),
+      level: normalizeLevel($('#planLevel').value),
+      duration: Number($('#planDuration').value) || 30,
+      equipment: normalizeEquipment($('#planEquipment').value),
+      days,
+      excludedExercises: $('#excludedExercises').value.split(',').map(v=>v.trim()).filter(Boolean),
+      notes: $('#planNotes').value.trim()
+    };
+  }
+
+  function selectPlan(id) {
+    if (!plans.some(plan => plan.id === id)) return;
+    selectedPlanId = id;
+    renderPlans();
+    const panel = $('#detailPanel');
+    if (window.innerWidth < 850) panel.scrollIntoView({behavior: 'smooth', block: 'start'});
+  }
+
+  function createPlan(data, options = {}) {
+    const plan = normalizePlan({
+      ...data,
+      id: makeId('plan'),
+      userId: userKey,
+      type:'plan',
+      exercises: options.exercises || [],
+      createdAt: new Date().toISOString()
+    });
+    plans.unshift(plan);
+    if (!savePlans()) {
+      plans.shift();
+      return false;
+    }
+    selectedPlanId = plan.id;
+    renderPlans();
+    toast('Workout plan created', `"${plan.name}" is ready to customize.`);
+    return true;
+  }
+
+  $('#planForm').addEventListener('submit', event => {
+    event.preventDefault();
+    const data = collectPlanForm();
+    if (!data) return;
+    if (editPlanId) {
+      const index = plans.findIndex(plan => plan.id === editPlanId);
+      if (index < 0) { toast('Plan not found', 'This plan may have been removed.', 'error'); closeModal('planModal'); return; }
+      const previous = plans[index];
+      plans[index] = normalizePlan({...previous, ...data, id:previous.id, userId:userKey, type:'plan', updatedAt:new Date().toISOString()});
+      if (!savePlans()) { plans[index] = previous; return; }
+      selectedPlanId = previous.id;
+      toast('Plan updated', 'Your workout plan changes have been saved.');
+    } else {
+      if (!createPlan(data)) return;
+    }
+    closeModal('planModal');
+    renderPlans();
+    renderSchedule();
+  });
+
+  function openConfirm(title, message, label, callback, danger = true) {
+    $('#confirmTitle').textContent = title;
+    $('#confirmMessage').textContent = message;
+    $('#confirmActionBtn').textContent = label;
+    $('#confirmActionBtn').className = `btn ${danger ? 'btn-danger' : 'btn-primary'}`;
+    confirmCallback = callback;
+    openModal('confirmModal');
+  }
+  $('#confirmActionBtn').addEventListener('click', () => {
+    const callback = confirmCallback;
+    confirmCallback = null;
+    closeModal('confirmModal');
+    if (typeof callback === 'function') callback();
+  });
+
+  function duplicatePlan(id) {
+    const original = plans.find(plan => plan.id === id);
+    if (!original) return;
+    const copy = normalizePlan({
+      ...original,
+      id: makeId('plan'),
+      userId: userKey,
+      name: `${original.name} (Copy)`,
+      createdAt: new Date().toISOString(),
+      updatedAt: null,
+      exercises: original.exercises.map(ex => ({...ex, id: makeId('ex')}))
+    });
+    plans.unshift(copy);
+    if (!savePlans()) { plans.shift(); return; }
+    selectedPlanId = copy.id;
+    renderPlans();
+    renderSchedule();
+    toast('Plan duplicated', 'A separate copy was created. Your original plan is unchanged.');
+  }
+
+  function deletePlan(id) {
+    const plan = plans.find(item => item.id === id);
+    if (!plan) return;
+    openConfirm('Remove workout plan?', `This will remove "${plan.name}" from your saved plans. Existing completion history will be kept.`, 'Remove plan', () => {
+      const oldPlans = [...plans];
+      plans = plans.filter(item => item.id !== id);
+      if (!savePlans()) { plans = oldPlans; return; }
+      if (selectedPlanId === id) selectedPlanId = plans[0]?.id || null;
+      renderPlans();
+      renderSchedule();
+      toast('Plan removed', 'The plan was removed. Existing history was preserved.');
+    });
+  }
+
+  function openLibrary(planId, replaceIndex = null) {
+    libraryTargetPlanId = planId;
+    $('#exerciseModalTitle').textContent = replaceIndex === null ? 'Add an exercise' : 'Replace exercise';
+    $('#exerciseModal').dataset.replaceIndex = replaceIndex === null ? '' : String(replaceIndex);
+    $('#librarySearch').value = '';
+    $('#libraryMuscle').value = '';
+    const plan = plans.find(item => item.id === planId);
+    $('#libraryEquipment').value = plan?.equipment || defaultEquipment;
+    renderLibrary();
+    openModal('exerciseModal');
+  }
+
+  function renderLibrary() {
+    const plan = plans.find(item => item.id === libraryTargetPlanId);
+    const search = $('#librarySearch').value.trim().toLowerCase();
+    const muscle = $('#libraryMuscle').value;
+    const equipment = $('#libraryEquipment').value;
+    const list = $('#libraryList');
+    const items = exerciseLibrary.filter(ex => {
+      if (search && !`${ex.name} ${ex.instructions} ${ex.muscleGroup}`.toLowerCase().includes(search)) return false;
+      if (muscle && ex.muscleGroup !== muscle) return false;
+      if (equipment && !equipmentAllowed(ex, equipment)) return false;
+      if (plan && !difficultyAllowed(ex, plan.level)) return false;
+      if (plan && !equipmentAllowed(ex, plan.equipment)) return false;
+      if (plan && excludedByName(ex, plan.excludedExercises || [])) return false;
+      return true;
+    });
+    visibleExercises = items;
+    if (!items.length) {
+      list.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fa-solid fa-magnifying-glass"></i></div><h3>No matching exercises</h3><p>Try another search or choose equipment available to you. You can also review the plan's excluded exercises.</p></div>`;
+      return;
+    }
+    list.innerHTML = items.map(ex => `
+      <div class="library-row">
+        <div class="plan-icon" style="width:35px;height:35px;font-size:14px"><i class="fa-solid ${ex.muscleGroup==='cardio'?'fa-heart-pulse':ex.muscleGroup==='core'?'fa-person-rays':ex.muscleGroup==='lower-body'?'fa-person-walking':'fa-dumbbell'}"></i></div>
+        <div class="library-row-main"><strong>${escapeHTML(ex.name)}</strong><span>${escapeHTML(muscleLabel(ex.muscleGroup))} · ${escapeHTML(equipmentLabel(ex.equipment))} · ${escapeHTML(levelLabel(ex.difficulty))} · ${ex.sets} × ${escapeHTML(ex.reps)}</span></div>
+        <button class="btn btn-outline btn-sm" data-library-add="${escapeHTML(ex.id)}"><i class="fa-solid ${$('#exerciseModal').dataset.replaceIndex !== '' ? 'fa-repeat' : 'fa-plus'}"></i> ${$('#exerciseModal').dataset.replaceIndex !== '' ? 'Replace' : 'Add'}</button>
+      </div>`).join('');
+  }
+  ['librarySearch','libraryMuscle','libraryEquipment'].forEach(id => {
+    $(`#${id}`).addEventListener(id === 'librarySearch' ? 'input' : 'change', renderLibrary);
+  });
+
+  function addLibraryExercise(exerciseId) {
+    const plan = plans.find(item => item.id === libraryTargetPlanId);
+    const exercise = exerciseLibrary.find(item => item.id === exerciseId);
+    if (!plan || !exercise) return;
+    if (!equipmentAllowed(exercise, plan.equipment)) {
+      toast('Equipment unavailable', 'This exercise requires equipment not selected for the plan.', 'error');
+      return;
+    }
+    if (!difficultyAllowed(exercise, plan.level)) {
+      toast('Experience level mismatch', 'Choose an exercise suitable for this plan’s experience level.', 'error');
+      return;
+    }
+    if (excludedByName(exercise, plan.excludedExercises || [])) {
+      toast('Exercise excluded', 'This exercise matches a movement you excluded from the plan.', 'error');
+      return;
+    }
+    const index = $('#exerciseModal').dataset.replaceIndex;
+    const previous = plans.find(p => p.id === plan.id);
+    const previousExercises = [...previous.exercises];
+    const item = {...exercise, id:makeId('ex')};
+    if (index !== '') {
+      const idx = Number(index);
+      if (!Number.isInteger(idx) || idx < 0 || idx >= plan.exercises.length) return;
+      plan.exercises[idx] = item;
+    } else {
+      plan.exercises.push(item);
+    }
+    plan.updatedAt = new Date().toISOString();
+    if (!savePlans()) {
+      plan.exercises = previousExercises;
+      return;
+    }
+    selectedPlanId = plan.id;
+    closeModal('exerciseModal');
+    renderPlans();
+    renderSchedule();
+    toast(index !== '' ? 'Exercise replaced' : 'Exercise added', `${exercise.name} is now in your plan.`);
+  }
+
+  function openExerciseEditor(planId, index) {
+    const plan = plans.find(item => item.id === planId);
+    const exercise = plan?.exercises[index];
+    if (!plan || !exercise) return;
+    editingExerciseIndex = index;
+    editingExerciseData = {planId, exerciseId: exercise.id};
+    $('#exerciseEditTitle').textContent = `Edit ${exercise.name}`;
+    $('#editExerciseName').value = exercise.name;
+    $('#editSets').value = exercise.sets || 3;
+    $('#editReps').value = exercise.reps || '8–12';
+    $('#editRest').value = exercise.restSeconds ?? 60;
+    $('#editDifficulty').value = normalizeLevel(exercise.difficulty);
+    $('#editExerciseNotes').value = exercise.personalNotes || '';
+    $('#exerciseInstructions').innerHTML = `<p><strong>Target muscle:</strong> ${escapeHTML(muscleLabel(exercise.muscleGroup))}</p><p><strong>Equipment:</strong> ${escapeHTML(equipmentLabel(exercise.equipment))}</p><p><strong>Instructions:</strong> ${escapeHTML(exercise.instructions || 'Use controlled movements.')}</p><p><strong>Safety:</strong> ${escapeHTML(exercise.safetyNotes || 'Stop if you experience pain or unusual discomfort.')}</p>`;
+    openModal('exerciseEditModal');
+  }
+
+  $('#exerciseEditForm').addEventListener('submit', event => {
+    event.preventDefault();
+    const plan = plans.find(item => item.id === editingExerciseData?.planId);
+    const exercise = plan?.exercises[editingExerciseIndex];
+    if (!plan || !exercise) return;
+    const name = $('#editExerciseName').value.trim();
+    const sets = Number($('#editSets').value);
+    const reps = $('#editReps').value.trim();
+    const rest = Number($('#editRest').value);
+    if (!name || !reps || sets < 1 || sets > 20 || rest < 0 || rest > 900) {
+      toast('Check exercise details', 'Enter a name, valid sets, reps, and rest period.', 'error');
+      return;
+    }
+    const previous = {...exercise};
+    Object.assign(exercise, {name, sets, reps, restSeconds:rest, difficulty:normalizeLevel($('#editDifficulty').value), personalNotes:$('#editExerciseNotes').value.trim()});
+    plan.updatedAt = new Date().toISOString();
+    if (!savePlans()) { Object.assign(exercise, previous); return; }
+    closeModal('exerciseEditModal');
+    renderPlans();
+    renderSchedule();
+    toast('Exercise updated', `${name} has been saved.`);
+  });
+
+  function removeExercise(planId, index) {
+    const plan = plans.find(item => item.id === planId);
+    if (!plan || !plan.exercises[index]) return;
+    const exercise = plan.exercises[index];
+    openConfirm('Remove exercise?', `Remove "${exercise.name}" from "${plan.name}"?`, 'Remove exercise', () => {
+      const oldExercises = [...plan.exercises];
+      plan.exercises.splice(index, 1);
+      plan.updatedAt = new Date().toISOString();
+      if (!savePlans()) { plan.exercises = oldExercises; return; }
+      renderPlans();
+      toast('Exercise removed', `${exercise.name} was removed from the plan.`);
+    });
+  }
+
+  function showExerciseInfo(planId, index) {
+    const plan = plans.find(item => item.id === planId);
+    const ex = plan?.exercises[index];
+    if (!ex) return;
+    editingExerciseData = {planId, exerciseId:ex.id};
+    $('#exerciseEditTitle').textContent = ex.name;
+    $('#editExerciseName').value = ex.name;
+    $('#editSets').value = ex.sets || 3;
+    $('#editReps').value = ex.reps || '8–12';
+    $('#editRest').value = ex.restSeconds ?? 60;
+    $('#editDifficulty').value = normalizeLevel(ex.difficulty);
+    $('#editExerciseNotes').value = ex.personalNotes || '';
+    $('#exerciseInstructions').innerHTML = `<p><strong>Target muscle:</strong> ${escapeHTML(muscleLabel(ex.muscleGroup))}</p><p><strong>Equipment:</strong> ${escapeHTML(equipmentLabel(ex.equipment))}</p><p><strong>Difficulty:</strong> ${escapeHTML(levelLabel(ex.difficulty))}</p><p><strong>Instructions:</strong> ${escapeHTML(ex.instructions || 'Use controlled movements.')}</p><p><strong>Safety:</strong> ${escapeHTML(ex.safetyNotes || 'Stop if you experience pain or unusual discomfort.')}</p>${ex.alternatives?.length?`<p><strong>Possible alternatives:</strong> ${escapeHTML(ex.alternatives.map(id=>exerciseLibrary.find(item=>item.id===id)?.name||id).join(', '))}</p>`:''}`;
+    $('#exerciseEditForm').querySelector('.modal-footer button[type="submit"]').hidden = true;
+    $('#exerciseEditForm').querySelector('.modal-footer button[data-close]').textContent = 'Close';
+    $('#exerciseEditForm').querySelector('.modal-footer').insertAdjacentHTML('afterbegin','');
+    $('#exerciseEditForm').dataset.readonly = 'true';
+    $('#editExerciseName').disabled = true;
+    $('#editSets').disabled = true;
+    $('#editReps').disabled = true;
+    $('#editRest').disabled = true;
+    $('#editDifficulty').disabled = true;
+    $('#editExerciseNotes').disabled = true;
+    openModal('exerciseEditModal');
+  }
+
+  function resetExerciseEditor() {
+    $('#exerciseEditForm').dataset.readonly = 'false';
+    $('#exerciseEditForm').querySelector('.modal-footer button[type="submit"]').hidden = false;
+    $('#exerciseEditForm').querySelector('.modal-footer button[data-close]').textContent = 'Cancel';
+    ['editExerciseName','editSets','editReps','editRest','editDifficulty','editExerciseNotes'].forEach(id => $(`#${id}`).disabled = false);
+  }
+  $('#exerciseEditModal').addEventListener('click', event => {
+    if (event.target.closest('[data-close="exerciseEditModal"]')) resetExerciseEditor();
+  });
+  $('#exerciseEditModal').addEventListener('submit', () => {
+    if ($('#exerciseEditForm').dataset.readonly === 'true') resetExerciseEditor();
+  });
+
+  function markComplete(planId) {
+    const plan = plans.find(item => item.id === planId);
+    if (!plan) return;
+    if (!plan.exercises.length) {
+      toast('Add exercises first', 'Add at least one exercise before marking this workout complete.', 'error');
+      return;
+    }
+    openConfirm('Mark workout complete?', `Record "${plan.name}" as completed today? This adds a new history entry and does not change your plan.`, 'Mark complete', () => {
+      const original = readStorage(STORAGE.workouts);
+      let other = [];
+      if (Array.isArray(original)) other = original.filter(record => !recordMatchesUser(record));
+      else if (original && typeof original === 'object') {
+        other = [original.plans,original.records,original.workouts,original.data].filter(Array.isArray).flat().filter(record => !recordMatchesUser(record));
+      }
+      const completed = {
+        id:makeId('completion'),
+        userId:userKey,
+        type:'completion',
+        status:'completed',
+        completed:true,
+        planId:plan.id,
+        name:plan.name,
+        goal:plan.goal,
+        duration:plan.duration,
+        date:todayISO(),
+        completedAt:new Date().toISOString(),
+        exerciseCount:plan.exercises.length
+      };
+      const next = [...other, ...plans.map(p=>({...p,userId:userKey,type:'plan'})), completed];
+      if (!writeStorage(STORAGE.workouts,next)) return;
+      workoutRecords = next.filter(recordMatchesUser);
+      renderPlans();
+      renderSchedule();
+      toast('Workout completed!', `${plan.name} has been added to your workout history.`);
+    });
+  }
+
+  function generateExercises(data) {
+    const excluded = data.excludedExercises || [];
+    const candidates = exerciseLibrary.filter(ex => equipmentAllowed(ex, data.equipment) &&
+      difficultyAllowed(ex, data.level) && !excludedByName(ex, excluded));
+    if (!candidates.length) return {exercises:[], warnings:['No exercises match the selected equipment, experience level, and exclusions. Try different preferences.']};
+    const byMuscle = group => candidates.filter(ex => ex.muscleGroup === group);
+    const pools = {
+      muscle:['upper-body','lower-body','upper-body','lower-body','core'],
+      strength:['lower-body','upper-body','lower-body','upper-body','core'],
+      weight:['cardio','lower-body','upper-body','core','cardio'],
+      endurance:['cardio','cardio','full-body','lower-body','core'],
+      mobility:['core','lower-body','upper-body','full-body','core'],
+      general:['lower-body','upper-body','core','cardio','lower-body']
+    };
+    let preferred = pools[data.goal] || pools.general;
+    if (data.goal === 'mobility') preferred = ['core','lower-body','upper-body','core','lower-body'];
+    const availableMuscles = [...new Set(candidates.map(ex=>ex.muscleGroup))];
+    const warnings = [];
+    let desiredCount = Math.max(3, Math.min(8, Math.floor(data.duration / 7)));
+    if (data.duration <= 20) desiredCount = Math.min(desiredCount, 4);
+    const result = [];
+    const used = new Set();
+    for (let i=0; i<desiredCount; i++) {
+      const target = preferred[i % preferred.length];
+      let pool = byMuscle(target).filter(ex=>!used.has(ex.id));
+      if (!pool.length) pool = candidates.filter(ex=>!used.has(ex.id));
+      if (!pool.length) break;
+      // Deterministic choice: sort by ID and choose the first unused match.
+      pool.sort((a,b)=>a.id.localeCompare(b.id));
+      const chosen = pool[0];
+      used.add(chosen.id);
+      const item = {...chosen, id:makeId('ex')};
+      if (data.level === 'beginner') {
+        item.sets = Math.min(item.sets || 3, 3);
+        item.reps = item.reps || '8–12';
+        item.restSeconds = Math.max(item.restSeconds || 45, 45);
+      } else if (data.level === 'advanced') {
+        item.sets = Math.min((item.sets || 3) + 1, 5);
+      }
+      result.push(item);
+    }
+    if (result.length < desiredCount) warnings.push(`Only ${result.length} suitable exercises were found with these preferences. Add more equipment options or remove some exclusions to expand your plan.`);
+    if (!availableMuscles.includes('cardio') && ['weight','endurance'].includes(data.goal)) warnings.push('No suitable cardio movements are available with these settings, so this plan focuses on other available exercises.');
+    if (data.excludedExercises.length) warnings.push(`Excluded movements were omitted: ${data.excludedExercises.join(', ')}.`);
+    return {exercises:result,warnings};
+  }
+
+  function generatePlanFromPreferences() {
+    const data = {
+      name: `${goalLabel(profileGoal)} Plan`,
+      goal:profileGoal,
+      level:profileLevel,
+      equipment:defaultEquipment,
+      duration:Number.isFinite(profileDuration) && profileDuration >= 10 && profileDuration <= 180 ? profileDuration : 30,
+      days:defaultDays,
+      excludedExercises:Array.isArray(profile.excludedExercises) ? profile.excludedExercises : []
+    };
+    const results = generateExercises(data);
+    if (!results.exercises.length) {
+      $('#generationWarning').hidden = false;
+      $('#generationWarningText').textContent = results.warnings.join(' ');
+      toast('Could not generate a suitable plan', results.warnings[0] || 'Adjust your preferences and try again.', 'error');
+      return;
+    }
+    data.name = `${goalLabel(data.goal)} · ${levelLabel(data.level)}`;
+    if (!createPlan(data,{exercises:results.exercises})) return;
+    if (results.warnings.length) {
+      $('#generationWarning').hidden = false;
+      $('#generationWarningText').textContent = results.warnings.join(' ');
+    } else {
+      $('#generationWarning').hidden = true;
+      $('#generationWarningText').textContent = '';
+    }
+    toast('Plan generated', 'A deterministic plan was created from your selected preferences and available equipment.');
+  }
+
+  function resetFilters() {
+    $('#searchPlans').value = '';
+    ['filterGoal','filterLevel','filterEquipment','filterDuration','filterMuscle'].forEach(id=>$(`#${id}`).value='');
+    $$('input[name="filterDays"]').forEach(input=>input.checked=false);
+    renderPlans();
+  }
+  ['searchPlans','filterGoal','filterLevel','filterEquipment','filterDuration','filterMuscle'].forEach(id => {
+    $(`#${id}`).addEventListener(id === 'searchPlans' ? 'input' : 'change', renderPlans);
+  });
+  $$('input[name="filterDays"]').forEach(input=>input.addEventListener('change',renderPlans));
+  $('#resetFiltersBtn').addEventListener('click', resetFilters);
+  $('#emptyCreateBtn').addEventListener('click', () => {
+    if ($('#plansEmptyTitle').textContent.includes('No matching')) resetFilters();
+    else openPlanForm();
+  });
+  $('#createPlanBtn').addEventListener('click', () => openPlanForm());
+  $('#generateBtn').addEventListener('click', () => {
+    // The selected preferences are applied directly; no external AI service is called.
+    generatePlanFromPreferences();
+  });
+
+  document.addEventListener('click', event => {
+    const action = event.target.closest('[data-action]');
+    if (action) {
+      const id = action.dataset.id;
+      const index = Number(action.dataset.index);
+      switch (action.dataset.action) {
+        case 'select-plan': selectPlan(id); break;
+        case 'edit-plan': {
+          const plan = plans.find(item=>item.id===id);
+          if (plan) openPlanForm(plan);
+          break;
+        }
+        case 'duplicate': duplicatePlan(id); break;
+        case 'delete-plan': deletePlan(id); break;
+        case 'add-exercise': openLibrary(id); break;
+        case 'replace-exercise': openLibrary(id,index); break;
+        case 'edit-exercise': resetExerciseEditor(); openExerciseEditor(id,index); break;
+        case 'remove-exercise': removeExercise(id,index); break;
+        case 'exercise-info': resetExerciseEditor(); showExerciseInfo(id,index); break;
+        case 'mark-complete': markComplete(id); break;
+      }
+    }
+    const add = event.target.closest('[data-library-add]');
+    if (add) addLibraryExercise(add.dataset.libraryAdd);
+  });
+
+  $('#notificationBtn').addEventListener('click', event => {
+    event.stopPropagation();
+    const popover = $('#notificationPopover');
+    popover.classList.toggle('open');
+    $('#notificationBtn').setAttribute('aria-expanded', String(popover.classList.contains('open')));
+  });
+  document.addEventListener('click', event => {
+    if (!event.target.closest('#notificationPopover') && !event.target.closest('#notificationBtn')) {
+      $('#notificationPopover').classList.remove('open');
+      $('#notificationBtn').setAttribute('aria-expanded','false');
+    }
+  });
+
+  $('#collapseBtn').addEventListener('click', () => {
+    document.body.classList.toggle('sidebar-collapsed');
+    const collapsed = document.body.classList.contains('sidebar-collapsed');
+    $('#collapseBtn').setAttribute('aria-expanded',String(!collapsed));
+    $('#collapseBtn').setAttribute('aria-label',collapsed?'Expand sidebar':'Collapse sidebar');
+    $('#collapseBtn').title = collapsed?'Expand sidebar':'Collapse sidebar';
+  });
+  const sidebar = $('#sidebar');
+  const overlay = $('#sidebarOverlay');
+  function setMobileMenu(open) {
+    sidebar.classList.toggle('mobile-open',open);
+    overlay.classList.toggle('open',open);
+    $('#mobileMenuBtn').setAttribute('aria-expanded',String(open));
+    $('#mobileMenuBtn').setAttribute('aria-label',open?'Close navigation':'Open navigation');
+    document.body.style.overflow = open ? 'hidden' : '';
+  }
+  $('#mobileMenuBtn').addEventListener('click',()=>setMobileMenu(!sidebar.classList.contains('mobile-open')));
+  overlay.addEventListener('click',()=>setMobileMenu(false));
+  $$('.nav-link').forEach(link=>link.addEventListener('click',()=>setMobileMenu(false)));
+
+  $('#logoutBtn').addEventListener('click', () => {
+    openConfirm('Log out?', 'Your saved workout plans and training history will remain in this browser. Only your current session will be cleared.', 'Log out', () => {
+      try { localStorage.removeItem(STORAGE.user); } catch {}
+      window.location.href = 'login.html';
+    });
+  });
+
+  // A week plan is generated from real saved plans and schedule data only.
+  renderPlans();
+  renderSchedule();
+
+})();
+</script>
+</body>
+</html>
